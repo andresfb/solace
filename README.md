@@ -1,2 +1,2 @@
 # Solace
-A private "Social Network" to doom scroll my own curated content
+A private "Social Network" to doomscrolling my own curated content
