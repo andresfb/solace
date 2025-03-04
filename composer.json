@@ -20,6 +20,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
@@ -68,7 +69,7 @@
         "test:refacto": "rector --dry-run",
         "test:lint": "pint --test",
         "test:typos": "peck",
-        "test:types": "phpstan analyse --ansi",
+        "test:types": "phpstan analyse --ansi --memory-limit=2G",
         "test:unit": "pest --colors=always --coverage --parallel --min=100",
         "test": [
             "@test:refacto",

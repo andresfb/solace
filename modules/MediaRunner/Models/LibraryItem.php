@@ -13,7 +13,7 @@ class LibraryItem extends BaseMediaRunnerModel
     protected static function booted(): void
     {
         parent::booted();
-        static::addGlobalScope(new LibraryMediaScope());
+        static::addGlobalScope(new LibraryMediaScope);
     }
 
     protected function casts(): array
@@ -30,7 +30,6 @@ class LibraryItem extends BaseMediaRunnerModel
 
     public function media(): HasMany
     {
-        return $this->hasMany(LibraryMedia::class, 'model_id', 'id')
-            ->where('model_type', 'App\Models\Item');
+        return $this->hasMany(LibraryMedia::class, 'model_id', 'id');
     }
 }

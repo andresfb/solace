@@ -12,7 +12,7 @@ class LibraryPost extends BaseMediaRunnerModel
     protected static function booted(): void
     {
         parent::booted();
-        static::addGlobalScope(new LibraryItemsScope());
+        static::addGlobalScope(new LibraryItemsScope);
     }
 
     protected function casts(): array

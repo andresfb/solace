@@ -2,12 +2,19 @@
 
 namespace Modules\MediaRunner\Models;
 
+use App\Models\Scopes\MediaModelTypeScope;
 use Illuminate\Support\Str;
 use Modules\MediaRunner\Libraries\MediaBasePath;
 
 class LibraryMedia extends BaseMediaRunnerModel
 {
     protected $table = 'media';
+
+    protected static function booted(): void
+    {
+        parent::booted();
+        static::addGlobalScope(new MediaModelTypeScope);
+    }
 
     protected function casts(): array
     {
@@ -31,7 +38,7 @@ class LibraryMedia extends BaseMediaRunnerModel
             'file_name' => $this->file_name,
             'mime_type' => $this->mime_type,
             'file_type' => $this->collection_name,
-            'size_mb'   => round($this->size / 2048, 2),
+            'size_mb' => round($this->size / 2048, 2),
             'file_path' => $filePath,
         ];
     }
