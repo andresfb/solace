@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\LibraryPost;
 use Exception;
 use Illuminate\Console\Command;
+use Modules\MediaRunner\Models\LibraryPost;
 
 class TestAppCommand extends Command
 {

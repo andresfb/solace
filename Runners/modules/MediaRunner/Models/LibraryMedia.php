@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace Modules\MediaRunner\Models;
 
-use app\Libraries\MediaBasePath;
 use App\Models\Scopes\MediaModelTypeScope;
 use Illuminate\Support\Str;
+use Modules\MediaRunner\Libraries\MediaBasePath;
 
 class LibraryMedia extends BaseMediaRunnerModel
 {

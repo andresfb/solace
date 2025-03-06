@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace Modules\MediaRunner\Models;
 
-use App\Models\Scopes\LibraryMediaScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -13,7 +12,7 @@ class LibraryItem extends BaseMediaRunnerModel
     protected static function booted(): void
     {
         parent::booted();
-        static::addGlobalScope(new LibraryMediaScope);
+        static::addGlobalScope(new LibraryMed1iaScope);
     }
 
     protected function casts(): array

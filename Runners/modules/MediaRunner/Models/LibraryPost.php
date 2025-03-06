@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace Modules\MediaRunner\Models;
 
-use App\Models\Scopes\LibraryItemsScope;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\MediaRunner\Models\Scopes\LibraryItemsScope;
 
 class LibraryPost extends BaseMediaRunnerModel
 {

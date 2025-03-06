@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Libraries;
+namespace Modules\MediaRunner\Libraries;
 
 use Illuminate\Support\Str;
 
