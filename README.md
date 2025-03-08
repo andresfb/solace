@@ -1,2 +1,2 @@
 # Solace
-A private "Social Network" for doomscrolling my own curated content
+A private "Social Media Network" for doomscrolling my own curated content
