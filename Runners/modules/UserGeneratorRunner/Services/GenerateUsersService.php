@@ -21,5 +21,6 @@ class GenerateUsersService
         $this->info('Generating users...');
 
         $users = $this->service->execute();
+        // TODO: loop through the Users and raise an event so the Host can pick it up with a listener
     }
 }
