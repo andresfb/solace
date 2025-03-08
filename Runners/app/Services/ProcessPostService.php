@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Modules\MediaRunner\Models\Media\MediaItem;
+use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Throwable;
 
 readonly class ProcessPostService

@@ -3,7 +3,7 @@
 namespace App\Models\Posts;
 
 use Illuminate\Support\Collection;
-use Modules\MediaRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
 class PostItem
 {

@@ -3,5 +3,6 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\HorizonServiceProvider::class,
-    Modules\MediaRunner\Providers\MediaRunnerServiceProvider::class,
+    Modules\MediaLibraryRunner\Providers\MediaLibraryRunnerServiceProvider::class,
+    Modules\UserGeneratorRunner\Providers\UserGeneratorRunnerServiceProvider::class,
 ];
