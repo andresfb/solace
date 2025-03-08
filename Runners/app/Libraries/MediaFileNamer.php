@@ -9,7 +9,7 @@ class MediaFileNamer extends DefaultFileNamer
 {
     public function originalFileName(string $fileName): string
     {
-        return hash('md5', sprintf("%s-%s", $fileName, time()));
+        return hash('md5', sprintf('%s-%s', $fileName, time()));
     }
 
     public function extensionFromBaseImage(string $baseImage): string
@@ -19,6 +19,6 @@ class MediaFileNamer extends DefaultFileNamer
 
     public function temporaryFileName(Media $media, string $extension): string
     {
-        return "{$this->responsiveFileName($media->file_name)}." . strtolower($extension);
+        return "{$this->responsiveFileName($media->file_name)}.".strtolower($extension);
     }
 }

@@ -96,6 +96,6 @@ class LibraryPost extends BaseMediaRunnerModel
 
                 return $tag;
             })
-            ->reject(fn($tag): bool => empty($tag));
+            ->reject(fn ($tag): bool => empty($tag));
     }
 }

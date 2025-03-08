@@ -45,13 +45,13 @@ trait ConvertDateTimeToTimezone
         // cloning it unnecessarily
         $justCreated = false;
 
-        if (!($value instanceof \DateTime)) {
+        if (! ($value instanceof \DateTime)) {
             $value = new \DateTime($value);
             $justCreated = true;
         }
 
         if ($value->getTimezone()->getName() !== config('app.timezone')) {
-            if (!$justCreated) {
+            if (! $justCreated) {
                 $value = clone $value;
             }
             $value->setTimezone(new \DateTimeZone(config('app.timezone')));

@@ -14,9 +14,7 @@ class PostItem
         public string $source,
         public Collection $mediaFiles,
         public Collection $hashtags,
-    )
-    {
-    }
+    ) {}
 
     public static function createFromModel(LibraryPost $libraryPost): self
     {

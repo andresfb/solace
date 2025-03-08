@@ -17,10 +17,10 @@ use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model implements HasMedia
 {
-    use InteractsWithMedia;
     use ConvertDateTimeToTimezone;
-    use SoftDeletes;
     use HasSlug;
+    use InteractsWithMedia;
+    use SoftDeletes;
 
     protected static function booted(): void
     {
@@ -42,7 +42,7 @@ class Post extends Model implements HasMedia
             ->withTimestamps();
     }
 
-    public function getSlugOptions() : SlugOptions
+    public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')

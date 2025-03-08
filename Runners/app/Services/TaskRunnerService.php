@@ -18,7 +18,7 @@ class TaskRunnerService
 
         foreach ($tasks as $taskClass) {
             $taskInstance = app($taskClass);
-            if (!$taskInstance instanceof TaskInterface) {
+            if (! $taskInstance instanceof TaskInterface) {
                 continue;
             }
 
@@ -39,7 +39,7 @@ class TaskRunnerService
                 Log::error($message);
 
                 if ($this->toScreen) {
-                    echo $message . PHP_EOL;
+                    echo $message.PHP_EOL;
                 }
             }
         }
@@ -48,12 +48,14 @@ class TaskRunnerService
     public function setToScreen(bool $toScreen): TaskRunnerService
     {
         $this->toScreen = $toScreen;
+
         return $this;
     }
 
     public function setDispatch(bool $dispatch): TaskRunnerService
     {
         $this->dispatch = $dispatch;
+
         return $this;
     }
 }

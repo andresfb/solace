@@ -16,9 +16,7 @@ use Throwable;
 
 readonly class ProcessPostService
 {
-    public function __construct(private RandomUserSelectorService $service)
-    {
-    }
+    public function __construct(private RandomUserSelectorService $service) {}
 
     /**
      * @throws Exception
@@ -30,7 +28,7 @@ readonly class ProcessPostService
             throw new \RuntimeException("No media files found for Library Post: $postItem->libraryPostId");
         }
 
-        dd($postItem);
+//        dd($postItem);
 
         try {
             DB::beginTransaction();
@@ -58,7 +56,7 @@ readonly class ProcessPostService
         } catch (Exception $e) {
             DB::rollBack();
 
-            Log::error("Error while processing post: " . $e->getMessage());
+            Log::error('Error while processing post: '.$e->getMessage());
 
             throw $e;
         }
@@ -83,7 +81,7 @@ readonly class ProcessPostService
     private function saveHashtags(Post $post, Collection $hashtags): void
     {
         $post->hashtags()->sync(
-            $hashtags->map(fn($tag) => Hashtag::firstOrCreate(['name' => $tag]))->pluck('id')
+            $hashtags->map(fn ($tag) => Hashtag::firstOrCreate(['name' => $tag]))->pluck('id')
         );
     }
 }

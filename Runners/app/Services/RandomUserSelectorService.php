@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Cache;
 class RandomUserSelectorService
 {
     private readonly int $limitDataset;
+
     private readonly int $maxRuns;
+
     private int $checks = 20;
+
     private int $runs = 1;
 
     public function __construct()
@@ -21,7 +24,7 @@ class RandomUserSelectorService
 
     public function getUser(): User
     {
-        ++$this->runs;
+        $this->runs++;
 
         $user = $this->getPostingWeightedUsers()
             ->shuffle()
@@ -35,7 +38,7 @@ class RandomUserSelectorService
             throw new \RuntimeException('No user found.');
         }
 
-        --$this->checks;
+        $this->checks--;
 
         if ($this->checks <= 0) {
             $this->checks = 20;
@@ -49,13 +52,13 @@ class RandomUserSelectorService
     {
         return Cache::remember("weighted:users:$count", now()->addMinutes(30), function () use ($count) {
             $lowPostUsers = User::withCount('posts')
-                ->whereHas('profile', fn($query) => $query->where('humanoid', false))
+                ->whereHas('profile', fn ($query) => $query->where('humanoid', false))
                 ->orderBy('posts_count')
                 ->limit($this->limitDataset)
                 ->get();
 
             $highPostUsers = User::withCount('posts')
-                ->whereHas('profile', fn($query) => $query->where('humanoid', false))
+                ->whereHas('profile', fn ($query) => $query->where('humanoid', false))
                 ->orderBy('posts_count', 'desc')
                 ->limit($this->limitDataset)
                 ->get();

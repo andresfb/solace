@@ -16,7 +16,7 @@ class TaskRunnerCommand extends Command
     public function handle(TaskRunnerService $service): int
     {
         $dispatch = true;
-        $toScreen = !blank($this->argument('screen'));
+        $toScreen = ! blank($this->argument('screen'));
 
         try {
             if ($toScreen) {
@@ -35,7 +35,7 @@ class TaskRunnerCommand extends Command
 
             return 0;
         } catch (Exception $e) {
-            $message = "Error running tasks: " . $e->getMessage();
+            $message = 'Error running tasks: '.$e->getMessage();
             Log::error($message);
 
             if ($toScreen) {

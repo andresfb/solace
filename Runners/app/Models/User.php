@@ -41,6 +41,7 @@ class User extends Authenticatable
         parent::booted();
         static::addGlobalScope(new ProfileScope);
     }
+
     /**
      * Get the attributes that should be cast.
      *

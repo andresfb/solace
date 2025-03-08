@@ -20,9 +20,7 @@ class ProcessPostJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly PostItem $postItem)
-    {
-    }
+    public function __construct(private readonly PostItem $postItem) {}
 
     /**
      * @throws Exception|Throwable

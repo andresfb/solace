@@ -12,9 +12,7 @@ class MigrateFulfilledPostsTask implements TaskInterface
 
     private bool $dispatch = true;
 
-    public function __construct(private readonly MigrateFulfilledPostsService $service)
-    {
-    }
+    public function __construct(private readonly MigrateFulfilledPostsService $service) {}
 
     public function execute(): void
     {
@@ -40,12 +38,14 @@ class MigrateFulfilledPostsTask implements TaskInterface
     public function setDispatch(bool $dispatch): self
     {
         $this->dispatch = $dispatch;
+
         return $this;
     }
 
     public function setToScreen(bool $toScreen): self
     {
         $this->toScreen = $toScreen;
+
         return $this;
     }
 }

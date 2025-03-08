@@ -7,16 +7,14 @@ use Illuminate\Contracts\Support\Arrayable;
 class MediaItem implements Arrayable
 {
     public function __construct(
-        public int    $originalId,
+        public int $originalId,
         public string $originalName,
         public string $fileName,
         public string $mimeType,
         public string $collectionName,
         public string $fileSize,
         public string $filePath,
-    )
-    {
-    }
+    ) {}
 
     public function toArray(): array
     {
