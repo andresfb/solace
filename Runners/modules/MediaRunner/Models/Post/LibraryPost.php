@@ -72,10 +72,10 @@ class LibraryPost extends BaseMediaRunnerModel
             ->where('taggables.taggable_id', $this->id)
             ->get()
             ->map(function ($tag) {
-                $values = json_decode($tag->name, true, 512, JSON_THROW_ON_ERROR);
+                $values = json_decode((string) $tag->name, true, 512, JSON_THROW_ON_ERROR);
 
                 $keys = array_keys($values);
-                if (empty($keys)) {
+                if ($keys === []) {
                     return '';
                 }
 
@@ -96,12 +96,6 @@ class LibraryPost extends BaseMediaRunnerModel
 
                 return $tag;
             })
-            ->reject(function ($tag) {
-                if (empty($tag)) {
-                    return true;
-                }
-
-                return false;
-            });
+            ->reject(fn($tag): bool => empty($tag));
     }
 }

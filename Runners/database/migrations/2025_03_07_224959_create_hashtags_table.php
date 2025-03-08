@@ -8,14 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('hashtags', static function (Blueprint $table) {
+        Schema::create('hashtags', static function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->softDeletes();
             $table->timestamps();
         });
 
-        Schema::create('post_hashtags', static function (Blueprint $table) {
+        Schema::create('post_hashtags', static function (Blueprint $table): void {
             $table->foreignId('post_id')
                 ->constrained()
                 ->onDelete('cascade');

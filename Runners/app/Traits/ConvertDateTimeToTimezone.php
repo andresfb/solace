@@ -31,10 +31,6 @@ use Illuminate\Support\Carbon;
 trait ConvertDateTimeToTimezone
 {
     /**
-     * Return a timestamp as DateTime object.
-     *
-     * @param mixed $value
-     * @return Carbon
      * @throws Exception
      */
     protected function asDateTime(mixed $value): Carbon

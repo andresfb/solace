@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Cache;
 
 class RandomUserSelectorService
 {
-    private int $limitDataset;
+    private readonly int $limitDataset;
+    private readonly int $maxRuns;
     private int $checks = 20;
     private int $runs = 1;
-    private int $maxRuns;
 
     public function __construct()
     {

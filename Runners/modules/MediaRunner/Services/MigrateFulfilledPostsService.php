@@ -30,7 +30,7 @@ class MigrateFulfilledPostsService
             return;
         }
 
-        $libraryPosts->each(function (LibraryPost $libraryPost) {
+        $libraryPosts->each(function (LibraryPost $libraryPost): void {
             $libraryPost->source = 'media-library';
 
            if ($this->dispatch) {

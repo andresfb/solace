@@ -69,7 +69,7 @@ readonly class ProcessPostService
      */
     private function saveMedia(Post $post, Collection $mediaFiles): void
     {
-        $mediaFiles->each(function (MediaItem $mediaFile) use ($post) {
+        $mediaFiles->each(function (MediaItem $mediaFile) use ($post): void {
             $post->addMedia($mediaFile->filePath)
                 ->withCustomProperties([
                     'original_id' => $mediaFile->originalId,

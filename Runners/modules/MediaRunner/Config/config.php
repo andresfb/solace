@@ -2,7 +2,7 @@
 
 return [
 
-    'banded_tags' => explode(',', env('MEDIA_RUNNER_BANDED_TAGS', 'bible,quran')),
+    'banded_tags' => explode(',', (string) env('MEDIA_RUNNER_BANDED_TAGS', 'bible,quran')),
 
     'fulfilled_posts_priority' => env('MEDIA_RUNNER_FULFILED_POSTS_PRIORITY', 80),
 

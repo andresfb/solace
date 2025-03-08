@@ -12,11 +12,9 @@ class MediaRunnerTasksServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton('tasks', function ($app) {
-            return collect();
-        });
+        $this->app->singleton('tasks', fn($app) => collect());
 
-        $this->app->resolving('tasks', function (Collection $tasks) {
+        $this->app->resolving('tasks', function (Collection $tasks): void {
             $tasks->push(MigrateFulfilledPostsTask::class);
 //            $tasks->push(MigrateFulfilledPostsTask::class);
 //            $tasks->push(MigrateFulfilledPostsTask::class);
