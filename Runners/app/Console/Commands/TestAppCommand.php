@@ -4,7 +4,8 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Modules\MediaRunner\Models\LibraryPost;
+use Modules\MediaRunner\Models\Media\LibraryMedia;
+use Modules\MediaRunner\Models\Post\LibraryPost;
 
 class TestAppCommand extends Command
 {
@@ -17,9 +18,26 @@ class TestAppCommand extends Command
         try {
             $this->info("\nStarting test\n");
 
-            $post = LibraryPost::find(15474);
+            $post = LibraryPost::find(25);
 
-            dump($post->toArray());
+            dump($post->getTags()->first());
+
+//            if ($post->item === null) {
+//                throw new \RuntimeException('No items available');
+//            }
+//
+//            $fileInfo = [];
+//
+//            foreach ($post->item->media as $media) {
+//                if ($media->collection_name === 'thumb') {
+//                    continue;
+//                }
+//
+//                $fileInfo = $media->getFileInfo();
+//                break;
+//            }
+//
+//            dump($fileInfo->toArray());
 
             $this->info("\nDone at: " . now() . "\n");
 

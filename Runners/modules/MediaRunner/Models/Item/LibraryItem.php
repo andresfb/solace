@@ -1,9 +1,13 @@
 <?php
 
-namespace Modules\MediaRunner\Models;
+namespace Modules\MediaRunner\Models\Item;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\MediaRunner\Models\BaseMediaRunnerModel;
+use Modules\MediaRunner\Models\Media\LibraryMedia;
+use Modules\MediaRunner\Models\Media\Scopes\LibraryMediaScope;
+use Modules\MediaRunner\Models\Post\LibraryPost;
 
 class LibraryItem extends BaseMediaRunnerModel
 {
@@ -12,7 +16,7 @@ class LibraryItem extends BaseMediaRunnerModel
     protected static function booted(): void
     {
         parent::booted();
-        static::addGlobalScope(new LibraryMed1iaScope);
+        static::addGlobalScope(new LibraryMediaScope);
     }
 
     protected function casts(): array
@@ -27,7 +31,7 @@ class LibraryItem extends BaseMediaRunnerModel
         return $this->belongsTo(LibraryPost::class, 'id', 'item_id');
     }
 
-    public function media(): HasMany
+    public function media(): HasMany|LibraryMedia
     {
         return $this->hasMany(LibraryMedia::class, 'model_id', 'id');
     }

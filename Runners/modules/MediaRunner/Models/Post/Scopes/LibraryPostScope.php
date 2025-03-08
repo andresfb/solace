@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Models\Scopes;
+namespace Modules\MediaRunner\Models\Post\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
-class MediaModelTypeScope implements Scope
+class LibraryPostScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('model_type', 'App\Models\Item');
+        $builder->where('status', '<', 2);
     }
 }

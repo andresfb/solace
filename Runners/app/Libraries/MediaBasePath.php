@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\MediaRunner\Libraries;
+namespace App\Libraries;
 
 use Illuminate\Support\Str;
 
 class MediaBasePath
 {
-    public function getBasePath(int $itemId, int $mediaId, string $collectionName): string
+    public static function getBasePath(int $itemId, int $mediaId, string $collectionName): string
     {
         $contentId = str_pad((string) $itemId, 12, '0', STR_PAD_LEFT);
 
