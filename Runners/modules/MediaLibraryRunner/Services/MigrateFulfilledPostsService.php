@@ -32,8 +32,8 @@ class MigrateFulfilledPostsService
         $libraryPosts->each(function (LibraryPost $libraryPost): void {
             $libraryPost->source = 'media-library';
 
+            // TODO: change this functionality to use and Event/Listener model and prevent the module from using Host classes
             if ($this->dispatch) {
-                // TODO: set up the queues and send this to it with a delay
                 ProcessPostJob::dispatch(
                     PostItem::createFromModel($libraryPost)
                 );
