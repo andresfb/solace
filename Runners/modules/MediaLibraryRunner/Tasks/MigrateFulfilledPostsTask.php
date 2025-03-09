@@ -19,7 +19,7 @@ class MigrateFulfilledPostsTask implements TaskInterface
 
     public function execute(): void
     {
-        if (!config("$this->MIGRATE_FULFILLED.posts_task_enabled")) {
+        if (!config("$this->MIGRATE_FULFILLED.task_enabled")) {
             $this->warning('The GenerateUsersTask is disabled.');
 
             return;
@@ -37,7 +37,8 @@ class MigrateFulfilledPostsTask implements TaskInterface
 
         $this->line('Running MigrateFulfilledPostsService');
 
-        $this->service->setQueueable($this->queueable)
+        $this->service->setToScreen($this->toScreen)
+            ->setQueueable($this->queueable)
             ->execute();
     }
 }

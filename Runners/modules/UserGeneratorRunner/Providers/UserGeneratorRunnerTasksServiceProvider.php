@@ -14,4 +14,9 @@ class UserGeneratorRunnerTasksServiceProvider extends ServiceProvider
             $tasks->push(GenerateUsersTask::class);
         });
     }
+
+    public function boot(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../Config/generate-users.php', 'generate_users');
+    }
 }

@@ -7,17 +7,19 @@ use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\UserGeneratorRunner\Jobs\GenerateUsersJob;
 use Modules\UserGeneratorRunner\Services\GenerateUsersService;
+use Modules\UserGeneratorRunner\Traits\ModuleConstants;
 
 class GenerateUsersTask implements TaskInterface
 {
     use Screenable;
     use SendToQueue;
+    use ModuleConstants;
 
     public function __construct(private readonly GenerateUsersService $service) {}
 
     public function execute(): void
     {
-        if (!config('user_generator.generate_users_task_enabled')) {
+        if (!config("$this->GENERATE_USERS.task_enabled")) {
             $this->warning('The GenerateUsersTask is disabled.');
 
             return;
@@ -34,7 +36,8 @@ class GenerateUsersTask implements TaskInterface
 
         $this->line('Running GenerateUsersService');
 
-        $this->service->setQueueable($this->queueable)
+        $this->service->setToScreen($this->toScreen)
+            ->setQueueable($this->queueable)
             ->execute();
     }
 }

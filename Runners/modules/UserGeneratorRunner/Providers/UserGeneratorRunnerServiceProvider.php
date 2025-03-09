@@ -11,6 +11,7 @@ class UserGeneratorRunnerServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'user_generator');
         $this->mergeConfigFrom(__DIR__.'/../Config/random-user.php', 'random_user');
+        $this->mergeConfigFrom(__DIR__.'/../Config/xsgames.php', 'xsgames');
 
         $this->app->register(UserGeneratorRunnerTasksServiceProvider::class);
 

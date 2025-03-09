@@ -2,12 +2,21 @@
 
 namespace Modules\UserGeneratorRunner\Services;
 
-class RandomImageService
-{
-    public function getImage(string $picture): string
-    {
-        // TODO: Implement image check and parsing
+use Modules\UserGeneratorRunner\Traits\ProfileImageCatchable;
 
-        return $picture;
+readonly class RandomImageService
+{
+    use ProfileImageCatchable;
+
+    public function __construct(private XsGamesService $altImageService) { }
+
+    public function getImage(string $pictureUrl): string
+    {
+        $image = $this->checkImage($pictureUrl);
+        if ($image === '') {
+            return $this->altImageService->getImage();
+        }
+
+        return $image;
     }
 }

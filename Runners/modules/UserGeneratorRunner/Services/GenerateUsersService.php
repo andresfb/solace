@@ -11,9 +11,7 @@ class GenerateUsersService
     use Screenable;
     use SendToQueue;
 
-    public function __construct(private readonly RandomUserService $service)
-    {
-    }
+    public function __construct(private readonly RandomUserService $service) { }
 
     /**
      * @throws Exception
