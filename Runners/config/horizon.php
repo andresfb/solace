@@ -3,6 +3,16 @@
 use Illuminate\Support\Str;
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | Horizon Environment
+    |--------------------------------------------------------------------------
+    |
+    | This value determine Horizon's environment!
+    |
+    */
+
+    'env' => env('HORIZON_ENV'),
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +51,7 @@ return [
     |
     */
 
-    'use' => 'default',
+    'use' => 'horizon',
 
     /*
     |--------------------------------------------------------------------------
@@ -188,7 +198,7 @@ return [
             'maxProcesses' => 1,
             'maxTime' => 0,
             'maxJobs' => 0,
-            'memory' => 128,
+            'memory' => 256,
             'tries' => 1,
             'timeout' => 60,
             'nice' => 0,
@@ -196,7 +206,8 @@ return [
     ],
 
     'environments' => [
-        'production' => [
+
+        'frost-mox' => [
             'supervisor-1' => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
@@ -204,30 +215,39 @@ return [
             ],
 
             'media-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'horizon',
                 'queue' => ['media'],
                 'balance' => 'auto',
+                'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
-                'maxProcesses' => 5,
+                'maxProcesses' => 10,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
                 'timeout' => 900,
                 'tries' => 1,
             ],
+
         ],
 
-        'local' => [
+        'dell-mox' => [
             'supervisor-1' => [
-                'maxProcesses' => 3,
+                'maxProcesses' => 10,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
             ],
 
-            'media-supervisor' => [
-                'connection' => 'redis',
-                'queue' => ['media'],
-                'balance' => 'auto',
+            'fulfiller-supervisor' => [
+                'connection' => 'horizon',
+                'queue' => ['fulfiller'],
+                'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
-                'maxProcesses' => 2,
+                'maxProcesses' => 5,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
                 'timeout' => 300,
                 'tries' => 1,
             ],
         ],
+
     ],
 ];

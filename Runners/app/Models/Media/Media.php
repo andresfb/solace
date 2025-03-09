@@ -10,4 +10,10 @@ class Media extends BaseMedia
 {
     use ConvertDateTimeToTimezone;
     use SoftDeletes;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setConnection(config('database.default'));
+    }
 }

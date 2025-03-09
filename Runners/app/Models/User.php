@@ -36,6 +36,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setConnection(config('database.default'));
+    }
+
     protected static function booted(): void
     {
         parent::booted();

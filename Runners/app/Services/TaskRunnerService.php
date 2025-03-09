@@ -2,14 +2,16 @@
 
 namespace App\Services;
 
-use App\Interfaces\TaskInterface;
-use App\Traits\Screenable;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Modules\Common\Interfaces\TaskInterface;
+use Modules\Common\Traits\Screenable;
+use Modules\Common\Traits\SendToQueue;
 
 class TaskRunnerService
 {
     use Screenable;
+    use SendToQueue;
 
     public function execute(): void
     {
@@ -21,19 +23,19 @@ class TaskRunnerService
                 continue;
             }
 
-            $this->line("Running task $taskClass");
+            $this->info("Running task $taskClass");
 
             try {
                 $taskInstance->setToScreen($this->toScreen)
-                    ->setDispatch($this->dispatch)
+                    ->setQueueable($this->queueable)
                     ->execute();
 
-                $this->line("\n");
+                $this->warning("Task $taskClass executed\n\n");
             } catch (Exception $e) {
                 $message = $e->getMessage();
-                Log::error($message);
 
                 $this->error($message);
+                Log::error($message);
             }
         }
     }

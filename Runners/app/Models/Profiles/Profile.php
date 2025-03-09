@@ -3,12 +3,12 @@
 namespace App\Models\Profiles;
 
 use App\Enums\ProfileGender;
+use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Profile extends Model
+class Profile extends BaseModel
 {
     use SoftDeletes;
 

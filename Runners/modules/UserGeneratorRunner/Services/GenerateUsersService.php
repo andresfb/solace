@@ -2,12 +2,14 @@
 
 namespace Modules\UserGeneratorRunner\Services;
 
-use App\Traits\Screenable;
 use Exception;
+use Modules\Common\Traits\Screenable;
+use Modules\Common\Traits\SendToQueue;
 
 class GenerateUsersService
 {
     use Screenable;
+    use SendToQueue;
 
     public function __construct(private readonly RandomUserService $service)
     {

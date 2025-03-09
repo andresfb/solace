@@ -2,31 +2,42 @@
 
 namespace Modules\MediaLibraryRunner\Tasks;
 
-use App\Interfaces\TaskInterface;
-use App\Traits\Screenable;
+use Modules\Common\Interfaces\TaskInterface;
+use Modules\Common\Traits\Screenable;
+use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Jobs\MigrateFulfilledPostsJob;
 use Modules\MediaLibraryRunner\Services\MigrateFulfilledPostsService;
+use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class MigrateFulfilledPostsTask implements TaskInterface
 {
+    use ModuleConstants;
     use Screenable;
+    use SendToQueue;
 
     public function __construct(private readonly MigrateFulfilledPostsService $service) {}
 
     public function execute(): void
     {
-        if ($this->dispatch) {
+        if (!config("$this->MIGRATE_FULFILLED.posts_task_enabled")) {
+            $this->warning('The GenerateUsersTask is disabled.');
+
+            return;
+        }
+
+        if ($this->queueable) {
             $this->line('Sending request to MigrateFulfilledPostsJob');
 
-            // TODO: set up the queues and send this to it with a delay
-            MigrateFulfilledPostsJob::dispatch($this->dispatch);
+            MigrateFulfilledPostsJob::dispatch($this->queueable)
+                ->onQueue(config("$this->MIGRATE_FULFILLED.horizon_queue"))
+                ->delay(now()->addSecond());
 
             return;
         }
 
         $this->line('Running MigrateFulfilledPostsService');
 
-        $this->service->setDispatch($this->dispatch)
+        $this->service->setQueueable($this->queueable)
             ->execute();
     }
 }

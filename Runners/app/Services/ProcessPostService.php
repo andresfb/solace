@@ -28,8 +28,6 @@ readonly class ProcessPostService
             throw new \RuntimeException("No media files found for Library Post: $postItem->libraryPostId");
         }
 
-//        dd($postItem);
-
         try {
             DB::beginTransaction();
 

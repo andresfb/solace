@@ -2,12 +2,12 @@
 
 namespace App\Models\Hashtags;
 
+use App\Models\BaseModel;
 use App\Models\Posts\Post;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Hashtag extends Model
+class Hashtag extends BaseModel
 {
     use SoftDeletes;
 

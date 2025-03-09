@@ -18,6 +18,8 @@ class MediaLibraryRunnerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'media_runner');
         $this->mergeConfigFrom(__DIR__.'/../Config/connection.php', 'database');
         $this->mergeConfigFrom(__DIR__.'/../Config/database.php', 'database.connections.media_runner');
+        $this->mergeConfigFrom(__DIR__.'/../Config/redis.php', 'database.redis');
+        $this->mergeConfigFrom(__DIR__.'/../Config/queue.php', 'queue.connections');
 
         $this->app->register(MediaLibraryRunnerTasksServiceProvider::class);
 

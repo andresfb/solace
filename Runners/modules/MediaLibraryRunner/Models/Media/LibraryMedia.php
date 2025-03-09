@@ -2,8 +2,8 @@
 
 namespace Modules\MediaLibraryRunner\Models\Media;
 
-use App\Libraries\MediaBasePath;
 use Illuminate\Support\Str;
+use Modules\Common\Libraries\MediaBasePath;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Media\Scopes\MediaModelTypeScope;
 

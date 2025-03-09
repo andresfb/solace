@@ -72,6 +72,14 @@ return [
             'after_commit' => false,
         ],
 
+        'posts-runner' => [
+            'driver' => 'redis',
+            'connection' => env('POSTS_RUNNER_REDIS_CNN', 'posts-cnn'),
+            'queue' => 'fedex',
+            'retry_after' => 2000,
+            'block_for' => 5,
+        ],
+
     ],
 
     /*

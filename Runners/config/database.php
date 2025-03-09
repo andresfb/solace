@@ -178,6 +178,22 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
 
+        'horizon' => [
+            'url' => env('HORIZON_REDIS_URL'),
+            'host' => env('HORIZON_REDIS_HOST', '127.0.0.1'),
+            'password' => env('HORIZON_REDIS_PASSWORD'),
+            'port' => env('HORIZON_REDIS_PORT', '6379'),
+            'database' => env('HORIZON_REDIS_CACHE_DB', '2'),
+        ],
+
+        'posts-cnn' => [
+            'url' => env('POSTS_RUNNER_REDIS_URL'),
+            'host' => env('POSTS_RUNNER_REDIS_HOST', '127.0.0.1'),
+            'password' => env('POSTS_RUNNER_REDIS_PASSWORD'),
+            'port' => env('POSTS_RUNNER_REDIS_PORT', '6379'),
+            'database' => env('POSTS_RUNNER_REDIS_DATABASE', '3'),
+        ],
+
     ],
 
 ];

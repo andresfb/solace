@@ -15,18 +15,18 @@ class TaskRunnerCommand extends Command
 
     public function handle(TaskRunnerService $service): int
     {
-        $dispatch = true;
+        $queueable = true;
         $toScreen = ! blank($this->argument('screen'));
 
         try {
             if ($toScreen) {
                 $this->info("Start running tasks...\n");
 
-                $dispatch = $this->confirm('Send tasks to queue?');
+                $queueable = $this->confirm('Send tasks to queue?');
             }
 
             $service->setToScreen($toScreen)
-                ->setDispatch($dispatch)
+                ->setQueueable($queueable)
                 ->execute();
 
             if ($toScreen) {

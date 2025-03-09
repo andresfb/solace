@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libraries;
+namespace Modules\Common\Libraries;
 
 use Illuminate\Support\Str;
 

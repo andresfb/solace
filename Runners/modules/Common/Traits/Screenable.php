@@ -1,19 +1,10 @@
 <?php
 
-namespace App\Traits;
+namespace Modules\Common\Traits;
 
 trait Screenable
 {
     private bool $toScreen = false;
-
-    private bool $dispatch = true;
-
-    public function setDispatch(bool $dispatch): self
-    {
-        $this->dispatch = $dispatch;
-
-        return $this;
-    }
 
     public function setToScreen(bool $toScreen): self
     {

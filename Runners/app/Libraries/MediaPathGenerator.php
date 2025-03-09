@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 
+use Modules\Common\Libraries\MediaBasePath;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
 
