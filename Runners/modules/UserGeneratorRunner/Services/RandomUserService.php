@@ -2,15 +2,18 @@
 
 namespace Modules\UserGeneratorRunner\Services;
 
+use Carbon\CarbonImmutable;
 use Exception;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Modules\UserGeneratorRunner\Dtos\RandomUserItem;
+use Modules\Common\Dtos\RandomUserItem;
+use Modules\Common\Traits\Screenable;
 
-readonly class RandomUserService
+class RandomUserService
 {
-    public function __construct(private RandomImageService $imageService) {}
+    use Screenable;
+
+    public function __construct(private readonly RandomImageService $imageService) {}
 
     /**
      * @throws Exception
@@ -22,15 +25,25 @@ readonly class RandomUserService
             config('user_generator.max_new_users')
         );
 
+        $this->line('Calling the randomuser.me API ' . now());
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-        ])->get($url);
+        ])
+        ->timeout(120)
+        ->get($url);
+
+        $this->line(sprintf("Api call finished at %s\n", now()));
 
         if ($response->failed()) {
+            $this->error('Error found '.$response->body());
+
             throw new \RuntimeException($response->body());
         }
 
         $data = $response->json();
+
+        $this->line("Parsing data...\n");
 
         return $this->parseResponse(collect($data['results']));
     }
@@ -45,9 +58,10 @@ readonly class RandomUserService
                 password: $user['login']['sha256'],
                 phone: $user['cell'] ?? $user['phone'],
                 city: $user['location']['city'],
+                country: $user['location']['country'],
                 picture: $this->imageService->getImage($user['picture']['large']),
-                dob: Carbon::parse($user['dob']['date']),
-                registered: Carbon::parse($user['registered']['date']),
+                dob: CarbonImmutable::parse($user['dob']['date']),
+                registered: CarbonImmutable::parse($user['registered']['date']),
             );
         });
     }

@@ -46,6 +46,18 @@ class LibraryPost extends BaseMediaRunnerModel
         return $query->whereNotIn('source', config('media_runner.banded_tags'));
     }
 
+    public function getPostableInfo(): array
+    {
+        return [
+            'libraryPostId' => $this->id,
+            'title' => $this->title,
+            'content' => $this->content,
+            'source' => $this->source,
+            'mediaFiles' => $this->getMediaFiles(),
+            'hashtags' => $this->getTags(),
+        ];
+    }
+
     /**
      * getMediaFiles Method.
      *

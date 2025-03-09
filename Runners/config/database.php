@@ -187,11 +187,19 @@ return [
         ],
 
         'posts-cnn' => [
-            'url' => env('POSTS_RUNNER_REDIS_URL'),
-            'host' => env('POSTS_RUNNER_REDIS_HOST', '127.0.0.1'),
-            'password' => env('POSTS_RUNNER_REDIS_PASSWORD'),
-            'port' => env('POSTS_RUNNER_REDIS_PORT', '6379'),
+            'url' => env('REDIS_FROST_URL'),
+            'host' => env('REDIS_FROST_HOST', '127.0.0.1'),
+            'password' => env('REDIS_FROST_PASSWORD'),
+            'port' => env('REDIS_FROST_PORT', '6379'),
             'database' => env('POSTS_RUNNER_REDIS_DATABASE', '3'),
+        ],
+
+        'reg-users-cnn' => [
+            'url' => env('REDIS_FROST_URL'),
+            'host' => env('REDIS_FROST_HOST', '127.0.0.1'),
+            'password' => env('REDIS_FROST_PASSWORD'),
+            'port' => env('REDIS_FROST_PORT', '6379'),
+            'database' => env('REGISTER_USERS_REDIS_DATABASE', '3'),
         ],
 
     ],

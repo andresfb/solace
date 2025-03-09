@@ -80,6 +80,14 @@ return [
             'block_for' => 5,
         ],
 
+        'reg-users-runner' => [
+            'driver' => 'redis',
+            'connection' => env('REGISTER_USERS_QUEUE_CNN', 'reg-users-cnn'),
+            'queue' => 'operatio',
+            'retry_after' => 2000,
+            'block_for' => 5,
+        ],
+
     ],
 
     /*

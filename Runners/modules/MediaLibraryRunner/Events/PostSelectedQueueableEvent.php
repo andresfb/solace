@@ -2,8 +2,8 @@
 
 namespace Modules\MediaLibraryRunner\Events;
 
-use App\Models\Posts\PostItem;
 use Illuminate\Foundation\Events\Dispatchable;
+use Modules\Common\Dtos\PostItem;
 
 class PostSelectedQueueableEvent
 {

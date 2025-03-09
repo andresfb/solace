@@ -2,14 +2,14 @@
 
 namespace Modules\MediaLibraryRunner\Events;
 
-use App\Models\Posts\PostItem;
 use Illuminate\Foundation\Events\Dispatchable;
+use Modules\Common\Dtos\PostItem;
 
 class PostSelectedEvent
 {
     use Dispatchable;
 
-    public function __construct(public readonly PostItem $postItem, public readonly bool $queueable = true)
+    public function __construct(public readonly PostItem $postItem, public readonly bool $toScreen = false)
     {
     }
 }

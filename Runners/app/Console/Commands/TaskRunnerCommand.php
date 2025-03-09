@@ -6,10 +6,13 @@ use App\Services\TaskRunnerService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Modules\Common\Enum\TaskRunnerSchedule;
 
 class TaskRunnerCommand extends Command
 {
-    protected $signature = 'task:runner {screen?}';
+    protected $signature = 'task:runner
+                            {frequency : h=Every Hour, eth=Every Two Hours, ttd=Three Times a Day, od=Once Daily, ow=Once a Weekly, om=Once a Monthly}
+                            {screen? : Send output to the screen}';
 
     protected $description = 'Command to run all registered tasks';
 
@@ -19,6 +22,9 @@ class TaskRunnerCommand extends Command
         $toScreen = ! blank($this->argument('screen'));
 
         try {
+            $frequency = strtolower($this->argument('frequency'));
+            $schedule = TaskRunnerSchedule::fromString($frequency);
+
             if ($toScreen) {
                 $this->info("Start running tasks...\n");
 
@@ -27,7 +33,7 @@ class TaskRunnerCommand extends Command
 
             $service->setToScreen($toScreen)
                 ->setQueueable($queueable)
-                ->execute();
+                ->execute($schedule);
 
             if ($toScreen) {
                 $this->info("\nDone\n");

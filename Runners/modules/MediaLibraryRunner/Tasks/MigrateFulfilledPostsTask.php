@@ -2,6 +2,7 @@
 
 namespace Modules\MediaLibraryRunner\Tasks;
 
+use Modules\Common\Enum\TaskRunnerSchedule;
 use Modules\Common\Interfaces\TaskInterface;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
@@ -40,5 +41,10 @@ class MigrateFulfilledPostsTask implements TaskInterface
         $this->service->setToScreen($this->toScreen)
             ->setQueueable($this->queueable)
             ->execute();
+    }
+
+    public function runSchedule(): TaskRunnerSchedule
+    {
+        return TaskRunnerSchedule::EVERY_TWO_HOURS;
     }
 }

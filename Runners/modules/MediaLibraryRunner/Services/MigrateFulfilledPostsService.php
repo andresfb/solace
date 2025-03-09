@@ -3,9 +3,9 @@
 namespace Modules\MediaLibraryRunner\Services;
 
 use App\Jobs\CreatePostItemJob;
-use App\Models\Posts\PostItem;
 use App\Services\ProcessPostService;
 use Illuminate\Support\Facades\Log;
+use Modules\Common\Dtos\PostItem;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
@@ -46,7 +46,7 @@ class MigrateFulfilledPostsService
             $libraryPost->source = $this->MEDIA_LIBRARY;
 
             if ($this->queueable) {
-                $this->line('Dispatching CreatePostItemJob for LibraryPost: '.$libraryPost->id);
+                $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
 
                 CreatePostItemJob::dispatch($libraryPost)
                     ->onConnection($this->getConnection($this->MIGRATE_FULFILLED))
@@ -59,10 +59,11 @@ class MigrateFulfilledPostsService
             $this->line('Loading the Media Files and tags...');
 
             PostSelectedEvent::dispatch(
-                PostItem::createFromModel($libraryPost)
+                PostItem::from($libraryPost->getPostableInfo()),
+                $this->toScreen
             );
 
-            $this->line('Event dispatched.');
+            $this->line('PostSelectedEvent Event dispatched.');
         });
     }
 }

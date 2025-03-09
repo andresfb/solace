@@ -18,7 +18,7 @@ class RandomUserSelectorService
 
     public function __construct()
     {
-        $this->limitDataset = config('constants.random_users_limit');
+        $this->limitDataset = config('settings.random_users_limit');
         $this->maxRuns = $this->checks * 5;
     }
 

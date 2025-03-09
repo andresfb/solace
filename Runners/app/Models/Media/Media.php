@@ -9,7 +9,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 class Media extends BaseMedia
 {
     use ConvertDateTimeToTimezone;
-    use SoftDeletes;
+
+    protected $guarded = ['id'];
 
     public function __construct(array $attributes = [])
     {

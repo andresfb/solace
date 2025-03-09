@@ -2,23 +2,25 @@
 
 namespace App\Listeners;
 
-use App\Services\ProcessPostService;
+use App\Services\RegisterUserService;
 use Illuminate\Support\Facades\Log;
-use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
+use Modules\UserGeneratorRunner\Events\UserGeneratedEvent;
 use Throwable;
 
-readonly class PostSelectedListener
+readonly class UserGeneratedListener
 {
-    public function __construct(private ProcessPostService $service) { }
+    public function __construct(private RegisterUserService $service)
+    {
+    }
 
     /**
      * @throws Throwable
      */
-    public function handle(PostSelectedEvent $event): void
+    public function handle(UserGeneratedEvent $event): void
     {
         try {
             $this->service->setToScreen($event->toScreen)
-                ->execute($event->postItem);
+                ->execute($event->user);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 

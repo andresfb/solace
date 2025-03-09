@@ -7,12 +7,14 @@ use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Profile extends BaseModel
+class Profile extends BaseModel implements HasMedia
 {
     use SoftDeletes;
+    use InteractsWithMedia;
 
-    // TODO: add media library for Profile and Cover pictures
     // TODO: add the Model Settings package to store the social_links
 
     protected function casts(): array
@@ -29,5 +31,23 @@ class Profile extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+            ])->singleFile();
+
+        foreach (config('settings.profile_image_sizes') as $item) {
+            $this->addMediaConversion((string) $item)
+                ->format('jpg')
+                ->width($item)
+                ->height($item)
+                ->sharpen(10)
+                ->performOnCollections('avatar');
+        }
     }
 }

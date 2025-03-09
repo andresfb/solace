@@ -15,8 +15,10 @@ return new class extends Migration
                 ->constrained()
                 ->onDelete('cascade');
             $table->text('bio')->nullable();
-            $table->string('location')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->string('website')->nullable();
+            $table->string('phone')->nullable();
             $table->date('birthday')->nullable();
             $table->string('gender', 1)->default('P');
             $table->boolean('private')->default(false);

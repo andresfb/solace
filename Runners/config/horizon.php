@@ -223,7 +223,7 @@ return [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
-                'timeout' => 900,
+                'timeout' => 900, # 15 Minutes
                 'tries' => 1,
             ],
 
@@ -244,7 +244,19 @@ return [
                 'maxProcesses' => 5,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
-                'timeout' => 300,
+                'timeout' => 300, # 5 minutes
+                'tries' => 1,
+            ],
+
+            'gen-users-supervisor' => [
+                'connection' => 'horizon',
+                'queue' => ['genusers'],
+                'autoScalingStrategy' => 'size',
+                'minProcesses' => 1,
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+                'timeout' => 180, # 3 minutes
                 'tries' => 1,
             ],
         ],

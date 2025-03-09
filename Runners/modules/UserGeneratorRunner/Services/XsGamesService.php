@@ -4,9 +4,7 @@ namespace Modules\UserGeneratorRunner\Services;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Modules\UserGeneratorRunner\Traits\ProfileImageCatchable;
-use Multiavatar;
 
 class XsGamesService
 {
@@ -23,11 +21,11 @@ class XsGamesService
             $response = Http::get($url);
 
             if ($response->failed()) {
-                return $this->getFallbackImage();
+                return '';
             }
 
             if (empty($response->handlerStats()) || blank($response->handlerStats()['url'])) {
-                return $this->getFallbackImage();
+                return '';
             }
 
             $image = $this->checkImage(
@@ -35,19 +33,12 @@ class XsGamesService
             );
 
             if ($image === '') {
-                return $this->getFallbackImage();
+                return '';
             }
 
             return $image;
         } catch (ConnectionException) {
-            return $this->getFallbackImage();
+            return '';
         }
-    }
-
-    public function getFallbackImage(): string
-    {
-        $multiAvatar = new Multiavatar();
-
-        return $multiAvatar(Str::random(32), null, null);
     }
 }

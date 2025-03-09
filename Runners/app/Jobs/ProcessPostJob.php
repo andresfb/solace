@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Posts\PostItem;
 use App\Services\ProcessPostService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -11,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Modules\Common\Dtos\PostItem;
 use Throwable;
 
 class ProcessPostJob implements ShouldQueue

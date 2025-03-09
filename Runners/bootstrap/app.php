@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\TaskRunnerCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,4 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
+    })
+    ->withSchedule(function () {
+
+        Schedule::command(TaskRunnerCommand::class, ['h'])->hourly();
+
+        Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours();
+
     })->create();

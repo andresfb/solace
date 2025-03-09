@@ -2,6 +2,8 @@
 
 namespace Modules\UserGeneratorRunner\Tasks;
 
+use Exception;
+use Modules\Common\Enum\TaskRunnerSchedule;
 use Modules\Common\Interfaces\TaskInterface;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
@@ -17,6 +19,9 @@ class GenerateUsersTask implements TaskInterface
 
     public function __construct(private readonly GenerateUsersService $service) {}
 
+    /**
+     * @throws Exception
+     */
     public function execute(): void
     {
         if (!config("$this->GENERATE_USERS.task_enabled")) {
@@ -28,16 +33,20 @@ class GenerateUsersTask implements TaskInterface
         if ($this->queueable) {
             $this->line('Sending request to GenerateUsersJob');
 
-            // TODO: set up the queues and send this to it with a delay
-            GenerateUsersJob::dispatch($this->queueable);
+            GenerateUsersJob::dispatch($this->queueable)
+                ->onQueue(config("$this->GENERATE_USERS.horizon_queue"))
+                ->delay(now()->addSecond());
 
             return;
         }
 
-        $this->line('Running GenerateUsersService');
-
         $this->service->setToScreen($this->toScreen)
             ->setQueueable($this->queueable)
             ->execute();
+    }
+
+    public function runSchedule(): TaskRunnerSchedule
+    {
+        return TaskRunnerSchedule::HOURLY;
     }
 }

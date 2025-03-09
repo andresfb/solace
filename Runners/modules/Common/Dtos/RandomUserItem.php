@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\UserGeneratorRunner\Dtos;
+namespace Modules\Common\Dtos;
 
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 
 readonly class RandomUserItem
 {
@@ -13,8 +13,9 @@ readonly class RandomUserItem
         public string $password,
         public string $phone,
         public string $city,
+        public string $country,
         public string $picture,
-        public Carbon $dob,
-        public Carbon $registered,
+        public CarbonImmutable $dob,
+        public CarbonImmutable $registered,
     ) {}
 }

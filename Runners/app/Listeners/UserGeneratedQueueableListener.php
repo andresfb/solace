@@ -2,30 +2,30 @@
 
 namespace App\Listeners;
 
-use App\Services\ProcessPostService;
+use App\Services\RegisterUserService;
 use App\Traits\RunnerConstants;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Traits\QueueSelectable;
-use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
+use Modules\UserGeneratorRunner\Events\UserGeneratedQueueableEvent;
 use Throwable;
 
-class PostSelectedQueueableListener implements ShouldQueue
+class UserGeneratedQueueableListener implements ShouldQueue
 {
     use QueueSelectable;
     use RunnerConstants;
 
-    public function __construct(private readonly ProcessPostService $service)
+    public function __construct(private readonly RegisterUserService $service)
     {
     }
 
     /**
      * @throws Throwable
      */
-    public function handle(PostSelectedQueueableEvent $event): void
+    public function handle(UserGeneratedQueueableEvent $event): void
     {
         try {
-            $this->service->execute($event->postItem);
+            $this->service->execute($event->user);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
@@ -35,12 +35,12 @@ class PostSelectedQueueableListener implements ShouldQueue
 
     public function viaConnection(): string
     {
-        return $this->getConnection($this->POSTS);
+        return $this->getConnection($this->REGISTER_USER);
     }
 
     public function viaQueue(): string
     {
-        return $this->getQueue($this->POSTS);
+        return $this->getQueue($this->REGISTER_USER);
     }
 
     /**

@@ -3,8 +3,11 @@
 namespace Modules\UserGeneratorRunner\Services;
 
 use Exception;
+use Modules\Common\Dtos\RandomUserItem;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
+use Modules\UserGeneratorRunner\Events\UserGeneratedEvent;
+use Modules\UserGeneratorRunner\Events\UserGeneratedQueueableEvent;
 
 class GenerateUsersService
 {
@@ -18,9 +21,21 @@ class GenerateUsersService
      */
     public function execute(): void
     {
-        $this->info('Generating users...');
+        $this->info("Generating users...\n");
 
-        $users = $this->service->execute();
-        // TODO: loop through the Users and raise an event so the Host can pick it up with a listener
+        $users = $this->service->setToScreen($this->toScreen)
+            ->execute();
+
+        $users->map(function (RandomUserItem $user) {
+            if ($this->queueable) {
+                $this->line('Dispatching ');
+
+                UserGeneratedQueueableEvent::dispatch($user);
+            }
+
+            $this->line('Dispatching UserGeneratedEvent event.');
+
+            UserGeneratedEvent::dispatch($user, $this->toScreen);
+        });
     }
 }
