@@ -207,7 +207,7 @@ return [
 
     'environments' => [
 
-        'frost-mox' => [
+        'tiger-mox' => [
             'supervisor-1' => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,

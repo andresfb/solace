@@ -187,18 +187,18 @@ return [
         ],
 
         'posts-cnn' => [
-            'url' => env('REDIS_FROST_URL'),
-            'host' => env('REDIS_FROST_HOST', '127.0.0.1'),
-            'password' => env('REDIS_FROST_PASSWORD'),
-            'port' => env('REDIS_FROST_PORT', '6379'),
+            'url' => env('REDIS_TIGER_URL'),
+            'host' => env('REDIS_TIGER_HOST', '127.0.0.1'),
+            'password' => env('REDIS_TIGER_PASSWORD'),
+            'port' => env('REDIS_TIGER_PORT', '6379'),
             'database' => env('POSTS_RUNNER_REDIS_DATABASE', '3'),
         ],
 
         'reg-users-cnn' => [
-            'url' => env('REDIS_FROST_URL'),
-            'host' => env('REDIS_FROST_HOST', '127.0.0.1'),
-            'password' => env('REDIS_FROST_PASSWORD'),
-            'port' => env('REDIS_FROST_PORT', '6379'),
+            'url' => env('REDIS_TIGER_URL'),
+            'host' => env('REDIS_TIGER_HOST', '127.0.0.1'),
+            'password' => env('REDIS_TIGER_PASSWORD'),
+            'port' => env('REDIS_TIGER_PORT', '6379'),
             'database' => env('REGISTER_USERS_REDIS_DATABASE', '3'),
         ],
 
