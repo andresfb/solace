@@ -32,7 +32,7 @@ class MigrateUntaggedVideosTask implements TaskInterface
             $this->line('Sending request to MigrateUntaggedVideosJob');
 
             MigrateUntaggedVideosJob::dispatch($this->queueable)
-                ->onQueue(config("$this->MODEL_NAME.horizon_queue"))
+                ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
                 ->delay(now()->addSecond());
 
             return;

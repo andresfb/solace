@@ -46,8 +46,8 @@ class MigrateFulfilledPostsService
                 $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
 
                 CreatePostItemJob::dispatch($libraryPost)
-                    ->onConnection($this->getConnection($this->MODEL_NAME))
-                    ->onQueue($this->getQueue($this->MODEL_NAME))
+                    ->onConnection($this->getConnection($this->MODULE_NAME))
+                    ->onQueue($this->getQueue($this->MODULE_NAME))
                     ->delay(now()->addSecond());
 
                 return;

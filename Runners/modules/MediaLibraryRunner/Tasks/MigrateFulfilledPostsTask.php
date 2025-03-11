@@ -30,7 +30,7 @@ class MigrateFulfilledPostsTask implements TaskInterface
             $this->line('Sending request to MigrateFulfilledPostsJob');
 
             MigrateFulfilledPostsJob::dispatch($this->queueable)
-                ->onQueue(config("$this->MODEL_NAME.horizon_queue"))
+                ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
                 ->delay(now()->addSecond());
 
             return;
