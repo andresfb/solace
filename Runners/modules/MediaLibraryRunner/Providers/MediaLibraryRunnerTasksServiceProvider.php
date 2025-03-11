@@ -5,6 +5,7 @@ namespace Modules\MediaLibraryRunner\Providers;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Modules\MediaLibraryRunner\Tasks\MigrateFulfilledPostsTask;
+use Modules\MediaLibraryRunner\Tasks\MigrateUntaggedVideosTask;
 
 class MediaLibraryRunnerTasksServiceProvider extends ServiceProvider
 {
@@ -12,13 +13,14 @@ class MediaLibraryRunnerTasksServiceProvider extends ServiceProvider
     {
         $this->app->resolving('tasks', function (Collection $tasks): void {
             $tasks->push(MigrateFulfilledPostsTask::class);
-            // $tasks->push(MigrateFulfilledPostsTask::class);
-            // $tasks->push(MigrateFulfilledPostsTask::class);
+            $tasks->push(MigrateUntaggedVideosTask::class);
+            //$tasks->push(MigrateFulfilledPostsTask::class);
         });
     }
 
     public function boot(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../Config/migrate-fulfilled.php', 'migrate_fulfilled');
+        $this->mergeConfigFrom(__DIR__.'/../Config/fulfilled.php', 'fulfilled');
+        $this->mergeConfigFrom(__DIR__.'/../Config/untagged-videos.php', 'untagged_videos');
     }
 }

@@ -41,6 +41,12 @@ class LibraryPost extends BaseMediaRunnerModel
         return $query->where('status', 1);
     }
 
+    public function scopeUntaggedVideos(Builder $query): Builder
+    {
+        return $query->where('status', 0)
+            ->where('type', 'video');
+    }
+
     public function scopeWithoutBanded(Builder $query): Builder
     {
         return $query->whereNotIn('source', config('media_runner.banded_tags'));

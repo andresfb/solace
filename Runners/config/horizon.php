@@ -236,9 +236,9 @@ return [
                 'balanceCooldown' => 3,
             ],
 
-            'fulfiller-supervisor' => [
+            'media-runner-supervisor' => [
                 'connection' => 'horizon',
-                'queue' => ['fulfiller'],
+                'queue' => ['media-runner'],
                 'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,

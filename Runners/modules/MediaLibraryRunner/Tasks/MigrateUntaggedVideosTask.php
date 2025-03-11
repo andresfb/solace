@@ -6,37 +6,39 @@ use Modules\Common\Enum\TaskRunnerSchedule;
 use Modules\Common\Interfaces\TaskInterface;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\MediaLibraryRunner\Jobs\MigrateFulfilledPostsJob;
-use Modules\MediaLibraryRunner\Services\MigrateFulfilledPostsService;
+use Modules\MediaLibraryRunner\Jobs\MigrateUntaggedVideosJob;
+use Modules\MediaLibraryRunner\Services\MigrateUntaggedVideosService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class MigrateFulfilledPostsTask implements TaskInterface
+class MigrateUntaggedVideosTask implements TaskInterface
 {
     use ModuleConstants;
     use Screenable;
     use SendToQueue;
 
-    public function __construct(private readonly MigrateFulfilledPostsService $service) {}
+    public function __construct(private readonly MigrateUntaggedVideosService $service)
+    {
+    }
 
     public function execute(): void
     {
-        if (!config("$this->MIGRATE_FULFILLED.task_enabled")) {
-            $this->warning('The MigrateFulfilledPostsTask is disabled.');
+        if (!config("$this->UNTAGGED_VIDEOS.task_enabled")) {
+            $this->warning('The MigrateUntaggedVideosTask is disabled.');
 
             return;
         }
 
         if ($this->queueable) {
-            $this->line('Sending request to MigrateFulfilledPostsJob');
+            $this->line('Sending request to MigrateUntaggedVideosJob');
 
-            MigrateFulfilledPostsJob::dispatch($this->queueable)
+            MigrateUntaggedVideosJob::dispatch($this->queueable)
                 ->onQueue(config("$this->MODEL_NAME.horizon_queue"))
                 ->delay(now()->addSecond());
 
             return;
         }
 
-        $this->line('Running MigrateFulfilledPostsService');
+        $this->line('Running MigrateUntaggedVideosService');
 
         $this->service->setToScreen($this->toScreen)
             ->setQueueable($this->queueable)

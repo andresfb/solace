@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Jobs;
+namespace Modules\MediaLibraryRunner\Jobs;
 
-use App\Services\ProcessPostService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,25 +9,22 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Modules\Common\Dtos\PostItem;
-use Throwable;
+use Modules\MediaLibraryRunner\Services\MigrateUntaggedVideosService;
 
-class ProcessPostJob implements ShouldQueue
+class MigrateUntaggedVideosJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly PostItem $postItem) {}
-
     /**
-     * @throws Exception|Throwable
+     * @throws Exception
      */
-    public function handle(ProcessPostService $service): void
+    public function handle(MigrateUntaggedVideosService $service): void
     {
         try {
-            $service->execute($this->postItem);
+            $service->execute();
         } catch (Exception $e) {
             Log::error($e->getMessage());
 

@@ -2,14 +2,13 @@
 
 namespace Modules\MediaLibraryRunner\Services;
 
-use App\Jobs\CreatePostItemJob;
-use App\Services\ProcessPostService;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
+use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -19,8 +18,6 @@ class MigrateFulfilledPostsService
     use Screenable;
     use SendToQueue;
     use QueueSelectable;
-
-    public function __construct(private readonly ProcessPostService $postService) {}
 
     public function execute(): void
     {
@@ -49,8 +46,8 @@ class MigrateFulfilledPostsService
                 $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
 
                 CreatePostItemJob::dispatch($libraryPost)
-                    ->onConnection($this->getConnection($this->MIGRATE_FULFILLED))
-                    ->onQueue($this->getQueue($this->MIGRATE_FULFILLED))
+                    ->onConnection($this->getConnection($this->MODEL_NAME))
+                    ->onQueue($this->getQueue($this->MODEL_NAME))
                     ->delay(now()->addSecond());
 
                 return;
