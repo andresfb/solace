@@ -1,9 +1,9 @@
 <?php
 
 return [
-
-    'task_enabled' => env('GENERATE_USERS_TASK_ENABLED', false),
-
+    
     'horizon_queue' => env('GENERATE_USERS_HORIZON_QUEUE', 'genusers'),
+
+    'max_empty_runs' => (int) env('GENERATE_USERS_MAX_EMPTY_RUN', 5),
 
 ];

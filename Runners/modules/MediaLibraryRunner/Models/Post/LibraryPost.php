@@ -6,14 +6,18 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Modules\Common\Enum\LibraryPostStatus;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\Scopes\LibraryPostScope;
+use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class LibraryPost extends BaseMediaRunnerModel
 {
+    use ModuleConstants;
+
     protected $table = 'posts';
 
     protected static function booted(): void
@@ -38,12 +42,12 @@ class LibraryPost extends BaseMediaRunnerModel
 
     public function scopeTagged(Builder $query): Builder
     {
-        return $query->where('status', 1);
+        return $query->where('status', LibraryPostStatus::TAGGED->value);
     }
 
     public function scopeUntaggedVideos(Builder $query): Builder
     {
-        return $query->where('status', 0)
+        return $query->where('status', LibraryPostStatus::CREATED->value)
             ->where('type', 'video');
     }
 
@@ -58,7 +62,8 @@ class LibraryPost extends BaseMediaRunnerModel
             'libraryPostId' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'source' => $this->source,
+            'source' => strtoupper("POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"),
+            'origin' => $this->MEDIA_LIBRARY,
             'mediaFiles' => $this->getMediaFiles(),
             'hashtags' => $this->getTags(),
         ];

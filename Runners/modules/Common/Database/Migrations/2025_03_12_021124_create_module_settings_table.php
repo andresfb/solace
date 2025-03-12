@@ -2,13 +2,21 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected Builder $schema;
+
+    public function __construct()
+    {
+        $this->schema = Schema::connection(config('database.default'));
+    }
+
     public function up(): void
     {
-        Schema::create('module_settings', static function (Blueprint $table) {
+        $this->schema->create('module_settings', static function (Blueprint $table) {
             $table->id();
             $table->string('module_name');
             $table->string('task_name');
@@ -22,6 +30,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('module_settings');
+        $this->schema->dropIfExists('module_settings');
     }
 };

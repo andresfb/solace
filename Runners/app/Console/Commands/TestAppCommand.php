@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Modules\MediaLibraryRunner\Services\TestCallbackService;
 
 class TestAppCommand extends Command
 {
@@ -16,9 +15,6 @@ class TestAppCommand extends Command
     {
         try {
             $this->info("\nStarting test\n");
-
-            $srv = new TestCallbackService();
-            $srv->execute();
 
             $this->info("\nDone at: ".now()."\n");
 

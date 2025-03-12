@@ -11,8 +11,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
+use Modules\Common\Enum\LibraryPostStatus;
+use Modules\Common\Events\PostCreatedEvent;
 use Modules\Common\Traits\Screenable;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 use Throwable;
 
 class ProcessPostService
@@ -33,6 +37,12 @@ class ProcessPostService
             $this->line($message);
             Log::notice($message);
 
+            PostCreatedEvent::dispatch(
+                $postItem->origin,
+                $postItem->libraryPostId,
+                LibraryPostStatus::PUBLISHED
+            );
+
             return;
         }
 
@@ -42,13 +52,19 @@ class ProcessPostService
             $this->line($message);
             Log::notice($message);
 
+            PostCreatedEvent::dispatch(
+                $postItem->origin,
+                $postItem->libraryPostId,
+                LibraryPostStatus::UNUSABLE
+            );
+
             return;
         }
 
-        try {
-            $this->line('Saving Post '.$postItem->title);
+        DB::beginTransaction();
 
-            DB::beginTransaction();
+        try {
+            $this->line('Saving Post ' . $postItem->title);
 
             $post = Post::create([
                 'hash' => $postItem->getHash(),
@@ -70,14 +86,36 @@ class ProcessPostService
 
             DB::commit();
 
+            PostCreatedEvent::dispatch(
+                $postItem->origin,
+                $postItem->libraryPostId,
+                LibraryPostStatus::PUBLISHED
+            );
+
+            // TODO: create a listener in the Host code for PostCreatedEvent where we can add a random number of likes.
+            // TODO: create another listener in the Host code for PostCreatedEvent where we can add random AI generated comments (ollama).
+
             $this->line("Post saved...");
+        } catch (FileDoesNotExist|FileIsTooBig $e) {
+            DB::rollBack();
+
+            $message = 'File error: '.$e->getMessage();
+            $this->error($message);
+            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->libraryPostId: $message");
+
+            PostCreatedEvent::dispatch(
+                $postItem->origin,
+                $postItem->libraryPostId,
+                LibraryPostStatus::UNUSABLE
+            );
+
+            throw $e;
         } catch (Exception $e) {
             DB::rollBack();
 
             $message = 'Error while processing post: '.$e->getMessage();
-
             $this->error($message);
-            Log::error($message);
+            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->libraryPostId: $message");
 
             throw $e;
         } finally {
@@ -86,14 +124,16 @@ class ProcessPostService
     }
 
     /**
-     * @throws Exception
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
      */
     private function saveMedia(Post $post, Collection $mediaFiles): void
     {
         $this->line('Saving Media Files. '.$mediaFiles->count());
 
-        $mediaFiles->each(function (MediaItem $mediaFile) use ($post): void {
+        $mediaFiles->each( function (MediaItem $mediaFile) use ($post): void {
             $post->addMedia($mediaFile->filePath)
+                ->preservingOriginal()
                 ->withCustomProperties([
                     'original_id' => $mediaFile->originalId,
                     'original_name' => $mediaFile->originalName,

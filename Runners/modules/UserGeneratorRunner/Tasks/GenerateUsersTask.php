@@ -2,51 +2,43 @@
 
 namespace Modules\UserGeneratorRunner\Tasks;
 
-use Exception;
-use Modules\Common\Enum\TaskRunnerSchedule;
-use Modules\Common\Interfaces\TaskInterface;
+use Modules\Common\Services\ModuleSettingsService;
+use Modules\Common\Tasks\BaseTask;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\UserGeneratorRunner\Jobs\GenerateUsersJob;
 use Modules\UserGeneratorRunner\Services\GenerateUsersService;
 use Modules\UserGeneratorRunner\Traits\ModuleConstants;
 
-class GenerateUsersTask implements TaskInterface
+class GenerateUsersTask extends BaseTask
 {
     use Screenable;
     use SendToQueue;
     use ModuleConstants;
 
-    public function __construct(private readonly GenerateUsersService $service) {}
-
-    /**
-     * @throws Exception
-     */
-    public function execute(): void
-    {
-        if (!config("$this->GENERATE_USERS.task_enabled")) {
-            $this->warning('The GenerateUsersTask is disabled.');
-
-            return;
-        }
-
-        if ($this->queueable) {
-            $this->line('Sending request to GenerateUsersJob');
-
-            GenerateUsersJob::dispatch($this->queueable)
-                ->onQueue(config("$this->GENERATE_USERS.horizon_queue"))
-                ->delay(now()->addSecond());
-
-            return;
-        }
-
-        $this->service->setToScreen($this->toScreen)
-            ->setQueueable($this->queueable)
-            ->execute();
+    public function __construct(
+        GenerateUsersService  $taskService,
+        ModuleSettingsService $settingsService
+    ) {
+        parent::__construct($taskService, $settingsService);
     }
 
-    public function runSchedule(): TaskRunnerSchedule
+    protected function getModuleName(): string
     {
-        return TaskRunnerSchedule::HOURLY;
+        return $this->MODULE_NAME;
+    }
+
+    protected function getTaskName(): string
+    {
+        return $this->GENERATE_USERS;
+    }
+
+    protected function dispatchEvent(): void
+    {
+        $this->line('Sending request to GenerateUsersJob');
+
+        GenerateUsersJob::dispatch($this->queueable)
+            ->onQueue(config("$this->GENERATE_USERS.horizon_queue"))
+            ->delay(now()->addSecond());
     }
 }

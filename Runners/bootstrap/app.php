@@ -19,8 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function () {
 
-        Schedule::command(TaskRunnerCommand::class, ['h'])->hourly();
+        Schedule::command(TaskRunnerCommand::class, ['h'])->hourlyAt(05);
 
-        Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours();
+        Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours(10);
+
+        // TODO: for task using Ollama AI (MacStudio machine) we can only run it when the machine is on, so we use this cron value: 45 12-23 * * 1-5 (from 12:45 noon to 11:45 pm monday through friday
 
     })->create();

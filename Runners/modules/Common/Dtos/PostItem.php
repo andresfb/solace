@@ -14,6 +14,7 @@ class PostItem extends Data
         public string $title,
         public string $content,
         public string $source,
+        public string $origin,
         public Collection $mediaFiles,
         public Collection $hashtags,
     ) {}

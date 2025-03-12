@@ -2,17 +2,30 @@
 
 namespace Modules\MediaLibraryRunner\Services;
 
-use Modules\Common\Interfaces\TaskServiceInterface;
-use Modules\Common\Traits\Screenable;
-use Modules\Common\Traits\SendToQueue;
+use Illuminate\Database\Eloquent\Collection;
+use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
-class MigrateUntaggedVideosService implements TaskServiceInterface
+class MigrateUntaggedVideosService extends BaseSimpleMigrateService
 {
-    use Screenable;
-    use SendToQueue;
-
-    public function execute(): void
+    protected function getLibraryPosts(): Collection
     {
+        return LibraryPost::query()
+            ->untaggedVideos()
+            ->withoutBanded()
+            ->oldest()
+            ->limit(
+                config("$this->UNTAGGED_VIDEOS.posts_limit")
+            )
+            ->get();
+    }
 
+    protected function getTaskName(): string
+    {
+        return $this->UNTAGGED_VIDEOS;
+    }
+
+    protected function getErrorMessage(): string
+    {
+        return 'No Untagged LibraryPosts videos found';
     }
 }

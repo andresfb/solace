@@ -4,12 +4,13 @@ namespace Modules\UserGeneratorRunner\Services;
 
 use Exception;
 use Modules\Common\Dtos\RandomUserItem;
+use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\UserGeneratorRunner\Events\UserGeneratedEvent;
 use Modules\UserGeneratorRunner\Events\UserGeneratedQueueableEvent;
 
-class GenerateUsersService
+class GenerateUsersService implements TaskServiceInterface
 {
     use Screenable;
     use SendToQueue;
@@ -28,7 +29,7 @@ class GenerateUsersService
 
         $users->map(function (RandomUserItem $user) {
             if ($this->queueable) {
-                $this->line('Dispatching ');
+                $this->line('Dispatching UserGeneratedQueueableEvent');
 
                 UserGeneratedQueueableEvent::dispatch($user);
             }

@@ -53,6 +53,8 @@ return [
 
     'use' => 'horizon',
 
+    'default_queue' => env('HORIZON_DEFAULT_QUEUE', 'default'),
+
     /*
     |--------------------------------------------------------------------------
     | Horizon Redis Prefix
@@ -191,14 +193,14 @@ return [
 
     'defaults' => [
         'supervisor-1' => [
-            'connection' => 'redis',
+            'connection' => env('QUEUE_CONNECTION', 'database'),
             'queue' => ['default'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
             'maxTime' => 0,
             'maxJobs' => 0,
-            'memory' => 256,
+            'memory' => 124,
             'tries' => 1,
             'timeout' => 60,
             'nice' => 0,
@@ -217,6 +219,7 @@ return [
             'media-supervisor' => [
                 'connection' => 'horizon',
                 'queue' => ['media'],
+                'memory' => 256,
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
@@ -239,6 +242,7 @@ return [
             'media-runner-supervisor' => [
                 'connection' => 'horizon',
                 'queue' => ['media-runner'],
+                'memory' => 124,
                 'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
@@ -251,6 +255,7 @@ return [
             'gen-users-supervisor' => [
                 'connection' => 'horizon',
                 'queue' => ['genusers'],
+                'memory' => 124,
                 'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
                 'maxProcesses' => 3,

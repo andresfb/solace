@@ -9,6 +9,8 @@ class UserGeneratorRunnerServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
         $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'user_generator');
         $this->mergeConfigFrom(__DIR__.'/../Config/random-user.php', 'random_user');
         $this->mergeConfigFrom(__DIR__.'/../Config/xsgames.php', 'xsgames');

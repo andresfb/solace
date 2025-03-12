@@ -28,7 +28,7 @@ class TaskRunnerService
                 continue;
             }
 
-            $this->info("Running task $taskClass");
+            $this->info("Running task $taskClass\n");
 
             try {
                 $taskInstance->setToScreen($this->toScreen)

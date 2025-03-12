@@ -2,13 +2,12 @@
 
 namespace Modules\MediaLibraryRunner\Jobs;
 
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Modules\Common\Exceptions\EmptyRunException;
 use Modules\MediaLibraryRunner\Services\MigrateFulfilledPostsService;
 
 class MigrateFulfilledPostsJob implements ShouldQueue
@@ -19,16 +18,10 @@ class MigrateFulfilledPostsJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @throws Exception
+     * @throws EmptyRunException
      */
     public function handle(MigrateFulfilledPostsService $service): void
     {
-        try {
-            $service->execute();
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-
-            throw $e;
-        }
+        $service->execute();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
+use Random\RandomException;
 
 class RandomUserSelectorService
 {
@@ -50,7 +51,7 @@ class RandomUserSelectorService
 
     public function getPostingWeightedUsers(int $count = 20): Collection
     {
-        return Cache::remember("weighted:users:$count", now()->addMinutes(30), function () use ($count) {
+        return Cache::remember("weighted:users:posters:$count", now()->addMinutes(30), function () use ($count) {
             $lowPostUsers = User::withCount('posts')
                 ->whereHas('profile', fn ($query) => $query->where('humanoid', false))
                 ->orderBy('posts_count')
@@ -63,6 +64,18 @@ class RandomUserSelectorService
                 ->limit($this->limitDataset)
                 ->get();
 
+            if ($lowPostUsers->isEmpty() && $highPostUsers->isEmpty()) {
+                return $this->getRandomUsers($count);
+            }
+
+            if ($lowPostUsers->isEmpty()) {
+                $lowPostUsers = $this->getRandomDbUsers();
+            }
+
+            if ($highPostUsers->isEmpty()) {
+                $highPostUsers = $this->getRandomDbUsers();
+            }
+
             // Define selection sizes
             $totalSelection = $count; // Total users to return
             $lowPostCount = round($totalSelection * 0.6); // 60% from low-post users
@@ -73,7 +86,27 @@ class RandomUserSelectorService
             $selectedHighPostUsers = $highPostUsers->shuffle()->take($highPostCount);
 
             // Merge and Return or use the final collection
-            return $selectedLowPostUsers->merge($selectedHighPostUsers);
+            return $selectedLowPostUsers->merge($selectedHighPostUsers)->unique();
         });
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function getRandomUsers(int $count): Collection
+    {
+        return $this->getRandomDbUsers()
+            ->shuffle()
+            ->take($count);
+    }
+
+    /**
+     * @throws RandomException
+     */
+    private function getRandomDbUsers(): Collection
+    {
+        $totalUsers = User::count();
+        $randomOffset = random_int(0, max(0, $totalUsers - $this->limitDataset));
+        return User::skip($randomOffset)->take($this->limitDataset)->get();
     }
 }

@@ -2,13 +2,22 @@
 
 namespace Modules\MediaLibraryRunner\Tasks;
 
+use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
 use Modules\MediaLibraryRunner\Jobs\MigrateUntaggedVideosJob;
+use Modules\MediaLibraryRunner\Services\MigrateUntaggedVideosService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class MigrateUntaggedVideosTask extends BaseTask
 {
     use ModuleConstants;
+
+    public function __construct(
+        MigrateUntaggedVideosService $taskTaskService,
+        ModuleSettingsService        $settingsService
+    ) {
+        parent::__construct($taskTaskService, $settingsService);
+    }
 
     protected function getModuleName(): string
     {

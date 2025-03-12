@@ -13,10 +13,10 @@ class MigrateFulfilledPostsTask extends BaseTask
     use ModuleConstants;
 
     public function __construct(
-        MigrateFulfilledPostsService $taskService,
-        ModuleSettingsService $settingsService
+        MigrateFulfilledPostsService $taskTaskService,
+        ModuleSettingsService        $settingsService
     ) {
-        parent::__construct($taskService, $settingsService);
+        parent::__construct($taskTaskService, $settingsService);
     }
 
     protected function getModuleName(): string

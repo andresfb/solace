@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Services\ProcessPostService;
 use App\Traits\RunnerConstants;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Traits\QueueSelectable;
@@ -20,14 +21,14 @@ class PostSelectedQueueableListener implements ShouldQueue
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception|Throwable
      */
     public function handle(PostSelectedQueueableEvent $event): void
     {
         try {
             $this->service->execute($event->postItem);
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
+        } catch (Exception|Throwable $e) {
+            Log::error($e);
 
             throw $e;
         }

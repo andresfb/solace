@@ -2,18 +2,19 @@
 
 namespace Modules\Common\Services;
 
-use Modules\Common\Dtos\ModelSettings;
+use Modules\Common\Dtos\ModuleSettingsInfo;
 use Modules\Common\Events\ModelSettingsEvent;
+use Modules\Common\Events\UpdateModelSettingsEvent;
 
 class ModuleSettingsService
 {
-    public function getSetting(ModelSettings $modelSettings): ModelSettings
+    public function getSetting(ModuleSettingsInfo $modelSettings): ModuleSettingsInfo
     {
         $response = null;
 
         ModelSettingsEvent::dispatch(
             $modelSettings,
-            static function (ModelSettings $settings) use (&$response) {
+            static function (ModuleSettingsInfo $settings) use (&$response) {
                 $response = $settings;
             }
         );
@@ -23,5 +24,13 @@ class ModuleSettingsService
         }
 
         return $response;
+    }
+
+    public function disableTask(ModuleSettingsInfo $info): void
+    {
+        $info->action = 'update';
+        $info->response['is_enabled'] = "0";
+
+        UpdateModelSettingsEvent::dispatch($info);
     }
 }

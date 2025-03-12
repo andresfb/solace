@@ -2,7 +2,7 @@
 
 namespace Modules\Common\Tasks;
 
-use Modules\Common\Dtos\ModelSettings;
+use Modules\Common\Dtos\ModuleSettingsInfo;
 use Modules\Common\Enum\TaskRunnerSchedule;
 use Modules\Common\Interfaces\TaskInterface;
 use Modules\Common\Interfaces\TaskServiceInterface;
@@ -16,7 +16,7 @@ abstract class BaseTask implements TaskInterface
     use SendToQueue;
 
     public function __construct(
-        protected readonly TaskServiceInterface $taskService,
+        protected readonly TaskServiceInterface  $taskTaskService,
         protected readonly ModuleSettingsService $settingsService
     ) { }
 
@@ -40,9 +40,9 @@ abstract class BaseTask implements TaskInterface
             return;
         }
 
-        $this->line('Running '.$this->taskService::class);
+        $this->line('Running '.$this->taskTaskService::class);
 
-        $this->taskService->setToScreen($this->toScreen)
+        $this->taskTaskService->setToScreen($this->toScreen)
             ->setQueueable($this->queueable)
             ->execute();
     }
@@ -53,7 +53,7 @@ abstract class BaseTask implements TaskInterface
             $this->getModuleSettings(['schedule'])
         );
 
-        return TaskRunnerSchedule::from($settings['schedule']);
+        return TaskRunnerSchedule::from($settings->response['schedule']);
     }
 
     private function isEnabled(): bool
@@ -72,18 +72,25 @@ abstract class BaseTask implements TaskInterface
 
         $emptyRunsCount = (int) $settings->response['empty_runs_count'];
 
-        return $emptyRunsCount < config($this->getTaskName().'.max_empty_runs');
+        $isEnabled = $emptyRunsCount < config($this->getTaskName().'.max_empty_runs');
+        if (! $isEnabled) {
+            $this->settingsService->disableTask(
+                $this->getModuleSettings(['is_enabled'])
+            );
+        }
+
+        return $isEnabled;
     }
 
-    private function getModuleSettings(array $settingName): ModelSettings
+    private function getModuleSettings(array $settingName): ModuleSettingsInfo
     {
         $info = [
             'moduleName' => $this->getModuleName(),
             'taskName' => $this->getTaskName(),
-            'settingName' => $settingName,
+            'settingNames' => $settingName,
             'response' => [],
         ];
 
-        return ModelSettings::from($info);
+        return ModuleSettingsInfo::from($info);
     }
 }
