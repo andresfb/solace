@@ -50,19 +50,17 @@ class RandomUserService
 
     private function parseResponse(Collection $response): Collection
     {
-        return $response->map(function (array $user) {
-            return new RandomUserItem(
-                gender: $user['gender'],
-                name: sprintf("%s %s", $user['name']['first'], $user['name']['last']),
-                email: $user['email'],
-                password: $user['login']['sha256'],
-                phone: $user['cell'] ?? $user['phone'],
-                city: $user['location']['city'],
-                country: $user['location']['country'],
-                picture: $this->imageService->getImage($user['picture']['large']),
-                dob: CarbonImmutable::parse($user['dob']['date']),
-                registered: CarbonImmutable::parse($user['registered']['date']),
-            );
-        });
+        return $response->map(fn(array $user): \Modules\Common\Dtos\RandomUserItem => new RandomUserItem(
+            gender: $user['gender'],
+            name: sprintf("%s %s", $user['name']['first'], $user['name']['last']),
+            email: $user['email'],
+            password: $user['login']['sha256'],
+            phone: $user['cell'] ?? $user['phone'],
+            city: $user['location']['city'],
+            country: $user['location']['country'],
+            picture: $this->imageService->getImage($user['picture']['large']),
+            dob: CarbonImmutable::parse($user['dob']['date']),
+            registered: CarbonImmutable::parse($user['registered']['date']),
+        ));
     }
 }

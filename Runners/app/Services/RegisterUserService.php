@@ -64,7 +64,7 @@ class RegisterUserService
             $this->line('Generating Avatar...');
 
             $image = $this->imageGenService->generateImage($userItem->email);
-            if (empty($image)) {
+            if ($image === '' || $image === '0') {
                 return;
             }
 

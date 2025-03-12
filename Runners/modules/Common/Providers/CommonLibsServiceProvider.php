@@ -14,9 +14,7 @@ class CommonLibsServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register the module's exception handler
-        $this->app->singleton(ExceptionHandler::class, function ($app) {
-            return new Handler($app);
-        });
+        $this->app->singleton(ExceptionHandler::class, fn($app): \Modules\Common\Exceptions\Handler => new Handler($app));
     }
 
     public function boot(): void

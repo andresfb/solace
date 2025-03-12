@@ -16,7 +16,7 @@ return new class extends Migration
 
     public function up(): void
     {
-        $this->schema->create('module_settings', static function (Blueprint $table) {
+        $this->schema->create('module_settings', static function (Blueprint $table): void {
             $table->id();
             $table->string('module_name');
             $table->string('task_name');

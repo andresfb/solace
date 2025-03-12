@@ -27,7 +27,7 @@ class GenerateUsersService implements TaskServiceInterface
         $users = $this->service->setToScreen($this->toScreen)
             ->execute();
 
-        $users->map(function (RandomUserItem $user) {
+        $users->map(function (RandomUserItem $user): void {
             if ($this->queueable) {
                 $this->line('Dispatching UserGeneratedQueueableEvent');
 

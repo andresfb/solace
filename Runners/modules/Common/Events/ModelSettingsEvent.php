@@ -9,6 +9,9 @@ class ModelSettingsEvent
 {
     use Dispatchable;
 
+    /**
+     * @var callable
+     */
     public $callback;
 
     public function __construct(public ModuleSettingsInfo $modelSettings, callable $callback)

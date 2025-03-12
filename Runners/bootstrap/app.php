@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
-    ->withSchedule(function () {
+    ->withSchedule(function (): void {
 
         Schedule::command(TaskRunnerCommand::class, ['h'])->hourlyAt(05);
 

@@ -13,7 +13,7 @@ class ModuleSettingsInfo extends Data
         public array $response,
         public string $action = 'update',
     ) {
-        if (empty($this->settingNames)) {
+        if ($this->settingNames === []) {
             throw new \RuntimeException('Setting names must have at least one name');
         }
     }

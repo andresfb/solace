@@ -14,12 +14,12 @@ class ModuleSettingsService
 
         ModelSettingsEvent::dispatch(
             $modelSettings,
-            static function (ModuleSettingsInfo $settings) use (&$response) {
+            static function (ModuleSettingsInfo $settings) use (&$response): void {
                 $response = $settings;
             }
         );
 
-        if ($response === null) {
+        if (!$response instanceof \Modules\Common\Dtos\ModuleSettingsInfo) {
             throw new \RuntimeException('Model settings not found');
         }
 
