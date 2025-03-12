@@ -7,9 +7,7 @@ use Modules\Common\Events\ModelSettingsEvent;
 
 readonly class ModuleSettingsListener
 {
-    public function __construct(private ModuleSettingsService $service)
-    {
-    }
+    public function __construct(private ModuleSettingsService $service) {}
 
     public function handle(ModelSettingsEvent $event): void
     {

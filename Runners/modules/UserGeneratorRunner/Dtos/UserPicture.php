@@ -6,6 +6,6 @@ readonly class UserPicture
 {
     public function __construct(
         public string $url,
-        public int    $usage,
-    ) { }
+        public int $usage,
+    ) {}
 }

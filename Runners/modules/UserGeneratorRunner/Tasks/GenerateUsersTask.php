@@ -12,12 +12,12 @@ use Modules\UserGeneratorRunner\Traits\ModuleConstants;
 
 class GenerateUsersTask extends BaseTask
 {
+    use ModuleConstants;
     use Screenable;
     use SendToQueue;
-    use ModuleConstants;
 
     public function __construct(
-        GenerateUsersService  $taskService,
+        GenerateUsersService $taskService,
         ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskService, $settingsService);

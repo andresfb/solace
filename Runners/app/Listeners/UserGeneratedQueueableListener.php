@@ -15,9 +15,7 @@ class UserGeneratedQueueableListener implements ShouldQueue
     use QueueSelectable;
     use RunnerConstants;
 
-    public function __construct(private readonly RegisterUserService $service)
-    {
-    }
+    public function __construct(private readonly RegisterUserService $service) {}
 
     /**
      * @throws Throwable

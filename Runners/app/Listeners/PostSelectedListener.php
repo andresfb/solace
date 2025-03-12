@@ -10,7 +10,7 @@ use Throwable;
 
 readonly class PostSelectedListener
 {
-    public function __construct(private ProcessPostService $service) { }
+    public function __construct(private ProcessPostService $service) {}
 
     /**
      * @throws Exception|Throwable

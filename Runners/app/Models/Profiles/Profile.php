@@ -12,8 +12,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Profile extends BaseModel implements HasMedia
 {
-    use SoftDeletes;
     use InteractsWithMedia;
+    use SoftDeletes;
 
     // TODO: add the Model Settings package to store the social_links
 

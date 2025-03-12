@@ -14,7 +14,7 @@ class MediaLibraryRunnerTasksServiceProvider extends ServiceProvider
         $this->app->resolving('tasks', function (Collection $tasks): void {
             $tasks->push(MigrateFulfilledPostsTask::class);
             $tasks->push(MigrateUntaggedVideosTask::class);
-            //$tasks->push(MigrateFulfilledPostsTask::class);
+            // $tasks->push(MigrateFulfilledPostsTask::class);
         });
     }
 

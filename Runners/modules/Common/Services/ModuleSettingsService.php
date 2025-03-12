@@ -19,7 +19,7 @@ class ModuleSettingsService
             }
         );
 
-        if (!$response instanceof \Modules\Common\Dtos\ModuleSettingsInfo) {
+        if (! $response instanceof \Modules\Common\Dtos\ModuleSettingsInfo) {
             throw new \RuntimeException('Model settings not found');
         }
 
@@ -29,7 +29,7 @@ class ModuleSettingsService
     public function disableTask(ModuleSettingsInfo $info): void
     {
         $info->action = 'update';
-        $info->response['is_enabled'] = "0";
+        $info->response['is_enabled'] = '0';
 
         UpdateModelSettingsEvent::dispatch($info);
     }

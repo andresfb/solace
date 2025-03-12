@@ -16,13 +16,13 @@ class ProfileImageGenService
 
             return $this->saveImageFile($svg);
         } catch (ImagickException) {
-            return "";
+            return '';
         }
     }
 
     private function generateSvg(string $seed): string
     {
-        $multiAvatar = new Multiavatar();
+        $multiAvatar = new Multiavatar;
 
         return $multiAvatar($seed, null, null);
     }
@@ -32,12 +32,12 @@ class ProfileImageGenService
      */
     private function saveImageFile(string $svgString): string
     {
-        $filename = md5($svgString).".png";
+        $filename = md5($svgString).'.png';
 
         $imagePath = Storage::disk('processing')->path($filename);
 
         // Create a new Imagick object
-        $imagick = new Imagick();
+        $imagick = new Imagick;
 
         // Read the SVG string
         $imagick->readImageBlob($svgString);

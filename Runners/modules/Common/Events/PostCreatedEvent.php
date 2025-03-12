@@ -13,5 +13,5 @@ class PostCreatedEvent
         public readonly string $origin,
         public readonly int $libraryPostId,
         public readonly LibraryPostStatus $status
-    ) { }
+    ) {}
 }

@@ -9,7 +9,5 @@ class PostSelectedQueueableEvent
 {
     use Dispatchable;
 
-    public function __construct(public readonly PostItem $postItem)
-    {
-    }
+    public function __construct(public readonly PostItem $postItem) {}
 }

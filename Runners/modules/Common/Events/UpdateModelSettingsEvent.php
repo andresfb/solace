@@ -9,5 +9,5 @@ class UpdateModelSettingsEvent
 {
     use Dispatchable;
 
-    public function __construct(public ModuleSettingsInfo $modelSettings){ }
+    public function __construct(public ModuleSettingsInfo $modelSettings) {}
 }

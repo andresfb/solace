@@ -64,7 +64,7 @@ class ProcessPostService
         DB::beginTransaction();
 
         try {
-            $this->line('Saving Post ' . $postItem->title);
+            $this->line('Saving Post '.$postItem->title);
 
             $post = Post::create([
                 'hash' => $postItem->getHash(),
@@ -95,7 +95,7 @@ class ProcessPostService
             // TODO: create a listener in the Host code for PostCreatedEvent where we can add a random number of likes.
             // TODO: create another listener in the Host code for PostCreatedEvent where we can add random AI generated comments (ollama).
 
-            $this->line("Post saved...");
+            $this->line('Post saved...');
         } catch (FileDoesNotExist|FileIsTooBig $e) {
             DB::rollBack();
 
@@ -131,7 +131,7 @@ class ProcessPostService
     {
         $this->line('Saving Media Files. '.$mediaFiles->count());
 
-        $mediaFiles->each( function (MediaItem $mediaFile) use ($post): void {
+        $mediaFiles->each(function (MediaItem $mediaFile) use ($post): void {
             $post->addMedia($mediaFile->filePath)
                 ->preservingOriginal()
                 ->withCustomProperties([

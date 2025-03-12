@@ -9,9 +9,7 @@ use Throwable;
 
 readonly class UserGeneratedListener
 {
-    public function __construct(private RegisterUserService $service)
-    {
-    }
+    public function __construct(private RegisterUserService $service) {}
 
     /**
      * @throws Throwable

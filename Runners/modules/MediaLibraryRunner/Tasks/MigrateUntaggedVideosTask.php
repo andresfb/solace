@@ -14,7 +14,7 @@ class MigrateUntaggedVideosTask extends BaseTask
 
     public function __construct(
         MigrateUntaggedVideosService $taskTaskService,
-        ModuleSettingsService        $settingsService
+        ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }

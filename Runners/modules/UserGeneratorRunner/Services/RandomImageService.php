@@ -8,7 +8,7 @@ readonly class RandomImageService
 {
     use ProfileImageCatchable;
 
-    public function __construct(private XsGamesService $altImageService) { }
+    public function __construct(private XsGamesService $altImageService) {}
 
     public function getImage(string $pictureUrl): string
     {

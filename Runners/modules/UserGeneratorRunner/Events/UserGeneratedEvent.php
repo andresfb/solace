@@ -9,7 +9,5 @@ class UserGeneratedEvent
 {
     use Dispatchable;
 
-    public function __construct(public readonly RandomUserItem $user, public readonly bool $toScreen = false)
-    {
-    }
+    public function __construct(public readonly RandomUserItem $user, public readonly bool $toScreen = false) {}
 }

@@ -21,7 +21,7 @@ class PostItem extends Data
 
     public function getHash(): string
     {
-        if (!isset($this->hash) || ($this->hash === '' || $this->hash === '0')) {
+        if (! isset($this->hash) || ($this->hash === '' || $this->hash === '0')) {
             $this->hash = md5("$this->libraryPostId|$this->title");
         }
 

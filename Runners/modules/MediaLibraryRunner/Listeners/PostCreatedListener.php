@@ -16,7 +16,7 @@ class PostCreatedListener implements ShouldQueue
     {
         LibraryPost::where('id', $event->libraryPostId)
             ->update([
-                'status' => DB::raw("status + {$event->status->value}") ,
+                'status' => DB::raw("status + {$event->status->value}"),
             ]);
     }
 

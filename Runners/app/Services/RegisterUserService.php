@@ -14,7 +14,7 @@ class RegisterUserService
 {
     use Screenable;
 
-    public function __construct(protected readonly ProfileImageGenService $imageGenService) { }
+    public function __construct(protected readonly ProfileImageGenService $imageGenService) {}
 
     /**
      * @throws Exception
@@ -31,7 +31,7 @@ class RegisterUserService
                 return;
             }
 
-            $this->line('Creating User ' . $userItem->email);
+            $this->line('Creating User '.$userItem->email);
 
             $user = User::create([
                 'name' => $userItem->name,
@@ -52,7 +52,7 @@ class RegisterUserService
                 'birthday' => $userItem->dob,
             ]);
 
-            if (!blank($userItem->picture)) {
+            if (! blank($userItem->picture)) {
                 $this->line('Saving Picture...');
 
                 $profile->addMediaFromUrl($userItem->picture)

@@ -2,14 +2,13 @@
 
 namespace App\Listeners;
 
-
 use App\Services\ModuleSettingsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Common\Events\UpdateModelSettingsEvent;
 
 readonly class UpdateModelSettingsListener implements ShouldQueue
 {
-    public function __construct(private ModuleSettingsService $settingsService) { }
+    public function __construct(private ModuleSettingsService $settingsService) {}
 
     public function handle(UpdateModelSettingsEvent $event): void
     {

@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,14 +10,14 @@ return new class extends Migration
             ->table('posts')
             ->where('status', '>', 2)
             ->update([
-                'status' => DB::raw("
+                'status' => DB::raw('
                     CASE
                         WHEN status = 3 THEN 0
                         WHEN status = 4 THEN 1
                         WHEN status = 5 THEN 2
                         ELSE status
                     END
-                ")
+                '),
             ]);
     }
 };

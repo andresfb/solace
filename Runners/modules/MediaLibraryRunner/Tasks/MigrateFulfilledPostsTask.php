@@ -14,7 +14,7 @@ class MigrateFulfilledPostsTask extends BaseTask
 
     public function __construct(
         MigrateFulfilledPostsService $taskTaskService,
-        ModuleSettingsService        $settingsService
+        ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }

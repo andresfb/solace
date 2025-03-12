@@ -10,7 +10,7 @@ trait ProfileImageCatchable
     public function checkImage(string $pictureUrl): string
     {
         $key = md5($pictureUrl);
-        if (!Cache::has($key)) {
+        if (! Cache::has($key)) {
             return $this->cacheImage($pictureUrl);
         }
 

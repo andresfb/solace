@@ -9,7 +9,5 @@ class UserGeneratedQueueableEvent
 {
     use Dispatchable;
 
-    public function __construct(public readonly RandomUserItem $user)
-    {
-    }
+    public function __construct(public readonly RandomUserItem $user) {}
 }

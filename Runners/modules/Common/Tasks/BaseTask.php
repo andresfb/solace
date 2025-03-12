@@ -16,9 +16,9 @@ abstract class BaseTask implements TaskInterface
     use SendToQueue;
 
     public function __construct(
-        protected readonly TaskServiceInterface  $taskTaskService,
+        protected readonly TaskServiceInterface $taskTaskService,
         protected readonly ModuleSettingsService $settingsService
-    ) { }
+    ) {}
 
     abstract protected function getModuleName(): string;
 
@@ -28,7 +28,7 @@ abstract class BaseTask implements TaskInterface
 
     public function execute(): void
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             $this->warning('The '.self::class.' is disabled.');
 
             return;

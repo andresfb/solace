@@ -19,7 +19,7 @@ class EmptyRunException extends Exception
             'taskName' => $taskName,
             'settingNames' => 'empty_runs_count',
             'response' => [],
-            'action' => 'increment'
+            'action' => 'increment',
         ]);
     }
 }

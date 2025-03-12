@@ -14,12 +14,12 @@ class CommonLibsServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register the module's exception handler
-        $this->app->singleton(ExceptionHandler::class, fn($app): \Modules\Common\Exceptions\Handler => new Handler($app));
+        $this->app->singleton(ExceptionHandler::class, fn ($app): \Modules\Common\Exceptions\Handler => new Handler($app));
     }
 
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->bind(ModelSettingsEvent::class);
         $this->app->bind(UpdateModelSettingsEvent::class);

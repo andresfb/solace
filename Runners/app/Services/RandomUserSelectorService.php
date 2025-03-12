@@ -107,6 +107,7 @@ class RandomUserSelectorService
     {
         $totalUsers = User::count();
         $randomOffset = random_int(0, max(0, $totalUsers - $this->limitDataset));
+
         return User::skip($randomOffset)->take($this->limitDataset)->get();
     }
 }

@@ -17,9 +17,9 @@ use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 abstract class BaseSimpleMigrateService implements TaskServiceInterface
 {
     use ModuleConstants;
+    use QueueSelectable;
     use Screenable;
     use SendToQueue;
-    use QueueSelectable;
 
     abstract protected function getLibraryPosts(): Collection;
 

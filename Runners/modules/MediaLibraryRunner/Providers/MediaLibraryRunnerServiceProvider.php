@@ -17,7 +17,7 @@ class MediaLibraryRunnerServiceProvider extends ServiceProvider
         // We won't need routes either, this is all backend
         // $this->app->register(RouteServiceProvider::class);
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'media_runner');
         $this->mergeConfigFrom(__DIR__.'/../Config/connection.php', 'database');

@@ -16,9 +16,7 @@ class PostSelectedQueueableListener implements ShouldQueue
     use QueueSelectable;
     use RunnerConstants;
 
-    public function __construct(private readonly ProcessPostService $service)
-    {
-    }
+    public function __construct(private readonly ProcessPostService $service) {}
 
     /**
      * @throws Exception|Throwable

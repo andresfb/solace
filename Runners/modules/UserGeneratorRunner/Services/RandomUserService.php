@@ -25,13 +25,13 @@ class RandomUserService
             config('user_generator.max_new_users')
         );
 
-        $this->line('Calling the randomuser.me API ' . now());
+        $this->line('Calling the randomuser.me API '.now());
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])
-        ->timeout(120)
-        ->get($url);
+            ->timeout(120)
+            ->get($url);
 
         $this->line(sprintf("Api call finished at %s\n", now()));
 
@@ -50,9 +50,9 @@ class RandomUserService
 
     private function parseResponse(Collection $response): Collection
     {
-        return $response->map(fn(array $user): \Modules\Common\Dtos\RandomUserItem => new RandomUserItem(
+        return $response->map(fn (array $user): \Modules\Common\Dtos\RandomUserItem => new RandomUserItem(
             gender: $user['gender'],
-            name: sprintf("%s %s", $user['name']['first'], $user['name']['last']),
+            name: sprintf('%s %s', $user['name']['first'], $user['name']['last']),
             email: $user['email'],
             password: $user['login']['sha256'],
             phone: $user['cell'] ?? $user['phone'],

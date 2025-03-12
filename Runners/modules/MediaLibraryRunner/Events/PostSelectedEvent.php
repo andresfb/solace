@@ -12,5 +12,5 @@ class PostSelectedEvent
     public function __construct(
         public readonly PostItem $postItem,
         public readonly bool $toScreen = false
-    ) { }
+    ) {}
 }
