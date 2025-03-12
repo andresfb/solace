@@ -4,7 +4,7 @@ namespace Modules\Common\Traits;
 
 trait Screenable
 {
-    private bool $toScreen = false;
+    protected bool $toScreen = false;
 
     public function setToScreen(bool $toScreen): self
     {

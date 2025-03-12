@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\MediaLibraryRunner\Events;
+namespace Modules\Common\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Modules\Common\Dtos\ModelSettings;
 
-class TestCallbackEvent
+class ModelSettingsEvent
 {
     use Dispatchable;
 

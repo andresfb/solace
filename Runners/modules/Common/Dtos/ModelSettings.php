@@ -9,7 +9,7 @@ class ModelSettings extends Data
     public function __construct(
         public string $moduleName,
         public string $taskName,
-        public string $settingName,
+        public array $settingNames,
         public array $response,
     ) { }
 }

@@ -2,49 +2,39 @@
 
 namespace Modules\MediaLibraryRunner\Tasks;
 
-use Modules\Common\Enum\TaskRunnerSchedule;
-use Modules\Common\Interfaces\TaskInterface;
-use Modules\Common\Traits\Screenable;
-use Modules\Common\Traits\SendToQueue;
+use Modules\Common\Services\ModuleSettingsService;
+use Modules\Common\Tasks\BaseTask;
 use Modules\MediaLibraryRunner\Jobs\MigrateFulfilledPostsJob;
 use Modules\MediaLibraryRunner\Services\MigrateFulfilledPostsService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class MigrateFulfilledPostsTask implements TaskInterface
+class MigrateFulfilledPostsTask extends BaseTask
 {
     use ModuleConstants;
-    use Screenable;
-    use SendToQueue;
 
-    public function __construct(private readonly MigrateFulfilledPostsService $service) {}
-
-    public function execute(): void
-    {
-        if (!config("$this->MIGRATE_FULFILLED.task_enabled")) {
-            $this->warning('The MigrateFulfilledPostsTask is disabled.');
-
-            return;
-        }
-
-        if ($this->queueable) {
-            $this->line('Sending request to MigrateFulfilledPostsJob');
-
-            MigrateFulfilledPostsJob::dispatch($this->queueable)
-                ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
-                ->delay(now()->addSecond());
-
-            return;
-        }
-
-        $this->line('Running MigrateFulfilledPostsService');
-
-        $this->service->setToScreen($this->toScreen)
-            ->setQueueable($this->queueable)
-            ->execute();
+    public function __construct(
+        MigrateFulfilledPostsService $taskService,
+        ModuleSettingsService $settingsService
+    ) {
+        parent::__construct($taskService, $settingsService);
     }
 
-    public function runSchedule(): TaskRunnerSchedule
+    protected function getModuleName(): string
     {
-        return TaskRunnerSchedule::EVERY_TWO_HOURS;
+        return $this->MODULE_NAME;
+    }
+
+    protected function getTaskName(): string
+    {
+        return $this->MIGRATE_FULFILLED;
+    }
+
+    protected function dispatchEvent(): void
+    {
+        $this->line('Sending request to MigrateFulfilledPostsJob');
+
+        MigrateFulfilledPostsJob::dispatch($this->queueable)
+            ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
+            ->delay(now()->addSecond());
     }
 }

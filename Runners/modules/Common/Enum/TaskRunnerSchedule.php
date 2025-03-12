@@ -2,14 +2,14 @@
 
 namespace Modules\Common\Enum;
 
-enum TaskRunnerSchedule
+enum TaskRunnerSchedule: string
 {
-    case HOURLY;
-    case EVERY_TWO_HOURS;
-    case THREE_TIMES_DAY;
-    case ONCE_DAILY;
-    case ONCE_WEEKLY;
-    case ONCE_MONTHLY;
+    case HOURLY = 'h';
+    case EVERY_TWO_HOURS = 'eth';
+    case THREE_TIMES_DAY = 'ttd';
+    case ONCE_DAILY = 'od';
+    case ONCE_WEEKLY = 'ow';
+    case ONCE_MONTHLY = 'om';
 
     public static function fromString(string $frequency): self
     {

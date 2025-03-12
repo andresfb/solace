@@ -4,6 +4,7 @@ namespace Modules\MediaLibraryRunner\Services;
 
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
+use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
@@ -12,7 +13,7 @@ use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class MigrateFulfilledPostsService
+class MigrateFulfilledPostsService implements TaskServiceInterface
 {
     use ModuleConstants;
     use Screenable;

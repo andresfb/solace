@@ -9,7 +9,8 @@ class PostSelectedEvent
 {
     use Dispatchable;
 
-    public function __construct(public readonly PostItem $postItem, public readonly bool $toScreen = false)
-    {
-    }
+    public function __construct(
+        public readonly PostItem $postItem,
+        public readonly bool $toScreen = false
+    ) { }
 }

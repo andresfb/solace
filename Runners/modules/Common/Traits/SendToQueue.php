@@ -4,7 +4,7 @@ namespace Modules\Common\Traits;
 
 trait SendToQueue
 {
-    private bool $queueable = true;
+    protected bool $queueable = true;
 
     public function setQueueable(bool $queueable): self
     {
