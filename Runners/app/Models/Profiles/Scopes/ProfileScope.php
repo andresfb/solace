@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Profiles\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Common\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;

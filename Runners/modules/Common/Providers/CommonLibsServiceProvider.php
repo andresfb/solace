@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Common\Providers;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -14,7 +16,7 @@ class CommonLibsServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register the module's exception handler
-        $this->app->singleton(ExceptionHandler::class, fn ($app): \Modules\Common\Exceptions\Handler => new Handler($app));
+        $this->app->singleton(ExceptionHandler::class, fn ($app): Handler => new Handler($app));
     }
 
     public function boot(): void

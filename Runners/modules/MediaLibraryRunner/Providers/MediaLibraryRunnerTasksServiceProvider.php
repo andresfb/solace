@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\MediaLibraryRunner\Providers;
 
 use Illuminate\Support\Collection;

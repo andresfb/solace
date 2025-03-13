@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Common\Services;
 
 use Modules\Common\Dtos\ModuleSettingsInfo;
@@ -19,7 +21,7 @@ class ModuleSettingsService
             }
         );
 
-        if (! $response instanceof \Modules\Common\Dtos\ModuleSettingsInfo) {
+        if (! $response instanceof ModuleSettingsInfo) {
             throw new \RuntimeException('Model settings not found');
         }
 

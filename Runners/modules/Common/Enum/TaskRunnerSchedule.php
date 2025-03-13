@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Common\Enum;
 
 enum TaskRunnerSchedule: string

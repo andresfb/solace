@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Common\Interfaces;
 
 use Modules\Common\Enum\TaskRunnerSchedule;

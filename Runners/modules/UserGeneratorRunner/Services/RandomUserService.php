@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\UserGeneratorRunner\Services;
 
 use Carbon\CarbonImmutable;
@@ -50,7 +52,7 @@ class RandomUserService
 
     private function parseResponse(Collection $response): Collection
     {
-        return $response->map(fn (array $user): \Modules\Common\Dtos\RandomUserItem => new RandomUserItem(
+        return $response->map(fn (array $user): RandomUserItem => new RandomUserItem(
             gender: $user['gender'],
             name: sprintf('%s %s', $user['name']['first'], $user['name']['last']),
             email: $user['email'],

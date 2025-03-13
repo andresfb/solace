@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\MediaLibraryRunner\Models\Post;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +13,6 @@ use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
-use Modules\MediaLibraryRunner\Models\Post\Scopes\LibraryPostScope;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class LibraryPost extends BaseMediaRunnerModel
@@ -23,7 +24,6 @@ class LibraryPost extends BaseMediaRunnerModel
     protected static function booted(): void
     {
         parent::booted();
-        static::addGlobalScope(new LibraryPostScope);
         static::addGlobalScope(new LibraryItemScope);
     }
 

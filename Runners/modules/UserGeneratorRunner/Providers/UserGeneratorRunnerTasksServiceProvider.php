@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\UserGeneratorRunner\Providers;
 
 use Illuminate\Support\Collection;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Common\Tasks;
 
 use Modules\Common\Dtos\ModuleSettingsInfo;

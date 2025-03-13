@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\UserGeneratorRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
