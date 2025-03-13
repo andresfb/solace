@@ -56,6 +56,18 @@ class LibraryPost extends BaseMediaRunnerModel
         return $query->whereNotIn('source', config('media_runner.banded_tags'));
     }
 
+    public function scopeImagePosts($query): Builder
+    {
+        return $query->where('type', 'image')
+            ->where(function ($query) {
+                $query->where('status', LibraryPostStatus::CREATED->value)
+                    ->orWhere(function ($query) {
+                        $query->whereIn('source', config('media_runner.banded_tags'))
+                            ->where('status', '<', LibraryPostStatus::DISABLED->value);
+                    });
+            });
+    }
+
     public function getPostableInfo(): array
     {
         return [
@@ -70,8 +82,6 @@ class LibraryPost extends BaseMediaRunnerModel
     }
 
     /**
-     * getMediaFiles Method.
-     *
      * @return Collection<MediaItem>
      */
     public function getMediaFiles(): Collection

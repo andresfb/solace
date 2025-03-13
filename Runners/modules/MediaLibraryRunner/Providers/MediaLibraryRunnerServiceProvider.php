@@ -24,6 +24,7 @@ class MediaLibraryRunnerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/database.php', 'database.connections.media_runner');
         $this->mergeConfigFrom(__DIR__.'/../Config/redis.php', 'database.redis');
         $this->mergeConfigFrom(__DIR__.'/../Config/queue.php', 'queue.connections');
+        $this->mergeConfigFrom(__DIR__.'/../Config/ollama-laravel.php', 'ollama-laravel');
 
         $this->app->register(MediaLibraryRunnerTasksServiceProvider::class);
 
