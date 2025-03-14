@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Modules\Common\Enum\LibraryPostStatus;
+use Modules\Common\Enum\RunnerStatus;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
@@ -30,8 +31,9 @@ class LibraryPost extends BaseMediaRunnerModel
     protected function casts(): array
     {
         return [
-            'status' => 'boolean',
             'used' => 'boolean',
+            'status' => LibraryPostStatus::class,
+            'runner_status' => RunnerStatus::class,
         ];
     }
 
@@ -42,12 +44,14 @@ class LibraryPost extends BaseMediaRunnerModel
 
     public function scopeTagged(Builder $query): Builder
     {
-        return $query->where('status', LibraryPostStatus::TAGGED->value);
+        return $query->where('status', LibraryPostStatus::TAGGED)
+            ->where('runner_status', RunnerStatus::STASIS);
     }
 
     public function scopeUntaggedVideos(Builder $query): Builder
     {
-        return $query->where('status', LibraryPostStatus::CREATED->value)
+        return $query->where('status', LibraryPostStatus::CREATED)
+            ->where('runner_status', RunnerStatus::STASIS)
             ->where('type', 'video');
     }
 
@@ -59,11 +63,12 @@ class LibraryPost extends BaseMediaRunnerModel
     public function scopeImagePosts($query): Builder
     {
         return $query->where('type', 'image')
+            ->where('runner_status', RunnerStatus::STASIS)
             ->where(function ($query) {
-                $query->where('status', LibraryPostStatus::CREATED->value)
+                $query->where('status', LibraryPostStatus::CREATED)
                     ->orWhere(function ($query) {
                         $query->whereIn('source', config('media_runner.banded_tags'))
-                            ->where('status', '<', LibraryPostStatus::DISABLED->value);
+                            ->where('status', '<', LibraryPostStatus::DISABLED);
                     });
             });
     }
@@ -76,6 +81,7 @@ class LibraryPost extends BaseMediaRunnerModel
             'content' => $this->content,
             'source' => strtoupper("POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"),
             'origin' => $this->MEDIA_LIBRARY,
+            'fromAi' => false,
             'mediaFiles' => $this->getMediaFiles(),
             'hashtags' => $this->getTags(),
         ];
@@ -112,22 +118,22 @@ class LibraryPost extends BaseMediaRunnerModel
                     return '';
                 }
 
-                $tag = str($values[$keys[0]])
-                    ->trim()
-                    ->lower()
-                    ->slug()
-                    ->toString();
-
                 $banded = array_merge(
                     config('media_runner.banded_tags'),
                     ['image', 'video']
                 );
 
-                if (in_array($tag, $banded, true)) {
+                $tag = str($values[$keys[0]])
+                    ->trim()
+                    ->lower();
+
+                if ($tag->contains($banded)) {
                     return '';
                 }
 
-                return $tag;
+                return $tag->title()
+                    ->replace(' ', '')
+                    ->toString();
             })
             ->reject(fn ($tag): bool => empty($tag));
     }

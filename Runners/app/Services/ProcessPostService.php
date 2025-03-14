@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
-use Modules\Common\Enum\LibraryPostStatus;
+use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\PostCreatedEvent;
 use Modules\Common\Traits\Screenable;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
@@ -42,7 +42,7 @@ class ProcessPostService
             PostCreatedEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                LibraryPostStatus::PUBLISHED
+                RunnerStatus::PUBLISHED
             );
 
             return;
@@ -57,7 +57,7 @@ class ProcessPostService
             PostCreatedEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                LibraryPostStatus::UNUSABLE
+                RunnerStatus::UNUSABLE
             );
 
             return;
@@ -91,7 +91,7 @@ class ProcessPostService
             PostCreatedEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                LibraryPostStatus::PUBLISHED
+                RunnerStatus::PUBLISHED
             );
 
             // TODO: create a listener in the Host code for PostCreatedEvent where we can add a random number of likes.
@@ -108,7 +108,7 @@ class ProcessPostService
             PostCreatedEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                LibraryPostStatus::UNUSABLE
+                RunnerStatus::UNUSABLE
             );
 
             throw $e;

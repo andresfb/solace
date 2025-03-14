@@ -16,8 +16,8 @@
         {{-- TODO: add the Encoders info --}}
     ]
 
-    $stgDeployWebPath = env('DEPLOY_LOCATION_WEB')
-    $stgDeployWrkPath = env('DEPLOY_LOCATION_WORKERS')
+    $stgDeployWebPath = env('STG_DEPLOY_LOCATION_WEB')
+    $stgDeployWrkPath = env('STG_DEPLOY_LOCATION_WORKERS')
 @endsetup
 
 @servers([

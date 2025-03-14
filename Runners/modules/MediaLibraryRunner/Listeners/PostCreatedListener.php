@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Listeners;
 
-use DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Common\Events\PostCreatedEvent;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
@@ -18,7 +17,7 @@ class PostCreatedListener implements ShouldQueue
     {
         LibraryPost::where('id', $event->libraryPostId)
             ->update([
-                'status' => DB::raw("status + {$event->status->value}"),
+                'runner_status' => $event->runnerStatus,
             ]);
     }
 

@@ -7,13 +7,13 @@ namespace Modules\MediaLibraryRunner\Services;
 use Cloudstudio\Ollama\Facades\Ollama;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
-use Modules\Common\Enum\LibraryPostStatus;
+use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\PostCreatedEvent;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
+use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -23,6 +23,17 @@ class OllamaService
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
+
+    private array $failureResponses;
+
+    public function __construct()
+    {
+        $this->failureResponses = [
+            'i cannot create',
+            'promotes nudity',
+            'is there anything else i can help you with',
+        ];
+    }
 
     public function execute(LibraryPost $libraryPost): void
     {
@@ -34,36 +45,46 @@ class OllamaService
                 PostCreatedEvent::dispatch(
                     $this->MEDIA_LIBRARY,
                     $libraryPost->id,
-                    LibraryPostStatus::UNUSABLE
+                    RunnerStatus::UNUSABLE
                 );
             }
 
+            /** @var MediaItem $mediaInfo */
             $mediaInfo = $mediaFiles->first();
-            if (!file_exists($mediaInfo->filePath)) {
+            if (! file_exists($mediaInfo->filePath)) {
                 PostCreatedEvent::dispatch(
                     $this->MEDIA_LIBRARY,
                     $libraryPost->id,
-                    LibraryPostStatus::UNUSABLE
+                    RunnerStatus::UNUSABLE
                 );
             }
 
-            $imagePath = sprintf(
-                config("$this->POST_VIA_AI.ai_readable_file_path"),
-                $mediaInfo->filePath,
-            );
+            dump($mediaInfo->filePath, round($mediaInfo->fileSize / 1024, 2));
 
+            $this->line('Getting the Post title');
             $title = Ollama::model(config("$this->POST_VIA_AI.ai_vision_model"))
+                ->keepAlive('8m')
+                ->image($mediaInfo->filePath)
                 ->prompt(config("$this->POST_VIA_AI.ai_post_prompt_title"))
-                ->image($imagePath)
                 ->ask();
 
+            dump($title['response']);
+
+            $this->line('Getting the Post content');
             $content = Ollama::model(config("$this->POST_VIA_AI.ai_vision_model"))
+                ->keepAlive('8m')
+                ->image($mediaInfo->filePath)
                 ->prompt(config("$this->POST_VIA_AI.ai_post_prompt_content"))
-                ->image($imagePath)
                 ->ask();
+
+            dump($content['response']);
+
+            $this->line('Processing Post');
 
             $this->processPost($libraryPost, $title, $content);
         } catch (GuzzleException|Exception $e) {
+            $this->error($e->getMessage());
+
             Log::error(
                 sprintf(
                     "%s %s %s %s",
@@ -76,50 +97,60 @@ class OllamaService
         }
     }
 
-    private function processPost(LibraryPost $libraryPost, Response|array $title, Response|array $content): void
+    private function processPost(LibraryPost $libraryPost, array $titleResponse, array $contentResponse): void
     {
-        if ($title instanceof Response) {
-            $title = $title->getBody()->getContents();
-        } else {
-            $title = $title[0];
+        if (blank($titleResponse['response'])) {
+            // TODO: create a custom Exception and dispatch and event to update the original to runner_status = REPROCESS
+            throw new \RuntimeException('We did not receive a Title from the AI: '.print_r($titleResponse, true));
         }
 
-        if ($content instanceof Response) {
-            $content = $content->getBody()->getContents();
-        } else {
-            $content = $content[0];
+        $title = $titleResponse['response'];
+
+        if (blank($contentResponse['response'])) {
+            throw new \RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
         }
 
-        [$hashtags, $content] = $this->extractHashtags($content);
+        $content = str($contentResponse['response']);
+        if (! $content->contains('#') || $content->trim()->contains($this->failureResponses)) {
+            throw new \RuntimeException('The AI did not provide usable content');
+        }
+
+        [$hashtags, $content] = $this->extractHashtags($content->toString());
+
+        dump($hashtags, $content);
 
         $postInfo = $libraryPost->getPostableInfo();
+        $postInfo['fromAi'] = true;
         $postInfo['title'] = $title;
         $postInfo['content'] = $content;
         $postInfo['source'] .= strtoupper(':AI_MODEL='.config("$this->POST_VIA_AI.ai_vision_model"));
-        $postInfo['hashtags']->push($hashtags);
+        $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
 
-
+        dd($postInfo);
     }
 
-
-    private function extractHashtags($string): array
+    private function extractHashtags(string $text): array
     {
-        // Regular expression to match hashtags
-        $pattern = '/#\w+/';
+        // Use regex to find hashtags
+        preg_match_all('/#\w+/', $text, $matches);
 
-        // Extract hashtags
-        preg_match_all($pattern, $string, $matches);
+        // Extract hashtags into an array
         $hashtags = $matches[0];
 
-        // Remove hashtags from the original string
-        $stringWithoutHashtags = preg_replace($pattern, '', $string);
+        // Remove hashtags from the original text
+        $textWithoutHashtags = preg_replace('/#\w+/', '', $text);
 
         // Trim any extra whitespace
-        $stringWithoutHashtags = trim($stringWithoutHashtags);
+        $textWithoutHashtags = trim($textWithoutHashtags);
+
+        // Remove the '#' symbol from each hashtag
+        $cleanedHashtags = array_map(static function($hashtag) {
+            return ltrim($hashtag, '#');
+        }, $hashtags);
 
         return [
-            'hashtags' => $hashtags,
-            'content' => $stringWithoutHashtags
+            $cleanedHashtags,
+            $textWithoutHashtags,
         ];
     }
 }

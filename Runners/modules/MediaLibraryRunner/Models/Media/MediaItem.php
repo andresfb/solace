@@ -14,7 +14,7 @@ class MediaItem implements Arrayable
         public string $fileName,
         public string $mimeType,
         public string $collectionName,
-        public string $fileSize,
+        public int $fileSize,
         public string $filePath,
     ) {}
 
