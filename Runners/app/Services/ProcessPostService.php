@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
-use Modules\Common\Events\PostCreatedEvent;
+use Modules\Common\Events\ChangeStatusEvent;
 use Modules\Common\Traits\Screenable;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -39,7 +39,7 @@ class ProcessPostService
             $this->line($message);
             Log::notice($message);
 
-            PostCreatedEvent::dispatch(
+            ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
                 RunnerStatus::PUBLISHED
@@ -54,7 +54,7 @@ class ProcessPostService
             $this->line($message);
             Log::notice($message);
 
-            PostCreatedEvent::dispatch(
+            ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
                 RunnerStatus::UNUSABLE
@@ -66,13 +66,17 @@ class ProcessPostService
         DB::beginTransaction();
 
         try {
-            $this->line('Saving Post '.$postItem->title);
+            $this->line('Saving Post '.$postItem->libraryPostId);
+
+            $content = str("**$postItem->title**")
+                ->append("\n\n")
+                ->append($postItem->content)
+                ->toString();
 
             $post = Post::create([
                 'hash' => $postItem->getHash(),
                 'user_id' => $this->service->getUser()->id,
-                'title' => $postItem->title,
-                'content' => $postItem->content,
+                'content' => $content,
                 'source' => $postItem->source,
                 'status' => PostStatus::CREATED,
                 'privacy' => PostPrivacy::PUBLIC,
@@ -88,7 +92,7 @@ class ProcessPostService
 
             DB::commit();
 
-            PostCreatedEvent::dispatch(
+            ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
                 RunnerStatus::PUBLISHED
@@ -105,7 +109,7 @@ class ProcessPostService
             $this->error($message);
             Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->libraryPostId: $message");
 
-            PostCreatedEvent::dispatch(
+            ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
                 RunnerStatus::UNUSABLE

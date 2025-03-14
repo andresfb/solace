@@ -12,11 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')
                 ->cascadeOnDelete();
-            $table->string('hash');
+            $table->string('slug', 11)->unique();
+            $table->string('hash')->unique();
             $table->string('status', 1)->default('C');
             $table->string('privacy', 1)->default('V');
-            $table->string('slug', 50);
-            $table->string('title');
             $table->text('content');
             $table->string('source');
             $table->unsignedInteger('likes_count')->default(0);
@@ -24,7 +23,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->unique(['user_id', 'hash']);
+            $table->unique(['user_id', 'slug']);
         });
     }
 

@@ -7,7 +7,7 @@ namespace Modules\Common\Events;
 use Illuminate\Foundation\Events\Dispatchable;
 use Modules\Common\Enum\RunnerStatus;
 
-class PostCreatedEvent
+class ChangeStatusEvent
 {
     use Dispatchable;
 

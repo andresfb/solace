@@ -7,7 +7,7 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
-use Modules\MediaLibraryRunner\Services\OllamaService;
+use Modules\MediaLibraryRunner\Services\OllamaVisionService;
 
 class TestAppCommand extends Command
 {
@@ -20,7 +20,7 @@ class TestAppCommand extends Command
         try {
             $this->info("\nStarting test\n");
 
-            $randomOffset = random_int(0, max(0, 50000 - 10));
+            $randomOffset = random_int(0, max(0, 200000 - 10));
 
             $posts = LibraryPost::query()
                 ->imagePosts()
@@ -30,7 +30,7 @@ class TestAppCommand extends Command
 
             $post = $posts->random();
 
-            $srv = new OllamaService();
+            $srv = new OllamaVisionService();
             $srv->setToScreen(true)
                 ->execute($post);
 

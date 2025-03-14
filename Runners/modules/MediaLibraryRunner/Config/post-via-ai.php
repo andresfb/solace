@@ -6,13 +6,11 @@ return [
 
     'max_empty_runs' => (int) env('MIGRATE_VIA_AI_MAX_EMPTY_RUN', 10),
 
-    'ai_vision_model' => env('MIGRATE_VIA_AI_VISION_MODEL', 'llama3.2-vision'),
+    'queue_connection' => env('MIGRATE_VIA_AI_REDIS_CNN', 'via-ai-cnn'),
 
-    'ai_post_prompt_title' => env(
-        'MIGRATE_VIA_AI_POST_PROMPT_TITLE',
-        'Can you provide a title for a social media post from this picture.'
-        .' Please respond with a single title; do not add any extra options or comments'
-    ),
+    'queues' => env('MIGRATE_VIA_AI_QUEUES', 'skynet'),
+
+    'ai_vision_model' => env('MIGRATE_VIA_AI_VISION_MODEL', 'llama3.2-vision'),
 
     'ai_post_prompt_content' => env(
         'MIGRATE_VIA_AI_POST_PROMPT_CONTENT',

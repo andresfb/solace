@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Services;
 
-use Modules\Common\Dtos\PostItem;
 use Modules\Common\Exceptions\EmptyRunException;
 use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
-use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
+use Modules\MediaLibraryRunner\Jobs\OllamaVisionJob;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -22,7 +20,7 @@ class MigrateViaAiService implements TaskServiceInterface
     use Screenable;
     use SendToQueue;
 
-    public function __construct(private readonly OllamaService $ollamaService) {}
+    public function __construct(private readonly OllamaVisionService $ollamaService) {}
 
     /**
      * @throws EmptyRunException
@@ -51,12 +49,12 @@ class MigrateViaAiService implements TaskServiceInterface
 
         $libraryPosts->each(function (LibraryPost $libraryPost): void {
             if ($this->queueable) {
-//                $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
-//
-//                CreatePostItemJob::dispatch($libraryPost)
-//                    ->onConnection($this->getConnection($this->MODULE_NAME))
-//                    ->onQueue($this->getQueue($this->MODULE_NAME))
-//                    ->delay(now()->addSecond());
+                $this->line('Queueing OllamaVisionJob for LibraryPost: '.$libraryPost->id);
+
+                OllamaVisionJob::dispatch($libraryPost)
+                    ->onConnection($this->getConnection($this->POST_VIA_AI))
+                    ->onQueue($this->getQueue($this->POST_VIA_AI))
+                    ->delay(now()->addMinute());
 
                 return;
             }

@@ -8,16 +8,21 @@ use Cloudstudio\Ollama\Facades\Ollama;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
-use Modules\Common\Events\PostCreatedEvent;
+use Modules\Common\Events\ChangeStatusEvent;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
+use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
+use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
+use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class OllamaService
+class OllamaVisionService
 {
     use ModuleConstants;
     use QueueSelectable;
@@ -42,49 +47,44 @@ class OllamaService
 
             $mediaFiles = $libraryPost->getMediaFiles();
             if ($mediaFiles->isEmpty()) {
-                PostCreatedEvent::dispatch(
+                ChangeStatusEvent::dispatch(
                     $this->MEDIA_LIBRARY,
                     $libraryPost->id,
                     RunnerStatus::UNUSABLE
                 );
             }
 
-            /** @var MediaItem $mediaInfo */
             $mediaInfo = $mediaFiles->first();
             if (! file_exists($mediaInfo->filePath)) {
-                PostCreatedEvent::dispatch(
+                ChangeStatusEvent::dispatch(
                     $this->MEDIA_LIBRARY,
                     $libraryPost->id,
                     RunnerStatus::UNUSABLE
                 );
             }
 
-            dump($mediaInfo->filePath, round($mediaInfo->fileSize / 1024, 2));
-
-            $this->line('Getting the Post title');
-            $title = Ollama::model(config("$this->POST_VIA_AI.ai_vision_model"))
-                ->keepAlive('8m')
-                ->image($mediaInfo->filePath)
-                ->prompt(config("$this->POST_VIA_AI.ai_post_prompt_title"))
-                ->ask();
-
-            dump($title['response']);
-
             $this->line('Getting the Post content');
+
             $content = Ollama::model(config("$this->POST_VIA_AI.ai_vision_model"))
                 ->keepAlive('8m')
                 ->image($mediaInfo->filePath)
                 ->prompt(config("$this->POST_VIA_AI.ai_post_prompt_content"))
                 ->ask();
 
-            dump($content['response']);
-
             $this->line('Processing Post');
 
-            $this->processPost($libraryPost, $title, $content);
+            $this->processPost($libraryPost, $content);
+        } catch (NoAiContentException $e) {
+            $this->error($e->getMessage());
+            Log::error($e->getMessage());
+
+            ChangeStatusEvent::dispatch(
+                $this->MEDIA_LIBRARY,
+                $libraryPost->id,
+                RunnerStatus::REPROCESS
+            );
         } catch (GuzzleException|Exception $e) {
             $this->error($e->getMessage());
-
             Log::error(
                 sprintf(
                     "%s %s %s %s",
@@ -97,36 +97,51 @@ class OllamaService
         }
     }
 
-    private function processPost(LibraryPost $libraryPost, array $titleResponse, array $contentResponse): void
+    /**
+     * @throws NoAiContentException
+     */
+    private function processPost(LibraryPost $libraryPost, array $contentResponse): void
     {
-        if (blank($titleResponse['response'])) {
-            // TODO: create a custom Exception and dispatch and event to update the original to runner_status = REPROCESS
-            throw new \RuntimeException('We did not receive a Title from the AI: '.print_r($titleResponse, true));
-        }
-
-        $title = $titleResponse['response'];
-
         if (blank($contentResponse['response'])) {
-            throw new \RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
+            throw new NoAiContentException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
         }
 
         $content = str($contentResponse['response']);
         if (! $content->contains('#') || $content->trim()->contains($this->failureResponses)) {
-            throw new \RuntimeException('The AI did not provide usable content');
+            throw new NoAiContentException('The AI did not provide usable content');
         }
 
         [$hashtags, $content] = $this->extractHashtags($content->toString());
 
-        dump($hashtags, $content);
-
         $postInfo = $libraryPost->getPostableInfo();
         $postInfo['fromAi'] = true;
-        $postInfo['title'] = $title;
         $postInfo['content'] = $content;
         $postInfo['source'] .= strtoupper(':AI_MODEL='.config("$this->POST_VIA_AI.ai_vision_model"));
         $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
 
-        dd($postInfo);
+        $this->dispatchEvents($postInfo);
+    }
+
+    private function dispatchEvents(array $postInfo): void
+    {
+        $message = "Dispatching %s event for LibraryPost: {$postInfo['libraryPostId']}";
+
+        if ($this->queueable) {
+            $this->line(sprintf($message, 'PostSelectedQueueableEvent'));
+
+            PostSelectedQueueableEvent::dispatch(
+                PostItem::from($postInfo)
+            );
+
+            return;
+        }
+
+        $this->line(sprintf($message, 'PostSelectedEvent'));
+
+        PostSelectedEvent::dispatch(
+            PostItem::from($postInfo),
+            $this->toScreen
+        );
     }
 
     private function extractHashtags(string $text): array

@@ -6,7 +6,7 @@ namespace Modules\MediaLibraryRunner\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Modules\Common\Events\PostCreatedEvent;
+use Modules\Common\Events\ChangeStatusEvent;
 use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
 use Modules\MediaLibraryRunner\Jobs\MigrateFulfilledPostsJob;
 use Modules\MediaLibraryRunner\Jobs\MigrateUntaggedVideosJob;
@@ -35,7 +35,7 @@ class MediaLibraryRunnerServiceProvider extends ServiceProvider
         $this->app->bind(MigrateUntaggedVideosJob::class);
 
         Event::listen(
-            PostCreatedEvent::class,
+            ChangeStatusEvent::class,
             [PostCreatedListener::class, 'handle']
         );
     }

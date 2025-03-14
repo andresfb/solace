@@ -52,6 +52,7 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
             if ($this->queueable) {
                 $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
 
+                // We use a job here as the process will load the media files
                 CreatePostItemJob::dispatch($libraryPost)
                     ->onConnection($this->getConnection($this->MODULE_NAME))
                     ->onQueue($this->getQueue($this->MODULE_NAME))
