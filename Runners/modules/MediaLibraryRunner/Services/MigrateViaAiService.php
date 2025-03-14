@@ -54,7 +54,7 @@ class MigrateViaAiService implements TaskServiceInterface
                 OllamaVisionJob::dispatch($libraryPost)
                     ->onConnection($this->getConnection($this->POST_VIA_AI))
                     ->onQueue($this->getQueue($this->POST_VIA_AI))
-                    ->delay(now()->addMinute());
+                    ->delay(now()->addMinutes(5));
 
                 return;
             }

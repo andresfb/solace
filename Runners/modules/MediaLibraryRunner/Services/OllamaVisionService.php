@@ -8,7 +8,6 @@ use Cloudstudio\Ollama\Facades\Ollama;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
@@ -18,7 +17,6 @@ use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
 use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
-use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 

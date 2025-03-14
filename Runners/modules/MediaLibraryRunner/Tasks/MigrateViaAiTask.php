@@ -6,6 +6,7 @@ namespace Modules\MediaLibraryRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
+use Modules\MediaLibraryRunner\Jobs\MigrateViaAiJob;
 use Modules\MediaLibraryRunner\Services\MigrateViaAiService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -32,6 +33,10 @@ class MigrateViaAiTask extends BaseTask
 
     protected function dispatchEvent(): void
     {
-        // TODO: Implement dispatchEvent() method.
+        $this->line('Sending request to MigrateViaAiJob');
+
+        MigrateViaAiJob::dispatch($this->queueable)
+            ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
+            ->delay(now()->addSecond());
     }
 }

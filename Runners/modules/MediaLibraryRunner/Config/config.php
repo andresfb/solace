@@ -6,9 +6,6 @@ return [
 
     'media_path' => env('MEDIA_RUNNER_STORAGE_PATH'),
 
-    // TODO: this one will be used for the more complex tasks
-    'posts_priority' => env('MEDIA_RUNNER_POSTS_PRIORITY', 80),
-
     'queue_connection' => env('MEDIA_RUNNER_REDIS_CNN', 'media-runner-cnn'),
 
     'queues' => env('MEDIA_RUNNER_QUEUES', 'fedex,usps,dhl,ups'),

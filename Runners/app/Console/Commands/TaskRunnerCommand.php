@@ -13,7 +13,7 @@ use Modules\Common\Enum\TaskRunnerSchedule;
 class TaskRunnerCommand extends Command
 {
     protected $signature = 'task:runner
-                            {frequency : h=Every Hour, eth=Every Two Hours, ttd=Three Times a Day, od=Once Daily, ow=Once a Weekly, om=Once a Monthly}
+                            {frequency : lf=Every Half Hour, h=Every Hour, odd=Every Odd Hour, eth=Every Two Hours, ttd=Three Times a Day, od=Once Daily, ow=Once a Weekly, om=Once a Monthly, cm=Custom Schedule}
                             {screen? : Send output to the screen}';
 
     protected $description = 'Command to run all registered tasks';

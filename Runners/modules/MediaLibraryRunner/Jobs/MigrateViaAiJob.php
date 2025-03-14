@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Modules\MediaLibraryRunner\Jobs;
 
 use Exception;
@@ -10,19 +8,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\MediaLibraryRunner\Services\MigrateUntaggedVideosService;
+use Modules\MediaLibraryRunner\Services\MigrateViaAiService;
 
-class MigrateUntaggedVideosJob implements ShouldQueue
+class MigrateViaAiJob implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * @throws Exception
      */
-    public function handle(MigrateUntaggedVideosService $service): void
+    public function handle(MigrateViaAiService $service): void
     {
         $service->execute();
     }
