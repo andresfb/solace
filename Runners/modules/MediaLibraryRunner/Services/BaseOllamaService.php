@@ -57,9 +57,13 @@ abstract class BaseOllamaService
 
             $this->line('Asking the AI for Post content');
 
-            //Ollama::agent('You are a snarky friend with one-line responses')
             $ollama = OllamaFacade::model(config("{$this->getTaskName()}.ai_model"))
-                ->keepAlive('8m')
+                ->agent(config("{$this->getTaskName()}.ai_agent"))
+                ->options([
+                    'temperature' => 0.8,
+                    'top_p' => 0.8,
+                ])
+                ->keepAlive('5m')
                 ->prompt(config("{$this->getTaskName()}.ai_post_prompt_content"));
 
             $content = $this->getExtraOllamaOptions($ollama)->ask();

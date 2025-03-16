@@ -12,9 +12,11 @@ return [
 
     'ai_model' => env('MIGRATE_CHAT_AI_MODEL', 'llama3.2-vision'),
 
+    'ai_agent' => env('MIGRATE_CHAT_AI_AGENT', 'You are a savvy Social Media with a knack for creative content text'),
+
     'ai_post_prompt_content' => env(
         'MIGRATE_CHAT_AI_POST_PROMPT_CONTENT',
-        "Adopt the persona of a savvy Social Media user and provide the content for one Social Media post with at least two paragraphs of text and 2 to 6 hashtags for an image. It would need to be random, as I don't know anything about the image. Please don't include any comments as part of the persona. Respond with the content only, and do not add any extra options or repeat the hashtags in the text."
+        "Please provide the content for one Social Media post with at least two paragraphs of text and 2 to 6 hashtags for an image. It would need to be random, as I don't know anything about the image. Please don't include any comments as part of the persona. Respond with the content only, and do not add any extra options or repeat the hashtags in the text."
     ),
 
 ];
