@@ -12,6 +12,8 @@ return [
 
     'ai_model' => env('MIGRATE_VISION_AI_VISION_MODEL', 'llama3.2-vision'),
 
+    'ai_api_url' => env('MIGRATE_VISION_AI_API_URL', 'http://127.0.0.1:11434'),
+
     'ai_agent' => env('MIGRATE_CHAT_AI_AGENT', 'You are a savvy Social Media with a knack for creative content text'),
 
     'ai_post_prompt_content' => env(

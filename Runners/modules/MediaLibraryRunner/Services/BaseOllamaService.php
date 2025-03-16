@@ -57,10 +57,12 @@ abstract class BaseOllamaService
 
             $this->line('Asking the AI for Post content');
 
-            $ollama = OllamaFacade::model(config("{$this->getTaskName()}.ai_model"))
+            // TODO: test the new URL setter
+            $ollama = OllamaFacade::url(config("{$this->getTaskName()}.ai_api_url"))
+                ->model(config("{$this->getTaskName()}.ai_model"))
                 ->agent(config("{$this->getTaskName()}.ai_agent"))
                 ->options([
-                    'temperature' => 0.8,
+                    'temperature' => 1,
                     'top_p' => 0.8,
                 ])
                 ->keepAlive('5m')

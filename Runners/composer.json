@@ -12,10 +12,16 @@
         "framework"
     ],
     "license": "CC BY-NC-SA 4.0",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/andresfb/ollama-laravel.git"
+        }
+    ],
     "require": {
         "php": "^8.3.0",
         "ext-imagick": "*",
-        "cloudstudio/ollama-laravel": "^1.1",
+        "cloudstudio/ollama-laravel": "dev-main",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.31",
         "laravel/tinker": "^2.10.1",
