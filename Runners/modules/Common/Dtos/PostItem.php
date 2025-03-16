@@ -15,6 +15,7 @@ class PostItem extends Data
         public int $libraryPostId,
         public string $title,
         public string $content,
+        public string $generator,
         public string $source,
         public string $origin,
         public bool $fromAi = false,

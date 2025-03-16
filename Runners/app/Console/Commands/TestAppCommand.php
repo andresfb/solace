@@ -7,7 +7,8 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
-use Modules\MediaLibraryRunner\Services\OllamaVisionService;
+use Modules\MediaLibraryRunner\Services\OllamaChatService;
+use Throwable;
 
 class TestAppCommand extends Command
 {
@@ -20,24 +21,19 @@ class TestAppCommand extends Command
         try {
             $this->info("\nStarting test\n");
 
-            $randomOffset = random_int(0, max(0, 200000 - 10));
+            $libraryPost = LibraryPost::query()
+                ->bandedReprocess()
+                ->inRandomOrder()
+                ->firstOrFail();
 
-            $posts = LibraryPost::query()
-                ->imagePosts()
-                ->skip($randomOffset)
-                ->take(10)
-                ->get();
-
-            $post = $posts->random();
-
-            $srv = new OllamaVisionService();
+            $srv = app(OllamaChatService::class);
             $srv->setToScreen(true)
-                ->execute($post);
+                ->execute($libraryPost);
 
             $this->info("\nDone at: ".now()."\n");
 
             return 0;
-        } catch (Exception $e) {
+        } catch (Exception|Throwable $e) {
             $this->info('');
             $this->error('Error Testing');
             $this->error($e->getMessage());

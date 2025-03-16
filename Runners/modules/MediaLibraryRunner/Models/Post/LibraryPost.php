@@ -60,16 +60,21 @@ class LibraryPost extends BaseMediaRunnerModel
         return $query->whereNotIn('source', config('media_runner.banded_tags'));
     }
 
-    public function scopeImagePosts($query): Builder
+    public function scopeUntaggedImages($query): Builder
     {
-        return $query->where('type', 'image')
+        return $query->where('status', LibraryPostStatus::CREATED)
             ->where('runner_status', RunnerStatus::STASIS)
+            ->where('type', 'image');
+    }
+
+    public function scopeBandedReprocess(Builder $query): Builder
+    {
+        return $query->where('status', LibraryPostStatus::CREATED)
             ->where(function ($query) {
-                $query->where('status', LibraryPostStatus::CREATED)
-                    ->orWhere(function ($query) {
-                        $query->whereIn('source', config('media_runner.banded_tags'))
-                            ->where('status', '<', LibraryPostStatus::DISABLED);
-                    });
+                $query->where(function ($query) {
+                    $query->where('type', 'video')
+                        ->whereIn('source', config('media_runner.banded_tags'));
+                })->orWhere('runner_status', RunnerStatus::REPROCESS);
             });
     }
 
@@ -79,7 +84,8 @@ class LibraryPost extends BaseMediaRunnerModel
             'libraryPostId' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'source' => strtoupper("POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"),
+            'generator' => strtoupper("POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"),
+            'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,
             'fromAi' => false,
             'mediaFiles' => $this->getMediaFiles(),

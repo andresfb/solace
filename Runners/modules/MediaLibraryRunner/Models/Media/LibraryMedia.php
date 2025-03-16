@@ -36,14 +36,21 @@ class LibraryMedia extends BaseMediaRunnerModel
             ->append($this->file_name)
             ->toString();
 
-        return new MediaItem(
-            originalId: $this->id,
-            originalName: $this->name,
-            fileName: $this->file_name,
-            mimeType: $this->mime_type,
-            collectionName: $this->collection_name,
-            fileSize: $this->size,
-            filePath: $filePath,
-        );
+        $data = $this->toArray();
+        $data['filePath'] = $filePath;
+
+        return MediaItem::from($data);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'originalId' => $this->id,
+            'originalName' => $this->name,
+            'fileName' => $this->file_name,
+            'mimeType' => $this->mime_type,
+            'collectionName' => $this->collection_name,
+            'fileSize' => $this->size,
+        ];
     }
 }

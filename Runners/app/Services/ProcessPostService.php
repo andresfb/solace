@@ -25,6 +25,8 @@ class ProcessPostService
 {
     use Screenable;
 
+    private array $extraTags = [];
+
     public function __construct(private readonly RandomUserSelectorService $service) {}
 
     /**
@@ -68,19 +70,16 @@ class ProcessPostService
         try {
             $this->line('Saving Post '.$postItem->libraryPostId);
 
-            $content = str("**$postItem->title**")
-                ->append("\n\n")
-                ->append($postItem->content)
-                ->toString();
-
-            $post = Post::create([
+            $data = [
                 'hash' => $postItem->getHash(),
                 'user_id' => $this->service->getUser()->id,
-                'content' => $content,
-                'source' => $postItem->source,
+                'content' => $this->getContent($postItem),
+                'generator' => $postItem->generator,
                 'status' => PostStatus::CREATED,
                 'privacy' => PostPrivacy::PUBLIC,
-            ]);
+            ];
+
+            $post = Post::create($data);
 
             if ($post === null) {
                 throw new \RuntimeException("Failed to create post from Library Post: $postItem->libraryPostId");
@@ -153,6 +152,9 @@ class ProcessPostService
 
     private function saveHashtags(Post $post, Collection $hashtags): void
     {
+        $hashtags = $hashtags->merge($this->extraTags)
+            ->unique();
+
         $this->line('Saving Hashtags. '.$hashtags->count());
 
         $post->hashtags()->sync(
@@ -160,5 +162,82 @@ class ProcessPostService
         );
 
         $this->line('Hashtags Saved.');
+    }
+
+    private function getContent(PostItem $postItem): string
+    {
+        if ($postItem->source === 'quote') {
+            $this->extraTags[] = $postItem->title;
+
+            return $postItem->content;
+        }
+
+        if ($postItem->source === 'joke') {
+            $this->extractTag($postItem->content);
+        }
+
+        $title = str($postItem->title)
+            ->trim()
+            ->replace('...', '');
+
+        $content = str($postItem->content)
+            ->replace('**Category:**', '')
+            ->replace('*Category:*', '')
+            ->trim();
+
+        foreach ($this->extraTags as $extraTag) {
+            $content = $content->replace("*$extraTag*", '')
+                ->trim();
+        }
+
+        if ($content->startsWith($title)) {
+            return $content->trim()
+                ->toString();
+        }
+
+        return $content->prepend(
+            $title->title()
+                ->prepend("**")
+                ->append("**")
+                ->append("\n\n")
+        )
+            ->toString();
+    }
+
+    private function extractTag(string $text): void
+    {
+        // Use regex to find words surrounded by asterisks or the word "NSFW"
+        preg_match_all('/\*{1,2}([^*]+)\*{1,2}|NSFW/i', $text, $matches);
+
+        // Flatten the matches array and filter out empty values
+        $results = array_filter(array_map('trim', $matches[0]));
+
+        // Remove asterisks and colons from the results
+        $cleanedResults = array_map(static function($item) {
+            return trim($item, '*:');
+        }, $results);
+
+        $cleanedResults = array_values(
+            array_unique(
+                array_map('strtolower', $cleanedResults)
+            )
+        );
+
+        foreach ($cleanedResults as $index => $cleanedResult) {
+            if ($cleanedResult !== 'category') {
+                continue;
+            }
+
+            unset($cleanedResults[$index]);
+            break;
+        }
+
+        $cleanedResults = array_map(static function ($item) {
+                return str($item)->title()
+                    ->replace(' ', '')
+                    ->toString();
+        }, $cleanedResults);
+
+        $this->extraTags = array_unique(array_merge($this->extraTags, $cleanedResults));
     }
 }

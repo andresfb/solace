@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Models\Media;
 
-use Illuminate\Contracts\Support\Arrayable;
+use Spatie\LaravelData\Data;
 
-class MediaItem implements Arrayable
+class MediaItem extends Data
 {
     public function __construct(
         public int $originalId,
@@ -18,16 +18,16 @@ class MediaItem implements Arrayable
         public string $filePath,
     ) {}
 
-    public function toArray(): array
+    public static function loadEmpty(): static
     {
-        return [
-            'original_id' => $this->originalId,
-            'original_name' => $this->originalName,
-            'file_name' => $this->fileName,
-            'mime_type' => $this->mimeType,
-            'size' => $this->fileSize,
-            'file_path' => $this->filePath,
-            'collection_name' => $this->collectionName,
-        ];
+        return self::from([
+            'originalId' => 0,
+            'originalName' => '',
+            'fileName' => '',
+            'mimeType' => '',
+            'collectionName' => '',
+            'fileSize' => 0,
+            'filePath' => '',
+        ]);
     }
 }

@@ -14,7 +14,8 @@ enum TaskRunnerSchedule: string
     case ONCE_DAILY = 'od';
     case ONCE_WEEKLY = 'ow';
     case ONCE_MONTHLY = 'om';
-    case CUSTOM = 'cm';
+    case CUSTOM_WEEKDAYS = 'cmw';
+    case CUSTOM_WEEKENDS = 'cmd';
 
     public static function fromString(string $frequency): self
     {
@@ -26,7 +27,8 @@ enum TaskRunnerSchedule: string
             'od' => self::ONCE_DAILY,
             'ow' => self::ONCE_WEEKLY,
             'om' => self::ONCE_MONTHLY,
-            'cm' => self::CUSTOM,
+            'cmw' => self::CUSTOM_WEEKDAYS,
+            'cmd' => self::CUSTOM_WEEKENDS,
             default => self::HALF_HOUR,
         };
     }

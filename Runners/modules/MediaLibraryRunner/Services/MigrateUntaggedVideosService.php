@@ -13,7 +13,6 @@ class MigrateUntaggedVideosService extends BaseSimpleMigrateService
     {
         return LibraryPost::query()
             ->untaggedVideos()
-            ->withoutBanded()
             ->oldest()
             ->limit(
                 config("$this->UNTAGGED_VIDEOS.posts_limit")

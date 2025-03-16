@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\MediaLibraryRunner\Services\MigrateViaAiService;
+use Modules\MediaLibraryRunner\Services\MigrateViaVisionAiService;
 
 class MigrateViaAiJob implements ShouldQueue
 {
@@ -17,7 +17,7 @@ class MigrateViaAiJob implements ShouldQueue
     /**
      * @throws Exception
      */
-    public function handle(MigrateViaAiService $service): void
+    public function handle(MigrateViaVisionAiService $service): void
     {
         $service->execute();
     }

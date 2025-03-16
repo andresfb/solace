@@ -14,5 +14,7 @@ trait ModuleConstants
 
     public string $UNTAGGED_VIDEOS = 'untagged_videos';
 
-    public string $POST_VIA_AI = 'post-via_ai';
+    public string $POST_VISION_AI = 'post-vision-ai';
+
+    public string $POST_CHAT_AI = 'post-chat-ai';
 }

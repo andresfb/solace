@@ -9,18 +9,18 @@ use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\MediaLibraryRunner\Jobs\OllamaVisionJob;
+use Modules\MediaLibraryRunner\Jobs\OllamaChatJob;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class MigrateViaAiService implements TaskServiceInterface
+class MigrateViaChatAiService implements TaskServiceInterface
 {
     use ModuleConstants;
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
 
-    public function __construct(private readonly OllamaVisionService $ollamaService) {}
+    public function __construct(private readonly OllamaChatService $ollamaService) {}
 
     /**
      * @throws EmptyRunException
@@ -28,10 +28,10 @@ class MigrateViaAiService implements TaskServiceInterface
     public function execute(): void
     {
         $libraryPosts = LibraryPost::query()
-            ->imagePosts()
+            ->bandedReprocess()
             ->oldest()
             ->limit(
-                config("$this->POST_VIA_AI.posts_limit")
+                config("$this->POST_CHAT_AI.posts_limit")
             )
             ->get();
 
@@ -42,18 +42,18 @@ class MigrateViaAiService implements TaskServiceInterface
 
             throw new EmptyRunException(
                 $this->MODULE_NAME,
-                $this->POST_VIA_AI,
+                $this->POST_CHAT_AI,
                 $message
             );
         }
 
         $libraryPosts->each(function (LibraryPost $libraryPost): void {
             if ($this->queueable) {
-                $this->line('Queueing OllamaVisionJob for LibraryPost: '.$libraryPost->id);
+                $this->line('Queueing OllamaChatJob for LibraryPost: '.$libraryPost->id);
 
-                OllamaVisionJob::dispatch($libraryPost)
-                    ->onConnection($this->getConnection($this->POST_VIA_AI))
-                    ->onQueue($this->getQueue($this->POST_VIA_AI))
+                OllamaChatJob::dispatch($libraryPost)
+                    ->onConnection($this->getConnection($this->POST_CHAT_AI))
+                    ->onQueue($this->getQueue($this->POST_CHAT_AI))
                     ->delay(now()->addMinutes(5));
 
                 return;

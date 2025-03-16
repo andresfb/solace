@@ -12,12 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')
                 ->cascadeOnDelete();
-            $table->string('slug', 11)->unique();
+            $table->string('slug', 12)->unique();
             $table->string('hash')->unique();
             $table->string('status', 1)->default('C');
             $table->string('privacy', 1)->default('V');
             $table->text('content');
-            $table->string('source');
+            $table->string('generator');
             $table->unsignedInteger('likes_count')->default(0);
             $table->unsignedInteger('comments_count')->default(0);
             $table->softDeletes();
