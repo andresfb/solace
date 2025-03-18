@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Services;
 
-use Cloudstudio\Ollama\Ollama;
 use Exception;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\OllamaApi\Services\Ollama;
 
 class OllamaVisionService extends BaseOllamaService
 {

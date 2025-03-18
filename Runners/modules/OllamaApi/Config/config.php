@@ -1,7 +1,5 @@
 <?php
 
-// Config for Cloudstudio/Ollama
-
 return [
     'model' => env('OLLAMA_MODEL', 'llama2'),
     'url' => env('OLLAMA_URL', 'http://127.0.0.1:11434'),

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Services;
 
-use Cloudstudio\Ollama\Facades\Ollama as OllamaFacade;
-use Cloudstudio\Ollama\Ollama;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +19,8 @@ use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
+use Modules\OllamaApi\Facades\Ollama;
+use Modules\OllamaApi\Services\Ollama as OllamaClient;
 
 abstract class BaseOllamaService
 {
@@ -48,7 +48,7 @@ abstract class BaseOllamaService
 
     abstract protected function loadMediaInfo(LibraryPost $libraryPost): void;
 
-    abstract protected function getExtraOllamaOptions(Ollama $ollama): Ollama;
+    abstract protected function getExtraOllamaOptions(OllamaClient $ollama): OllamaClient;
 
     public function execute(LibraryPost $libraryPost): void
     {
@@ -57,8 +57,7 @@ abstract class BaseOllamaService
 
             $this->line('Asking the AI for Post content');
 
-            // TODO: test the new URL setter
-            $ollama = OllamaFacade::url(config("{$this->getTaskName()}.ai_api_url"))
+            $ollama = Ollama::url(config("{$this->getTaskName()}.ai_api_url"))
                 ->model(config("{$this->getTaskName()}.ai_model"))
                 ->agent(config("{$this->getTaskName()}.ai_agent"))
                 ->options([
@@ -122,8 +121,6 @@ abstract class BaseOllamaService
         $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
         $postInfo['content'] = $content;
         // TODO: add a field to save the original AI response into the model settings field
-
-//        dd($postInfo);
 
         $this->dispatchEvents($postInfo);
     }
