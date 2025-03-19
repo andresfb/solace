@@ -6,6 +6,7 @@ namespace Modules\MediaLibraryRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
+use Modules\MediaLibraryRunner\Jobs\MigrateLostCauseNoBandedJob;
 use Modules\MediaLibraryRunner\Services\MigrateLostCauseNoBandedService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -32,9 +33,9 @@ class MigrateLostCauseNoBandedTask extends BaseTask
 
     protected function dispatchEvent(): void
     {
-        $this->line('Sending request to MigrateFulfilledPostsJob');
+        $this->line('Sending request to MigrateLostCauseNoBandedJob');
 
-        MigrateFulfilledPostsJob::dispatch($this->queueable)
+        MigrateLostCauseNoBandedJob::dispatch($this->queueable)
             ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
             ->delay(now()->addSecond());
     }
