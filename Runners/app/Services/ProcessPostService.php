@@ -70,16 +70,15 @@ class ProcessPostService
         try {
             $this->line('Saving Post '.$postItem->libraryPostId);
 
-            $data = [
+            $post = Post::create([
                 'hash' => $postItem->getHash(),
                 'user_id' => $this->service->getUser()->id,
                 'content' => $this->getContent($postItem),
                 'generator' => $postItem->generator,
                 'status' => PostStatus::CREATED,
                 'privacy' => PostPrivacy::PUBLIC,
-            ];
-
-            $post = Post::create($data);
+                'responses' => $postItem->responses,
+            ]);
 
             if ($post === null) {
                 throw new \RuntimeException("Failed to create post from Library Post: $postItem->libraryPostId");

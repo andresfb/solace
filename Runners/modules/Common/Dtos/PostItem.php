@@ -19,6 +19,7 @@ class PostItem extends Data
         public string $source,
         public string $origin,
         public bool $fromAi = false,
+        public ?string $responses,
         public Collection $mediaFiles,
         public Collection $hashtags,
     ) {}

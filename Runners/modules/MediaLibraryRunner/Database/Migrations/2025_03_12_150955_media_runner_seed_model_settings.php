@@ -22,6 +22,9 @@ return new class extends Migration
                 ['module_name' => 'media_runner', 'task_name' => 'post-chat-ai', 'name' => 'is_enabled', 'value' => '1', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'post-chat-ai', 'name' => 'schedule', 'value' => 'cmd', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'post-chat-ai', 'name' => 'empty_runs_count', 'value' => '0', 'created_at' => now(), 'updated_at' => now()],
+                ['module_name' => 'media_runner', 'task_name' => 'lc-no-banded', 'name' => 'is_enabled', 'value' => '1', 'created_at' => now(), 'updated_at' => now()],
+                ['module_name' => 'media_runner', 'task_name' => 'lc-no-banded', 'name' => 'schedule', 'value' => 'td', 'created_at' => now(), 'updated_at' => now()],
+                ['module_name' => 'media_runner', 'task_name' => 'lc-no-banded', 'name' => 'empty_runs_count', 'value' => '0', 'created_at' => now(), 'updated_at' => now()],
             ]);
     }
 

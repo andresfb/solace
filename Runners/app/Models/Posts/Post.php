@@ -41,6 +41,7 @@ class Post extends BaseModel implements HasMedia
         return [
             'status' => PostStatus::class,
             'privacy' => PostPrivacy::class,
+            'responses' => 'json',
         ];
     }
 

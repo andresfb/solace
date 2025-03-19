@@ -21,6 +21,7 @@ use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 use Modules\OllamaApi\Facades\Ollama;
 use Modules\OllamaApi\Services\Ollama as OllamaClient;
+use RuntimeException;
 
 abstract class BaseOllamaService
 {
@@ -96,12 +97,12 @@ abstract class BaseOllamaService
     }
 
     /**
-     * @throws NoAiContentException
+     * @throws NoAiContentException|RuntimeException
      */
     private function processPost(LibraryPost $libraryPost, array $contentResponse): void
     {
         if (empty($contentResponse['response'])) {
-            throw new \RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
+            throw new RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
         }
 
         $content = str($contentResponse['response']);
@@ -112,7 +113,7 @@ abstract class BaseOllamaService
         [$hashtags, $content] = $this->extractHashtags($content->toString());
 
         if (empty($hashtags) || empty($content)) {
-            throw new \RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
+            throw new RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
         }
 
         $postInfo = $libraryPost->getPostableInfo();
@@ -120,7 +121,7 @@ abstract class BaseOllamaService
         $postInfo['generator'] .= strtoupper(':AI_MODEL='.config("{$this->getTaskName()}.ai_model"));
         $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
         $postInfo['content'] = $content;
-        // TODO: add a field to save the original AI response into the model settings field
+        $postInfo['responses'] = $contentResponse;
 
         $this->dispatchEvents($postInfo);
     }

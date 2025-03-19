@@ -6,7 +6,7 @@ namespace Modules\MediaLibraryRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
-use Modules\MediaLibraryRunner\Jobs\MigrateViaAiJob;
+use Modules\MediaLibraryRunner\Jobs\MigrateViaVisionAiJob;
 use Modules\MediaLibraryRunner\Services\MigrateViaVisionAiService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -35,7 +35,7 @@ class MigrateViaVisionAiTask extends BaseTask
     {
         $this->line('Sending request to MigrateViaAiJob');
 
-        MigrateViaAiJob::dispatch($this->queueable)
+        MigrateViaVisionAiJob::dispatch($this->queueable)
             ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
             ->delay(now()->addSecond());
     }

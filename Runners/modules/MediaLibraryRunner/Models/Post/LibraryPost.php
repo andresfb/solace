@@ -70,12 +70,17 @@ class LibraryPost extends BaseMediaRunnerModel
     public function scopeBandedReprocess(Builder $query): Builder
     {
         return $query->where('status', LibraryPostStatus::CREATED)
-            ->where(function ($query) {
-                $query->where(function ($query) {
+            ->where(function (Builder $query) {
+                $query->where(function (Builder $query) {
                     $query->where('type', 'video')
                         ->whereIn('source', config('media_runner.banded_tags'));
                 })->orWhere('runner_status', RunnerStatus::REPROCESS);
             });
+    }
+
+    public function scopeLostCause(Builder $query): Builder
+    {
+        return $query->where('runner_status', RunnerStatus::LOST_CAUSE);
     }
 
     public function getPostableInfo(): array
@@ -84,12 +89,15 @@ class LibraryPost extends BaseMediaRunnerModel
             'libraryPostId' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'generator' => strtoupper("POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"),
+            'generator' => strtoupper(
+                "POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"
+            ),
             'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,
             'fromAi' => false,
             'mediaFiles' => $this->getMediaFiles(),
             'hashtags' => $this->getTags(),
+            'responses' => null,
         ];
     }
 

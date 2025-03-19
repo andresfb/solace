@@ -17,4 +17,6 @@ trait ModuleConstants
     public string $POST_VISION_AI = 'post-vision-ai';
 
     public string $POST_CHAT_AI = 'post-chat-ai';
+
+    public string $LO_NO_BANDED = 'lc-no-banded';
 }

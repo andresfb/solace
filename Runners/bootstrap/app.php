@@ -27,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours(10);
 
+        Schedule::command(TaskRunnerCommand::class, ['td'])->twiceDaily();
+
         // Every two hours from 11:45 am to 11:45 pm Weekdays
         Schedule::command(TaskRunnerCommand::class, ['cmw'])->cron('45 11-23/2 * * 1-5');
 

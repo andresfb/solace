@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('privacy', 1)->default('V');
             $table->text('content');
             $table->string('generator');
+            $table->json('responses')->nullable();
             $table->unsignedInteger('likes_count')->default(0);
             $table->unsignedInteger('comments_count')->default(0);
             $table->softDeletes();

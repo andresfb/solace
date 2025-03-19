@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\MediaLibraryRunner\Jobs;
 
 use Exception;
@@ -10,9 +12,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\MediaLibraryRunner\Services\MigrateViaVisionAiService;
 
-class MigrateViaAiJob implements ShouldQueue
+class MigrateViaVisionAiJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @throws Exception

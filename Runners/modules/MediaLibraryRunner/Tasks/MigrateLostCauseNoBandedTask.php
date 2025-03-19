@@ -6,16 +6,15 @@ namespace Modules\MediaLibraryRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
-use Modules\MediaLibraryRunner\Jobs\MigrateViaChatAiJob;
-use Modules\MediaLibraryRunner\Services\MigrateViaChatAiService;
+use Modules\MediaLibraryRunner\Services\MigrateLostCauseNoBandedService;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class MigrateViaChatAiTask extends BaseTask
+class MigrateLostCauseNoBandedTask extends BaseTask
 {
     use ModuleConstants;
 
     public function __construct(
-        MigrateViaChatAiService $taskTaskService,
+        MigrateLostCauseNoBandedService $taskTaskService,
         ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
@@ -28,14 +27,14 @@ class MigrateViaChatAiTask extends BaseTask
 
     protected function getTaskName(): string
     {
-        return $this->POST_CHAT_AI;
+        return $this->LO_NO_BANDED;
     }
 
     protected function dispatchEvent(): void
     {
-        $this->line('Sending request to MigrateViaChatAiJob');
+        $this->line('Sending request to MigrateFulfilledPostsJob');
 
-        MigrateViaChatAiJob::dispatch($this->queueable)
+        MigrateFulfilledPostsJob::dispatch($this->queueable)
             ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
             ->delay(now()->addSecond());
     }

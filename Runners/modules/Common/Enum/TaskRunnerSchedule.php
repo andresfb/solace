@@ -10,8 +10,9 @@ enum TaskRunnerSchedule: string
     case HOURLY = 'h';
     case ODD_HOUR = 'odd';
     case EVERY_TWO_HOURS = 'eth';
-    case THREE_TIMES_DAY = 'ttd';
     case ONCE_DAILY = 'od';
+    case TWICE_DAILY = 'td';
+    case THREE_TIMES_DAY = 'ttd';
     case ONCE_WEEKLY = 'ow';
     case ONCE_MONTHLY = 'om';
     case CUSTOM_WEEKDAYS = 'cmw';
@@ -23,8 +24,9 @@ enum TaskRunnerSchedule: string
             'h' => self::HOURLY,
             'odd' => self::ODD_HOUR,
             'eth' => self::EVERY_TWO_HOURS,
-            'ttd' => self::THREE_TIMES_DAY,
             'od' => self::ONCE_DAILY,
+            'td' => self::TWICE_DAILY,
+            'ttd' => self::THREE_TIMES_DAY,
             'ow' => self::ONCE_WEEKLY,
             'om' => self::ONCE_MONTHLY,
             'cmw' => self::CUSTOM_WEEKDAYS,
