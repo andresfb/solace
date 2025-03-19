@@ -17,9 +17,7 @@ class OllamaVisionJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly LibraryPost $libraryPost)
-    {
-    }
+    public function __construct(private readonly LibraryPost $libraryPost) {}
 
     public function handle(OllamaVisionService $service): void
     {

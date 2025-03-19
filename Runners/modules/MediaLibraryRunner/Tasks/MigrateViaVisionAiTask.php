@@ -16,7 +16,7 @@ class MigrateViaVisionAiTask extends BaseTask
 
     public function __construct(
         MigrateViaVisionAiService $taskTaskService,
-        ModuleSettingsService     $settingsService
+        ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }

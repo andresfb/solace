@@ -18,7 +18,7 @@ class OllamaApiServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(Ollama::class, fn($app): Ollama => new Ollama());
+        $this->app->singleton(Ollama::class, fn ($app): Ollama => new Ollama);
     }
 
     public function boot(): void

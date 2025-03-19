@@ -4,7 +4,4 @@ namespace Modules\MediaLibraryRunner\Exceptions;
 
 use Exception;
 
-class NoAiContentException extends Exception
-{
-
-}
+class NoAiContentException extends Exception {}

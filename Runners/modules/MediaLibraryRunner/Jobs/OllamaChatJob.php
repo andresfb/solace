@@ -17,9 +17,7 @@ class OllamaChatJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly LibraryPost $libraryPost)
-    {
-    }
+    public function __construct(private readonly LibraryPost $libraryPost) {}
 
     public function handle(OllamaChatService $service): void
     {

@@ -49,6 +49,6 @@ trait Sluggable
         $randomIndex = random_int(1, $length - 2);
 
         // Insert the dash at the random index
-        return substr($dashSlug, 0, $randomIndex) . '-' . substr($dashSlug, $randomIndex);
+        return substr($dashSlug, 0, $randomIndex).'-'.substr($dashSlug, $randomIndex);
     }
 }

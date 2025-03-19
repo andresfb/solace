@@ -6,8 +6,8 @@ namespace Modules\Common\Providers;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\ServiceProvider;
-use Modules\Common\Events\ModelSettingsEvent;
 use Modules\Common\Events\ChangeStatusEvent;
+use Modules\Common\Events\ModelSettingsEvent;
 use Modules\Common\Events\UpdateModelSettingsEvent;
 use Modules\Common\Exceptions\Handler;
 

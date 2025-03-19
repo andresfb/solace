@@ -39,23 +39,23 @@ trait MakesHttpRequests
     protected function getBearerHeader(): array
     {
         $token = config('ollama-laravel.auth.token');
-        if (!$token) {
+        if (! $token) {
             throw new InvalidArgumentException('Bearer token is required when using token authentication');
         }
 
-        return ['Authorization' => 'Bearer ' . $token];
+        return ['Authorization' => 'Bearer '.$token];
     }
 
     protected function getBasicHeader(): array
     {
         $username = config('ollama-laravel.auth.username');
         $password = config('ollama-laravel.auth.password');
-        if (!$username || !$password) {
+        if (! $username || ! $password) {
             throw new InvalidArgumentException('Username and password are required when using basic authentication');
         }
-        $credentials = base64_encode($username . ':' . $password);
+        $credentials = base64_encode($username.':'.$password);
 
-        return ['Authorization' => 'Basic ' . $credentials];
+        return ['Authorization' => 'Basic '.$credentials];
     }
 
     /**
@@ -63,11 +63,11 @@ trait MakesHttpRequests
      */
     protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): null|array|Response
     {
-        $url = config('ollama-laravel.url') . $urlSuffix;
+        $url = config('ollama-laravel.url').$urlSuffix;
         $headers = $this->getHeaders();
 
-        if (!empty($data['stream']) && $data['stream'] === true) {
-            $client = new Client();
+        if (! empty($data['stream']) && $data['stream'] === true) {
+            $client = new Client;
             $options = [
                 'json' => $data,
                 'stream' => true,

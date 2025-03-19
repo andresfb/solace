@@ -25,7 +25,7 @@ class Post extends BaseModel implements HasMedia
 
     protected $guarded = [
         'id',
-        'slug'
+        'slug',
     ];
 
     protected static function booted(): void

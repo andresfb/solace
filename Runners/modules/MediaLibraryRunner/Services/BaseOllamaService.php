@@ -81,9 +81,9 @@ abstract class BaseOllamaService
             $this->error($e->getMessage());
             Log::error(
                 sprintf(
-                    "%s %s %s %s",
-                    "@".self::class.".execute.",
-                    "Error found generating AI content for Library Post Id:",
+                    '%s %s %s %s',
+                    '@'.self::class.'.execute.',
+                    'Error found generating AI content for Library Post Id:',
                     $libraryPost->id,
                     $e->getMessage()
                 )
@@ -162,7 +162,7 @@ abstract class BaseOllamaService
             ->toString();
 
         // Remove the '#' symbol from each hashtag
-        $cleanedHashtags = array_map(static fn($hashtag): string => ltrim((string) $hashtag, '#'), $hashtags);
+        $cleanedHashtags = array_map(static fn ($hashtag): string => ltrim((string) $hashtag, '#'), $hashtags);
 
         return [
             $cleanedHashtags,

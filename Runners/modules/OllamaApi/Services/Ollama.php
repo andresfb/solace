@@ -37,7 +37,7 @@ class Ollama
 
     private ?array $images = [];
 
-    private string $keepAlive = "5m";
+    private string $keepAlive = '5m';
 
     public function __construct()
     {
@@ -56,77 +56,88 @@ class Ollama
     public function agent(string $agent): static
     {
         $this->agent = $agent;
+
         return $this;
     }
 
     public function prompt(string $prompt): static
     {
         $this->prompt = $prompt;
+
         return $this;
     }
 
     public function model(string $model): static
     {
         $this->model = $model;
+
         return $this;
     }
 
     public function format(string $format): static
     {
         $this->format = $format;
+
         return $this;
     }
 
     public function options(array $options = []): static
     {
         $this->options = $options;
+
         return $this;
     }
 
     public function stream(bool $stream = false): static
     {
         $this->stream = $stream;
+
         return $this;
     }
 
     public function tools(array $tools = []): static
     {
         $this->tools = $tools;
+
         return $this;
     }
 
     public function raw(bool $raw): static
     {
         $this->raw = $raw;
+
         return $this;
     }
 
     public function keepAlive(string $keepAlive): static
     {
         $this->keepAlive = $keepAlive;
+
         return $this;
     }
 
     public function setTimeout(int $timeout): Ollama
     {
         $this->timeout = $timeout;
+
         return $this;
     }
 
     public function image(string $imagePath): static
     {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             throw new \RuntimeException("Image file does not exist: $imagePath");
         }
 
         $this->image = base64_encode(file_get_contents($imagePath));
+
         return $this;
     }
 
     public function images(array $imagePaths): static
     {
         foreach ($imagePaths as $imagePath) {
-            if (!file_exists($imagePath)) {
+            if (! file_exists($imagePath)) {
                 throw new \RuntimeException("Image file does not exist: $imagePath");
             }
 
@@ -181,7 +192,8 @@ class Ollama
     /**
      * @throws Exception
      */
-    public static function processStream(StreamInterface $body, Closure $handleJsonObject): array {
+    public static function processStream(StreamInterface $body, Closure $handleJsonObject): array
+    {
         return self::doProcessStream($body, $handleJsonObject);
     }
 }
