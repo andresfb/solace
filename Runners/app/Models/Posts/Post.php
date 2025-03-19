@@ -31,7 +31,7 @@ class Post extends BaseModel implements HasMedia
     protected static function booted(): void
     {
         static::addGlobalScope(new HashtagsScope);
-        static::creating(static function (Post $post) {
+        static::creating(static function (Post $post): void {
             $post->slug = $post->getSlug();
         });
     }

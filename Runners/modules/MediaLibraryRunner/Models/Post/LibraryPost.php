@@ -70,8 +70,8 @@ class LibraryPost extends BaseMediaRunnerModel
     public function scopeBandedReprocess(Builder $query): Builder
     {
         return $query->where('status', LibraryPostStatus::CREATED)
-            ->where(function (Builder $query) {
-                $query->where(function (Builder $query) {
+            ->where(function (Builder $query): void {
+                $query->where(function (Builder $query): void {
                     $query->where('type', 'video')
                         ->whereIn('source', config('media_runner.banded_tags'));
                 })->orWhere('runner_status', RunnerStatus::REPROCESS);

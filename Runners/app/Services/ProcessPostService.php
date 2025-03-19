@@ -212,9 +212,7 @@ class ProcessPostService
         $results = array_filter(array_map('trim', $matches[0]));
 
         // Remove asterisks and colons from the results
-        $cleanedResults = array_map(static function($item) {
-            return trim($item, '*:');
-        }, $results);
+        $cleanedResults = array_map(static fn($item): string => trim((string) $item, '*:'), $results);
 
         $cleanedResults = array_values(
             array_unique(
@@ -231,11 +229,9 @@ class ProcessPostService
             break;
         }
 
-        $cleanedResults = array_map(static function ($item) {
-                return str($item)->title()
-                    ->replace(' ', '')
-                    ->toString();
-        }, $cleanedResults);
+        $cleanedResults = array_map(static fn($item) => str($item)->title()
+            ->replace(' ', '')
+            ->toString(), $cleanedResults);
 
         $this->extraTags = array_unique(array_merge($this->extraTags, $cleanedResults));
     }

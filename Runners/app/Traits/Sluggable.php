@@ -35,7 +35,7 @@ trait Sluggable
 
         $addSlash = random_int(0, 1);
 
-        if (!$addSlash) {
+        if ($addSlash === 0) {
             return $slug;
         }
 

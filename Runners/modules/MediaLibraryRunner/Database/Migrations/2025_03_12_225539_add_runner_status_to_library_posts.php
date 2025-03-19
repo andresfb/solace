@@ -20,7 +20,7 @@ return new class extends Migration
             return;
         }
 
-        $this->schema->table('posts', function (Blueprint $table) {
+        $this->schema->table('posts', function (Blueprint $table): void {
             $table->unsignedTinyInteger('runner_status')
                 ->after('used')
                 ->default(0);
@@ -35,7 +35,7 @@ return new class extends Migration
             return;
         }
 
-        $this->schema->table('posts', function (Blueprint $table) {
+        $this->schema->table('posts', function (Blueprint $table): void {
             $table->dropColumn('runner_status');
         });
     }

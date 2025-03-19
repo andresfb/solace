@@ -30,18 +30,13 @@ abstract class BaseOllamaService
     use Screenable;
     use SendToQueue;
 
-    private array $failureResponses;
+    private array $failureResponses = [
+        'i cannot create',
+        'promotes nudity',
+        'is there anything else i can help you with',
+    ];
 
     protected MediaItem $mediaInfo;
-
-    public function __construct()
-    {
-        $this->failureResponses = [
-            'i cannot create',
-            'promotes nudity',
-            'is there anything else i can help you with',
-        ];
-    }
 
     abstract protected function getTaskName(): string;
 
@@ -87,7 +82,7 @@ abstract class BaseOllamaService
             Log::error(
                 sprintf(
                     "%s %s %s %s",
-                    "@".__CLASS__.".execute.",
+                    "@".self::class.".execute.",
                     "Error found generating AI content for Library Post Id:",
                     $libraryPost->id,
                     $e->getMessage()
@@ -167,9 +162,7 @@ abstract class BaseOllamaService
             ->toString();
 
         // Remove the '#' symbol from each hashtag
-        $cleanedHashtags = array_map(static function($hashtag) {
-            return ltrim($hashtag, '#');
-        }, $hashtags);
+        $cleanedHashtags = array_map(static fn($hashtag): string => ltrim((string) $hashtag, '#'), $hashtags);
 
         return [
             $cleanedHashtags,

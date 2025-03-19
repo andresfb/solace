@@ -47,7 +47,7 @@ trait StreamHelper
         }
 
         // Process any remaining data in the buffer
-        if (!empty($buffer)) {
+        if ($buffer !== '' && $buffer !== '0') {
             $data = json_decode($buffer, true, 512, JSON_THROW_ON_ERROR);
             if ($data !== null) {
                 $handleJsonObject($data);

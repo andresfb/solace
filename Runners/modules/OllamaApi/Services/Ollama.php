@@ -152,11 +152,11 @@ class Ollama
             'keep_alive' => $this->keepAlive,
         ];
 
-        if ($this->image) {
+        if ($this->image !== null && $this->image !== '' && $this->image !== '0') {
             $requestData['images'] = [$this->image];
         }
 
-        if ($this->images) {
+        if ($this->images !== null && $this->images !== []) {
             $requestData['images'] = $this->images;
         }
 
