@@ -19,11 +19,14 @@ class MigrateViaVisionAiJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public function __construct(private readonly bool $queueable) {}
+
     /**
      * @throws Exception
      */
     public function handle(MigrateViaVisionAiService $service): void
     {
-        $service->execute();
+        $service->setQueueable($this->queueable)
+            ->execute();
     }
 }

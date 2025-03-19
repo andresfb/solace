@@ -6,6 +6,7 @@ namespace Modules\MediaLibraryRunner\Models\Post;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Modules\Common\Enum\LibraryPostStatus;
@@ -13,9 +14,14 @@ use Modules\Common\Enum\RunnerStatus;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
-use Modules\MediaLibraryRunner\Models\Media\MediaItem;
+use Modules\MediaLibraryRunner\Models\Media\LibraryMedia;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
+/**
+ * @property string $title
+ * @property integer $item_id
+ * @property string $source
+ */
 class LibraryPost extends BaseMediaRunnerModel
 {
     use ModuleConstants;
@@ -60,7 +66,7 @@ class LibraryPost extends BaseMediaRunnerModel
         return $query->whereNotIn('source', config('media_runner.banded_tags'));
     }
 
-    public function scopeUntaggedImages($query): Builder
+    public function scopeUntaggedImages(Builder $query): Builder
     {
         return $query->where('status', LibraryPostStatus::CREATED)
             ->where('runner_status', RunnerStatus::STASIS)
@@ -83,6 +89,9 @@ class LibraryPost extends BaseMediaRunnerModel
         return $query->where('runner_status', RunnerStatus::LOST_CAUSE);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getPostableInfo(): array
     {
         return [
@@ -101,9 +110,6 @@ class LibraryPost extends BaseMediaRunnerModel
         ];
     }
 
-    /**
-     * @return Collection<MediaItem>
-     */
     public function getMediaFiles(): Collection
     {
         $files = collect();

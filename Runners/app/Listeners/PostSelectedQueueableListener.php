@@ -8,7 +8,6 @@ use App\Services\ProcessPostService;
 use App\Traits\RunnerConstants;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
 use Throwable;
@@ -25,13 +24,7 @@ class PostSelectedQueueableListener implements ShouldQueue
      */
     public function handle(PostSelectedQueueableEvent $event): void
     {
-        try {
-            $this->service->execute($event->postItem);
-        } catch (Exception|Throwable $e) {
-            Log::error($e);
-
-            throw $e;
-        }
+        $this->service->execute($event->postItem);
     }
 
     public function viaConnection(): string

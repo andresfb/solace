@@ -1,18 +1,21 @@
 includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/nesbot/carbon/extension.neon
+    - phpstan-baseline.neon
 
 parameters:
+    checkModelProperties: false
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
 
     paths:
         - app/
         - modules/
 
-    # Level 10 is the highest level
-    level: 5
+    level: 6
 
-#    ignoreErrors:
-#        - '#PHPDoc tag @var#'
-#
+    ignoreErrors:
+        - identifier: missingType.generics
+
     excludePaths:
         - ./modules/*/Config/*.php

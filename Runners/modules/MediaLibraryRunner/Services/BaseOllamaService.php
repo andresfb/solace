@@ -19,8 +19,7 @@ use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
-use Modules\OllamaApi\Facades\Ollama;
-use Modules\OllamaApi\Services\Ollama as OllamaClient;
+use Modules\OllamaApi\Services\Ollama;
 use RuntimeException;
 
 abstract class BaseOllamaService
@@ -30,6 +29,9 @@ abstract class BaseOllamaService
     use Screenable;
     use SendToQueue;
 
+    /**
+     * @var array|string[]
+     */
     private array $failureResponses = [
         'i cannot create',
         'promotes nudity',
@@ -38,13 +40,15 @@ abstract class BaseOllamaService
 
     protected MediaItem $mediaInfo;
 
+    public function __construct(protected readonly Ollama $ollama) {}
+
     abstract protected function getTaskName(): string;
 
     abstract protected function getRunnerStatus(): RunnerStatus;
 
     abstract protected function loadMediaInfo(LibraryPost $libraryPost): void;
 
-    abstract protected function getExtraOllamaOptions(OllamaClient $ollama): OllamaClient;
+    abstract protected function getExtraOllamaOptions(Ollama $ollama): Ollama;
 
     public function execute(LibraryPost $libraryPost): void
     {
@@ -53,7 +57,7 @@ abstract class BaseOllamaService
 
             $this->line('Asking the AI for Post content');
 
-            $ollama = Ollama::url(config("{$this->getTaskName()}.ai_api_url"))
+            $ollama = $this->ollama->url(config("{$this->getTaskName()}.ai_api_url"))
                 ->model(config("{$this->getTaskName()}.ai_model"))
                 ->agent(config("{$this->getTaskName()}.ai_agent"))
                 ->options([
@@ -92,6 +96,11 @@ abstract class BaseOllamaService
     }
 
     /**
+     * processPost Method.
+     *
+     * @param LibraryPost $libraryPost
+     * @param array<string, mixed> $contentResponse
+     * @return void
      * @throws NoAiContentException|RuntimeException
      */
     private function processPost(LibraryPost $libraryPost, array $contentResponse): void
@@ -121,6 +130,10 @@ abstract class BaseOllamaService
         $this->dispatchEvents($postInfo);
     }
 
+    /**
+     * @param array<string, mixed> $postInfo
+     * @return void
+     */
     private function dispatchEvents(array $postInfo): void
     {
         $message = "Dispatching %s event for LibraryPost: {$postInfo['libraryPostId']}";
@@ -143,6 +156,12 @@ abstract class BaseOllamaService
         );
     }
 
+    /**
+     * extractHashtags Method.
+     *
+     * @param string $text
+     * @return array<int, list<string>|string>
+     */
     private function extractHashtags(string $text): array
     {
         // Use regex to find hashtags

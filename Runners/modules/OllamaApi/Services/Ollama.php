@@ -8,6 +8,7 @@ use Closure;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\Client\ConnectionException;
 use Modules\OllamaApi\Traits\MakesHttpRequests;
 use Modules\OllamaApi\Traits\StreamHelper;
 use Psr\Http\Message\StreamInterface;
@@ -33,9 +34,9 @@ class Ollama
 
     private string $agent = '';
 
-    private ?string $image = null;
+    private string $image = '';
 
-    private ?array $images = [];
+    private array $images = [];
 
     private string $keepAlive = '5m';
 
@@ -149,6 +150,7 @@ class Ollama
 
     /**
      * @throws GuzzleException
+     * @throws ConnectionException
      */
     public function ask(): Response|array
     {
@@ -163,11 +165,11 @@ class Ollama
             'keep_alive' => $this->keepAlive,
         ];
 
-        if ($this->image !== null && $this->image !== '' && $this->image !== '0') {
+        if ($this->image !== '' && $this->image !== '0') {
             $requestData['images'] = [$this->image];
         }
 
-        if ($this->images !== null && $this->images !== []) {
+        if ($this->images !== []) {
             $requestData['images'] = $this->images;
         }
 
@@ -176,6 +178,7 @@ class Ollama
 
     /**
      * @throws GuzzleException
+     * @throws ConnectionException
      */
     public function chat(array $conversation): array
     {

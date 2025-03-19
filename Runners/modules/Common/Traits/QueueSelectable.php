@@ -13,7 +13,12 @@ trait QueueSelectable
         return config("$section.queue_connection");
     }
 
-    public function getQueue(string $section, int $number = 1)
+    /**
+     * @param string $section
+     * @param int $number
+     * @return string|array<string>
+     */
+    public function getQueue(string $section, int $number = 1): string|array
     {
         $queues = Str::of(config("$section.queues"))
             ->explode(',')

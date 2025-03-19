@@ -25,6 +25,9 @@ class ProcessPostService
 {
     use Screenable;
 
+    /**
+     * @var array<string>
+     */
     private array $extraTags = [];
 
     public function __construct(private readonly RandomUserSelectorService $service) {}
@@ -189,7 +192,7 @@ class ProcessPostService
                 ->trim();
         }
 
-        if ($content->startsWith($title)) {
+        if ($content->startsWith($title->toString())) {
             return $content->trim()
                 ->toString();
         }
@@ -199,6 +202,7 @@ class ProcessPostService
                 ->prepend('**')
                 ->append('**')
                 ->append("\n\n")
+                ->toString()
         )
             ->toString();
     }

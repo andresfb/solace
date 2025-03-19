@@ -10,7 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Modules\UserGeneratorRunner\Services\GenerateUsersService;
 
 class GenerateUsersJob implements ShouldQueue
@@ -20,17 +19,14 @@ class GenerateUsersJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public function __construct(private readonly bool $queueable) {}
+
     /**
      * @throws Exception
      */
     public function handle(GenerateUsersService $service): void
     {
-        try {
-            $service->execute();
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-
-            throw $e;
-        }
+        $service->setQueueable($this->queueable)
+            ->execute();
     }
 }

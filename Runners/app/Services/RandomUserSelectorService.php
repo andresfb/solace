@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Random\RandomException;
@@ -29,6 +30,7 @@ class RandomUserSelectorService
     {
         $this->runs++;
 
+        /** @var User $user */
         $user = $this->getPostingWeightedUsers()
             ->shuffle()
             ->first();
@@ -55,13 +57,13 @@ class RandomUserSelectorService
     {
         return Cache::remember("weighted:users:posters:$count", now()->addMinutes(30), function () use ($count) {
             $lowPostUsers = User::withCount('posts')
-                ->whereHas('profile', fn ($query) => $query->where('humanoid', false))
+                ->whereHas('profile', fn (Builder $query) => $query->where('humanoid', false))
                 ->orderBy('posts_count')
                 ->limit($this->limitDataset)
                 ->get();
 
             $highPostUsers = User::withCount('posts')
-                ->whereHas('profile', fn ($query) => $query->where('humanoid', false))
+                ->whereHas('profile', fn (Builder $query) => $query->where('humanoid', false))
                 ->orderBy('posts_count', 'desc')
                 ->limit($this->limitDataset)
                 ->get();
@@ -80,7 +82,7 @@ class RandomUserSelectorService
 
             // Define selection sizes
             $totalSelection = $count; // Total users to return
-            $lowPostCount = round($totalSelection * 0.6); // 60% from low-post users
+            $lowPostCount = (int) round($totalSelection * 0.6); // 60% from low-post users
             $highPostCount = $totalSelection - $lowPostCount; // 40% from high-post users
 
             // Randomly sample from each group

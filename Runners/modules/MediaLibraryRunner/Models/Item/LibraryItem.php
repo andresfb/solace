@@ -33,7 +33,7 @@ class LibraryItem extends BaseMediaRunnerModel
         return $this->belongsTo(LibraryPost::class, 'id', 'item_id');
     }
 
-    public function media(): HasMany|LibraryMedia
+    public function media(): HasMany
     {
         return $this->hasMany(LibraryMedia::class, 'model_id', 'id');
     }

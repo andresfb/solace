@@ -7,8 +7,10 @@ namespace Modules\OllamaApi\Traits;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 
 trait MakesHttpRequests
 {
@@ -60,8 +62,9 @@ trait MakesHttpRequests
 
     /**
      * @throws GuzzleException
+     * @throws ConnectionException
      */
-    protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): null|array|Response
+    protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): ResponseInterface|Response|array|null
     {
         $url = config('ollama-laravel.url').$urlSuffix;
         $headers = $this->getHeaders();
@@ -83,6 +86,10 @@ trait MakesHttpRequests
             ->timeout($this->timeout)
             ->withOptions(['verify' => config('ollama-laravel.connection.verify_ssl', true)]);
 
-        return $http->$method($url, $data)->json();
+        if ($method === 'post') {
+            return $http->post($url, $data)->json();
+        }
+
+        return $http->get($url, $data)->json();
     }
 }

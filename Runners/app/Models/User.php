@@ -42,6 +42,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * @phpstan-ignore missingType.iterableValue
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -67,12 +70,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function profile(): HasOne|User
+    public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
     }
 
-    public function posts(): User|HasMany
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }

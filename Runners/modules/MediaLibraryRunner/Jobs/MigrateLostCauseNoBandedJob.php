@@ -19,11 +19,14 @@ class MigrateLostCauseNoBandedJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public function __construct(private readonly bool $queueable) {}
+
     /**
      * @throws EmptyRunException
      */
     public function handle(MigrateLostCauseNoBandedService $service): void
     {
-        $service->execute();
+        $service->setQueueable($this->queueable)
+            ->execute();
     }
 }

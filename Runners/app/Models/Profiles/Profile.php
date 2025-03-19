@@ -45,11 +45,11 @@ class Profile extends BaseModel implements HasMedia
 
         foreach (config('settings.profile_image_sizes') as $item) {
             $this->addMediaConversion((string) $item)
+                ->performOnCollections('avatar')
                 ->format('jpg')
                 ->width($item)
                 ->height($item)
-                ->sharpen(10)
-                ->performOnCollections('avatar');
+                ->sharpen(10);
         }
     }
 }

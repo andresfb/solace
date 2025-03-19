@@ -84,6 +84,10 @@ abstract class BaseTask implements TaskInterface
         return $isEnabled;
     }
 
+    /**
+     * @param array<string> $settingName
+     * @return ModuleSettingsInfo
+     */
     private function getModuleSettings(array $settingName): ModuleSettingsInfo
     {
         $info = [

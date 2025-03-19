@@ -10,6 +10,9 @@ abstract class BaseModel extends Model
 {
     protected $guarded = ['id'];
 
+    /**
+     * @phpstan-ignore missingType.iterableValue
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

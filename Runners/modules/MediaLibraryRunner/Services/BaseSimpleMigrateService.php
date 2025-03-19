@@ -48,7 +48,8 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
             );
         }
 
-        $libraryPosts->each(function (LibraryPost $libraryPost): void {
+        /** @var LibraryPost $libraryPost */
+        foreach ($libraryPosts as $libraryPost) {
             if ($this->queueable) {
                 $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
 
@@ -69,6 +70,6 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
             );
 
             $this->line('PostSelectedEvent Event dispatched.');
-        });
+        }
     }
 }
