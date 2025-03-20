@@ -74,7 +74,7 @@ class Ollama
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return $this
      */
     public function options(array $options = []): static
@@ -122,7 +122,7 @@ class Ollama
     }
 
     /**
-     * @param array<string> $imagePaths
+     * @param  array<string>  $imagePaths
      * @return $this
      */
     public function images(array $imagePaths): static
@@ -145,6 +145,7 @@ class Ollama
 
     /**
      * @return array<string, mixed>
+     *
      * @throws ConnectionException
      */
     public function ask(): array

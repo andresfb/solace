@@ -96,7 +96,8 @@ abstract class BaseOllamaService
     /**
      * processPost Method.
      *
-     * @param array<string, mixed> $contentResponse
+     * @param  array<string, mixed>  $contentResponse
+     *
      * @throws NoAiContentException|RuntimeException
      */
     private function processPost(LibraryPost $libraryPost, array $contentResponse): void
@@ -129,7 +130,7 @@ abstract class BaseOllamaService
     }
 
     /**
-     * @param array<string, mixed> $postInfo
+     * @param  array<string, mixed>  $postInfo
      */
     private function dispatchEvents(array $postInfo): void
     {

@@ -17,7 +17,7 @@ use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 /**
  * @property string $title
- * @property integer $item_id
+ * @property int $item_id
  * @property string $source
  */
 class LibraryPost extends BaseMediaRunnerModel

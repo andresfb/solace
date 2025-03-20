@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\OllamaApi\Traits;
 
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
@@ -72,7 +71,8 @@ trait MakesHttpRequests
     /**
      * sendRequest Method.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
+     *
      * @throws ConnectionException
      */
     protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): mixed
@@ -84,7 +84,7 @@ trait MakesHttpRequests
             ->timeout($this->timeout)
             ->throw()
             ->withOptions([
-                'verify' => config('ollama-laravel.connection.verify_ssl', true)
+                'verify' => config('ollama-laravel.connection.verify_ssl', true),
             ]);
 
         if ($method === 'post') {
