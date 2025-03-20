@@ -23,9 +23,7 @@ class Joke extends BaseContentModel
     {
         $baseTake = 100;
 
-        $totalJokes = Cache::remember('jokes:count', now()->addDays(10), static function () {
-            return self::query()->where('used', 0)->count();
-        });
+        $totalJokes = Cache::remember('jokes:count', now()->addDays(10), static fn() => self::query()->where('used', 0)->count());
 
         try {
             $randomOffset = random_int(0, max(0, $totalJokes - $baseTake));

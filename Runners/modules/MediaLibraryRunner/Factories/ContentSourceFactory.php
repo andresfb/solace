@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Factories;
 
 use Modules\MediaLibraryRunner\Interfaces\ContentSourceInterface;
+use Modules\MediaLibraryRunner\Models\Content\BaseContentModel;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
 class ContentSourceFactory
@@ -21,7 +22,7 @@ class ContentSourceFactory
             }
 
             $contentModel = $contentInstance->getRandomContent();
-            if ($contentModel === null) {
+            if (!$contentModel instanceof BaseContentModel) {
                 continue;
             }
 

@@ -55,7 +55,7 @@ class MigrateLostCauseService implements TaskServiceInterface
             $this->line('Loading the Generating new Content...');
 
             $newPost = ContentSourceFactory::loadContent($libraryPost);
-            if ($newPost === null) {
+            if (!$newPost instanceof LibraryPost) {
                 continue;
             }
 
