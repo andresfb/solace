@@ -56,16 +56,16 @@ class ContentSourceJokes implements ContentSourceInterface
         $jokeBase = $this->cleanString($joke->body);
         $title = $this->cleanString($joke->title);
 
-        $body = $title->length() > 40 && !$jokeBase->lower()->contains($title->lower())
+        $body = $title->length() > 40 && ! $jokeBase->lower()->contains($title->lower())
             ? $title->append("\n\n")->append($joke->body)->toString()
             : $joke->body;
 
         $category = sprintf(
-            "**Category:** *%s*",
+            '**Category:** *%s*',
             $joke->category,
         );
 
-        return $body . "\n\n" . $category;
+        return $body."\n\n".$category;
     }
 
     private function cleanString(string $value): Stringable

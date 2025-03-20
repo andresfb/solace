@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Console\Command;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Repositories\ContentSourceJokes;
-use Modules\MediaLibraryRunner\Services\OllamaChatService;
 use Throwable;
 
 class TestAppCommand extends Command

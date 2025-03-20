@@ -22,7 +22,7 @@ class PostCreatedListener implements ShouldQueue
                 'runner_status' => $event->runnerStatus,
             ]);
 
-        if ($event->source === '' || !str_contains($event->source, ':')) {
+        if ($event->source === '' || ! str_contains($event->source, ':')) {
             return;
         }
 

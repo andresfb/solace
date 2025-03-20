@@ -51,11 +51,10 @@ class MigrateLostCauseService implements TaskServiceInterface
         foreach ($libraryPosts as $libraryPost) {
             // TODO: dispatch a Job if the queueable is true
 
-
             $this->line('Loading the Generating new Content...');
 
             $newPost = ContentSourceFactory::loadContent($libraryPost);
-            if (!$newPost instanceof LibraryPost) {
+            if (! $newPost instanceof LibraryPost) {
                 continue;
             }
 

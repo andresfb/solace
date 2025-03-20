@@ -22,7 +22,7 @@ class ContentSourceFactory
             }
 
             $contentModel = $contentInstance->getRandomContent();
-            if (!$contentModel instanceof BaseContentModel) {
+            if (! $contentModel instanceof BaseContentModel) {
                 continue;
             }
 
