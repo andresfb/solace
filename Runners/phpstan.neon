@@ -12,7 +12,7 @@ parameters:
         - app/
         - modules/
 
-    level: 6
+    level: 8
 
     ignoreErrors:
         - identifier: missingType.generics

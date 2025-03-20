@@ -28,7 +28,7 @@ class MediaPathGenerator implements PathGenerator
     private function getBasePath(Media $media): string
     {
         return MediaBasePath::getBasePath(
-            $media->model_id,
+            (int) $media->model_id,
             $media->id,
             $media->collection_name
         );

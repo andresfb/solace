@@ -16,7 +16,7 @@ class XsGamesService
     {
         $url = sprintf(
             config('xsgames.api_url'),
-            collect(config('xsgames.options'))->random()
+            collect((array) config('xsgames.options'))->random()
         );
 
         try {

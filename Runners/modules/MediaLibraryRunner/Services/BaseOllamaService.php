@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
@@ -61,8 +60,7 @@ abstract class BaseOllamaService
                 ->model(config("{$this->getTaskName()}.ai_model"))
                 ->agent(config("{$this->getTaskName()}.ai_agent"))
                 ->options([
-                    'temperature' => 1,
-                    'top_p' => 0.8,
+                    'temperature' => 0.8,
                 ])
                 ->keepAlive('5m')
                 ->prompt(config("{$this->getTaskName()}.ai_post_prompt_content"));
@@ -81,7 +79,7 @@ abstract class BaseOllamaService
                 $libraryPost->id,
                 $this->getRunnerStatus()
             );
-        } catch (GuzzleException|Exception $e) {
+        } catch (Exception $e) {
             $this->error($e->getMessage());
             Log::error(
                 sprintf(
@@ -105,11 +103,13 @@ abstract class BaseOllamaService
      */
     private function processPost(LibraryPost $libraryPost, array $contentResponse): void
     {
-        if (empty($contentResponse['response'])) {
+        $response = $contentResponse['response'] ?? '';
+
+        if (empty($response)) {
             throw new RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
         }
 
-        $content = str($contentResponse['response']);
+        $content = str($response);
         if (! $content->contains('#') || $content->trim()->contains($this->failureResponses)) {
             throw new NoAiContentException('The AI did not provide usable content');
         }

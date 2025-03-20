@@ -43,10 +43,14 @@ trait Sluggable
         $dashSlug = substr($slug, 0, -1);
 
         // Get the length of the string
-        $length = strlen($dashSlug);
+        $length = strlen($dashSlug) - 2;
+
+        if ($length <= 1) {
+            return $slug;
+        }
 
         // Generate a random index between 1 and length - 2
-        $randomIndex = random_int(1, $length - 2);
+        $randomIndex = random_int(1, $length);
 
         // Insert the dash at the random index
         return substr($dashSlug, 0, $randomIndex).'-'.substr($dashSlug, $randomIndex);

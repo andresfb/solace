@@ -44,10 +44,11 @@ class RandomUserService
         }
 
         $data = $response->json();
+        $results = (array) $data['results'];
 
         $this->line("Parsing data...\n");
 
-        return $this->parseResponse(collect($data['results']));
+        return $this->parseResponse(collect($results));
     }
 
     private function parseResponse(Collection $response): Collection

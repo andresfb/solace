@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Modules\OllamaApi\Services;
 
-use Closure;
-use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Client\ConnectionException;
 use Modules\OllamaApi\Traits\MakesHttpRequests;
-use Modules\OllamaApi\Traits\StreamHelper;
-use Psr\Http\Message\StreamInterface;
 
 class Ollama
 {
     use MakesHttpRequests;
-    use StreamHelper;
 
     private string $model;
 
@@ -24,11 +17,8 @@ class Ollama
 
     private string $format = '';
 
+    /** @var array<string, mixed> */
     private array $options = [];
-
-    private array $tools = [];
-
-    private bool $stream = false;
 
     private bool $raw = false;
 
@@ -36,6 +26,7 @@ class Ollama
 
     private string $image = '';
 
+    /** @var array<string> */
     private array $images = [];
 
     private string $keepAlive = '5m';
@@ -82,23 +73,13 @@ class Ollama
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @return $this
+     */
     public function options(array $options = []): static
     {
         $this->options = $options;
-
-        return $this;
-    }
-
-    public function stream(bool $stream = false): static
-    {
-        $this->stream = $stream;
-
-        return $this;
-    }
-
-    public function tools(array $tools = []): static
-    {
-        $this->tools = $tools;
 
         return $this;
     }
@@ -130,11 +111,20 @@ class Ollama
             throw new \RuntimeException("Image file does not exist: $imagePath");
         }
 
-        $this->image = base64_encode(file_get_contents($imagePath));
+        $contents = file_get_contents($imagePath);
+        if ($contents === false) {
+            throw new \RuntimeException("Image file could not be read: $imagePath");
+        }
+
+        $this->image = base64_encode($contents);
 
         return $this;
     }
 
+    /**
+     * @param array<string> $imagePaths
+     * @return $this
+     */
     public function images(array $imagePaths): static
     {
         foreach ($imagePaths as $imagePath) {
@@ -142,25 +132,30 @@ class Ollama
                 throw new \RuntimeException("Image file does not exist: $imagePath");
             }
 
-            $this->images[] = base64_encode(file_get_contents($imagePath));
+            $contents = file_get_contents($imagePath);
+            if ($contents === false) {
+                throw new \RuntimeException("Image file could not be read: $imagePath");
+            }
+
+            $this->images[] = base64_encode($contents);
         }
 
         return $this;
     }
 
     /**
-     * @throws GuzzleException
+     * @return array<string, mixed>
      * @throws ConnectionException
      */
-    public function ask(): Response|array
+    public function ask(): array
     {
         $requestData = [
+            'stream' => false,
             'model' => $this->model,
             'system' => $this->agent,
             'prompt' => $this->prompt,
             'format' => $this->format,
             'options' => $this->options,
-            'stream' => $this->stream,
             'raw' => $this->raw,
             'keep_alive' => $this->keepAlive,
         ];
@@ -173,30 +168,11 @@ class Ollama
             $requestData['images'] = $this->images;
         }
 
-        return $this->sendRequest('/api/generate', $requestData);
-    }
+        $response = $this->sendRequest('/api/generate', $requestData);
+        if ($response === null) {
+            throw new \RuntimeException("Could not generate image response: $response");
+        }
 
-    /**
-     * @throws GuzzleException
-     * @throws ConnectionException
-     */
-    public function chat(array $conversation): array
-    {
-        return $this->sendRequest('/api/chat', [
-            'model' => $this->model,
-            'messages' => $conversation,
-            'format' => $this->format,
-            'options' => $this->options,
-            'stream' => $this->stream,
-            'tools' => $this->tools,
-        ]);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public static function processStream(StreamInterface $body, Closure $handleJsonObject): array
-    {
-        return self::doProcessStream($body, $handleJsonObject);
+        return (array) $response;
     }
 }

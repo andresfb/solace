@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\OllamaApi\Traits;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
 
 trait MakesHttpRequests
 {
@@ -18,6 +15,9 @@ trait MakesHttpRequests
 
     private int $timeout = 0;
 
+    /**
+     * @return string[]
+     */
     protected function getHeaders(): array
     {
         $customHeaders = config('ollama-laravel.headers', []);
@@ -27,6 +27,9 @@ trait MakesHttpRequests
         return array_merge($authHeaders, $customHeaders);
     }
 
+    /**
+     * @return string[]
+     */
     protected function getAuthenticationHeaders(): array
     {
         $authType = config('ollama-laravel.auth.type');
@@ -38,6 +41,9 @@ trait MakesHttpRequests
         };
     }
 
+    /**
+     * @return string[]
+     */
     protected function getBearerHeader(): array
     {
         $token = config('ollama-laravel.auth.token');
@@ -48,6 +54,9 @@ trait MakesHttpRequests
         return ['Authorization' => 'Bearer '.$token];
     }
 
+    /**
+     * @return string[]
+     */
     protected function getBasicHeader(): array
     {
         $username = config('ollama-laravel.auth.username');
@@ -61,30 +70,25 @@ trait MakesHttpRequests
     }
 
     /**
-     * @throws GuzzleException
+     * sendRequest Method.
+     *
+     * @param string $urlSuffix
+     * @param array<string, mixed> $data
+     * @param string $method
+     * @return mixed
      * @throws ConnectionException
      */
-    protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): ResponseInterface|Response|array|null
+    protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): mixed
     {
-        $url = config('ollama-laravel.url').$urlSuffix;
+        $url = $this->baseUrl.$urlSuffix;
         $headers = $this->getHeaders();
-
-        if (! empty($data['stream']) && $data['stream'] === true) {
-            $client = new Client;
-            $options = [
-                'json' => $data,
-                'stream' => true,
-                'timeout' => $this->timeout,
-                'headers' => $headers,
-                'verify' => config('ollama-laravel.connection.verify_ssl', true),
-            ];
-
-            return $client->request($method, $url, $options);
-        }
 
         $http = Http::withHeaders($headers)
             ->timeout($this->timeout)
-            ->withOptions(['verify' => config('ollama-laravel.connection.verify_ssl', true)]);
+            ->throw()
+            ->withOptions([
+                'verify' => config('ollama-laravel.connection.verify_ssl', true)
+            ]);
 
         if ($method === 'post') {
             return $http->post($url, $data)->json();

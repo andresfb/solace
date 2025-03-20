@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Models\Media;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use Modules\Common\Libraries\MediaBasePath;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
+use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Media\Scopes\MediaModelTypeScope;
 
 class LibraryMedia extends BaseMediaRunnerModel
@@ -24,6 +26,11 @@ class LibraryMedia extends BaseMediaRunnerModel
         return [
             'size' => 'integer',
         ];
+    }
+
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(LibraryItem::class, 'id', 'model_id');
     }
 
     public function getFileInfo(): MediaItem

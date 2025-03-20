@@ -6,7 +6,6 @@ namespace Modules\MediaLibraryRunner\Models\Post;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Modules\Common\Enum\LibraryPostStatus;
@@ -14,7 +13,6 @@ use Modules\Common\Enum\RunnerStatus;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
-use Modules\MediaLibraryRunner\Models\Media\LibraryMedia;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 /**
@@ -114,7 +112,7 @@ class LibraryPost extends BaseMediaRunnerModel
     {
         $files = collect();
 
-        foreach ($this->item->media as $media) {
+        foreach ($this->item?->media as $media) {
             $files->push($media->getFileInfo());
         }
 
