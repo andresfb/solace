@@ -26,17 +26,10 @@ class LibraryPost extends BaseMediaRunnerModel
 
     protected $table = 'posts';
 
-    private array $extraTags = [];
-
     protected static function booted(): void
     {
         parent::booted();
         static::addGlobalScope(new LibraryItemScope);
-    }
-
-    public function setExtraTags(array $extraTags): void
-    {
-        $this->extraTags = $extraTags;
     }
 
     protected function casts(): array

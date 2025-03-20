@@ -43,7 +43,7 @@ class ContentSourceJokes implements ContentSourceInterface
     {
         $title = $this->cleanString($joke->title);
         if ($title->length() > 40) {
-            return Str::of($title)
+            return Str::of($title->toString())
                 ->words(6)
                 ->toString();
         }
@@ -56,7 +56,7 @@ class ContentSourceJokes implements ContentSourceInterface
         $jokeBase = $this->cleanString($joke->body);
         $title = $this->cleanString($joke->title);
 
-        $body = $title->length() > 40 && ! $jokeBase->lower()->contains($title->lower())
+        $body = $title->length() > 40 && ! $jokeBase->lower()->contains($title->lower()->toString())
             ? $title->append("\n\n")->append($joke->body)->toString()
             : $joke->body;
 

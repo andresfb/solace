@@ -6,8 +6,8 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
-use Modules\MediaLibraryRunner\Repositories\ContentSourceJokes;
+//use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+//use Modules\MediaLibraryRunner\Repositories\ContentSourceJokes;
 use Throwable;
 
 class TestAppCommand extends Command
@@ -21,17 +21,17 @@ class TestAppCommand extends Command
         try {
             $this->info("\nStarting test\n");
 
-            $libraryPost = LibraryPost::query()
-                ->bandedReprocess()
-                ->inRandomOrder()
-                ->firstOrFail();
-
-            dump($libraryPost->toArray());
-
-            $srv = app(ContentSourceJokes::class);
-            $item = $srv->generateContent($libraryPost);
-
-            dump($item->toArray());
+//            $libraryPost = LibraryPost::query()
+//                ->bandedReprocess()
+//                ->inRandomOrder()
+//                ->firstOrFail();
+//
+//            dump($libraryPost->toArray());
+//
+//            $srv = app(ContentSourceJokes::class);
+//            $item = $srv->generateContent($libraryPost);
+//
+//            dump($item->toArray());
 
             $this->info("\nDone at: ".now()."\n");
 

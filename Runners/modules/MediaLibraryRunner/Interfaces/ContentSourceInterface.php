@@ -15,5 +15,6 @@ interface ContentSourceInterface
 
     public function updateSource(int $sourceId): void;
 
+    // TODO: replace the BaseContentModel for a DTO that has all properties needed for all possible fields on all cnt tables and they are all optional
     public function getRandomContent(): ?BaseContentModel;
 }

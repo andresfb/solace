@@ -25,8 +25,13 @@ class Joke extends BaseContentModel
 
         $totalJokes = Cache::remember('jokes:count', now()->addDays(10), static fn () => self::query()->where('used', 0)->count());
 
+        $maxTakes = $totalJokes - $baseTake;
+        if ($maxTakes <= 0) {
+            $maxTakes = 200;
+        }
+
         try {
-            $randomOffset = random_int(0, max(0, $totalJokes - $baseTake));
+            $randomOffset = random_int(0, max(0, (int) $maxTakes));
         } catch (RandomException) {
             return null;
         }
