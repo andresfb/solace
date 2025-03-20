@@ -96,9 +96,7 @@ abstract class BaseOllamaService
     /**
      * processPost Method.
      *
-     * @param LibraryPost $libraryPost
      * @param array<string, mixed> $contentResponse
-     * @return void
      * @throws NoAiContentException|RuntimeException
      */
     private function processPost(LibraryPost $libraryPost, array $contentResponse): void
@@ -132,7 +130,6 @@ abstract class BaseOllamaService
 
     /**
      * @param array<string, mixed> $postInfo
-     * @return void
      */
     private function dispatchEvents(array $postInfo): void
     {
@@ -159,7 +156,6 @@ abstract class BaseOllamaService
     /**
      * extractHashtags Method.
      *
-     * @param string $text
      * @return array<int, list<string>|string>
      */
     private function extractHashtags(string $text): array
@@ -181,7 +177,7 @@ abstract class BaseOllamaService
             ->toString();
 
         // Remove the '#' symbol from each hashtag
-        $cleanedHashtags = array_map(static fn ($hashtag): string => ltrim((string) $hashtag, '#'), $hashtags);
+        $cleanedHashtags = array_map(static fn ($hashtag): string => ltrim($hashtag, '#'), $hashtags);
 
         return [
             $cleanedHashtags,

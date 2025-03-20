@@ -72,10 +72,7 @@ trait MakesHttpRequests
     /**
      * sendRequest Method.
      *
-     * @param string $urlSuffix
      * @param array<string, mixed> $data
-     * @param string $method
-     * @return mixed
      * @throws ConnectionException
      */
     protected function sendRequest(string $urlSuffix, array $data, string $method = 'post'): mixed

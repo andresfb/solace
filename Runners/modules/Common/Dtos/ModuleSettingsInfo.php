@@ -9,11 +9,8 @@ use Spatie\LaravelData\Data;
 class ModuleSettingsInfo extends Data
 {
     /**
-     * @param string $moduleName
-     * @param string $taskName
      * @param array<string> $settingNames
      * @param array<string> $response
-     * @param string $action
      */
     public function __construct(
         public string $moduleName,

@@ -216,7 +216,7 @@ class ProcessPostService
         $results = array_filter(array_map('trim', $matches[0]));
 
         // Remove asterisks and colons from the results
-        $cleanedResults = array_map(static fn ($item): string => trim((string) $item, '*:'), $results);
+        $cleanedResults = array_map(static fn ($item): string => trim($item, '*:'), $results);
 
         $cleanedResults = array_values(
             array_unique(
