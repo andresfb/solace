@@ -26,10 +26,17 @@ class LibraryPost extends BaseMediaRunnerModel
 
     protected $table = 'posts';
 
+    private array $extraTags = [];
+
     protected static function booted(): void
     {
         parent::booted();
         static::addGlobalScope(new LibraryItemScope);
+    }
+
+    public function setExtraTags(array $extraTags): void
+    {
+        $this->extraTags = $extraTags;
     }
 
     protected function casts(): array
@@ -62,6 +69,11 @@ class LibraryPost extends BaseMediaRunnerModel
     public function scopeWithoutBanded(Builder $query): Builder
     {
         return $query->whereNotIn('source', config('media_runner.banded_tags'));
+    }
+
+    public function scopeWithBanded(Builder $query): Builder
+    {
+        return $query->whereIn('source', config('media_runner.banded_tags'));
     }
 
     public function scopeUntaggedImages(Builder $query): Builder
@@ -121,6 +133,11 @@ class LibraryPost extends BaseMediaRunnerModel
 
     public function getTags(): Collection
     {
+        $banded = array_merge(
+            config('media_runner.banded_tags'),
+            ['image', 'video']
+        );
+
         return DB::connection(config('database.media_runner_connection'))
             ->table('tags')
             ->select('tags.name')
@@ -128,18 +145,13 @@ class LibraryPost extends BaseMediaRunnerModel
             ->where('taggables.taggable_type', 'App\Models\Post')
             ->where('taggables.taggable_id', $this->id)
             ->get()
-            ->map(function ($tag) {
+            ->map(function ($tag) use ($banded) {
                 $values = json_decode((string) $tag->name, true, 512, JSON_THROW_ON_ERROR);
 
                 $keys = array_keys($values);
                 if ($keys === []) {
                     return '';
                 }
-
-                $banded = array_merge(
-                    config('media_runner.banded_tags'),
-                    ['image', 'video']
-                );
 
                 $tag = str($values[$keys[0]])
                     ->trim()

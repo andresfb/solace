@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Models\Media;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Modules\Common\Libraries\MediaBasePath;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
@@ -13,6 +14,8 @@ use Modules\MediaLibraryRunner\Models\Media\Scopes\MediaModelTypeScope;
 
 class LibraryMedia extends BaseMediaRunnerModel
 {
+    use SoftDeletes;
+
     protected $table = 'media';
 
     protected static function booted(): void

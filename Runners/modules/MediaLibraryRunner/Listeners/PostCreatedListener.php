@@ -6,6 +6,8 @@ namespace Modules\MediaLibraryRunner\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Common\Events\ChangeStatusEvent;
+use Modules\MediaLibraryRunner\Factories\ContentSourceFactory;
+use Modules\MediaLibraryRunner\Interfaces\ContentSourceInterface;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -19,6 +21,20 @@ class PostCreatedListener implements ShouldQueue
             ->update([
                 'runner_status' => $event->runnerStatus,
             ]);
+
+        if ($event->source === '' || !str_contains($event->source, ':')) {
+            return;
+        }
+
+        [$model, $id] = explode(':', $event->source);
+
+        /** @var ContentSourceInterface $source */
+        $source = ContentSourceFactory::getContentSource($model);
+        if ($source !== null) {
+            return;
+        }
+
+        $source->updateSource((int) $id);
     }
 
     public function shouldQueue(ChangeStatusEvent $event): bool

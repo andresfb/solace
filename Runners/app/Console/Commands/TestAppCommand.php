@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Repositories\ContentSourceJokes;
 use Modules\MediaLibraryRunner\Services\OllamaChatService;
 use Throwable;
 
@@ -26,9 +27,12 @@ class TestAppCommand extends Command
                 ->inRandomOrder()
                 ->firstOrFail();
 
-            $srv = app(OllamaChatService::class);
-            $srv->setToScreen(true)
-                ->execute($libraryPost);
+            dump($libraryPost->toArray());
+
+            $srv = app(ContentSourceJokes::class);
+            $item = $srv->generateContent($libraryPost);
+
+            dump($item->toArray());
 
             $this->info("\nDone at: ".now()."\n");
 

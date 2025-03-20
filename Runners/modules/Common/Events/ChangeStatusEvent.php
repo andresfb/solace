@@ -14,6 +14,7 @@ class ChangeStatusEvent
     public function __construct(
         public readonly string $origin,
         public readonly int $libraryPostId,
-        public readonly RunnerStatus $runnerStatus
+        public readonly RunnerStatus $runnerStatus,
+        public readonly string $source = '',
     ) {}
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Modules\MediaLibraryRunner\Tasks\MigrateFulfilledPostsTask;
 use Modules\MediaLibraryRunner\Tasks\MigrateLostCauseNoBandedTask;
+use Modules\MediaLibraryRunner\Tasks\MigrateLostCauseTask;
 use Modules\MediaLibraryRunner\Tasks\MigrateUntaggedVideosTask;
 use Modules\MediaLibraryRunner\Tasks\MigrateViaChatAiTask;
 use Modules\MediaLibraryRunner\Tasks\MigrateViaVisionAiTask;
@@ -22,6 +23,7 @@ class MediaLibraryRunnerTasksServiceProvider extends ServiceProvider
             $tasks->push(MigrateViaVisionAiTask::class);
             $tasks->push(MigrateViaChatAiTask::class);
             $tasks->push(MigrateLostCauseNoBandedTask::class);
+            $tasks->push(MigrateLostCauseTask::class);
         });
     }
 
@@ -32,5 +34,6 @@ class MediaLibraryRunnerTasksServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/post-vision-ai.php', 'post-vision-ai');
         $this->mergeConfigFrom(__DIR__.'/../Config/post-chat-ai.php', 'post-chat-ai');
         $this->mergeConfigFrom(__DIR__.'/../Config/lc-no-banded.php', 'lc-no-banded');
+        $this->mergeConfigFrom(__DIR__.'/../Config/lost-cause.php', 'lost-cause');
     }
 }

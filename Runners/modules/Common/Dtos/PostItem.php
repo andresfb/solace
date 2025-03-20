@@ -13,6 +13,7 @@ class PostItem extends Data
 
     public function __construct(
         public int $libraryPostId,
+        public string $slug,
         public string $title,
         public string $content,
         public string $generator,
@@ -27,7 +28,7 @@ class PostItem extends Data
     public function getHash(): string
     {
         if (! isset($this->hash) || ($this->hash === '' || $this->hash === '0')) {
-            $this->hash = md5("$this->libraryPostId|$this->title");
+            $this->hash = md5("$this->libraryPostId|$this->slug");
         }
 
         return $this->hash;

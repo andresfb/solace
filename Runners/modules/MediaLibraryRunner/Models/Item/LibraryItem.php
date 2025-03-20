@@ -6,6 +6,7 @@ namespace Modules\MediaLibraryRunner\Models\Item;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Media\LibraryMedia;
 use Modules\MediaLibraryRunner\Models\Media\Scopes\LibraryMediaScope;
@@ -13,6 +14,8 @@ use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
 class LibraryItem extends BaseMediaRunnerModel
 {
+    use SoftDeletes;
+
     protected $table = 'items';
 
     protected static function booted(): void

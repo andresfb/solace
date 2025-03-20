@@ -7,13 +7,19 @@ namespace Modules\MediaLibraryRunner\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Modules\Common\Events\ChangeStatusEvent;
-use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
-use Modules\MediaLibraryRunner\Jobs\MigrateFulfilledPostsJob;
-use Modules\MediaLibraryRunner\Jobs\MigrateUntaggedVideosJob;
 use Modules\MediaLibraryRunner\Listeners\PostCreatedListener;
 
 class MediaLibraryRunnerServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->app->singleton('contents', fn ($app) => collect());
+
+        $this->app->register(MediaLibraryRunnerTasksServiceProvider::class);
+
+        $this->app->register(MediaLibraryRunnerContentServiceProvider::class);
+    }
+
     public function boot(): void
     {
         // We won't need routes either, this is all backend
@@ -26,12 +32,6 @@ class MediaLibraryRunnerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/database.php', 'database.connections.media_runner');
         $this->mergeConfigFrom(__DIR__.'/../Config/redis.php', 'database.redis');
         $this->mergeConfigFrom(__DIR__.'/../Config/queue.php', 'queue.connections');
-
-        $this->app->register(MediaLibraryRunnerTasksServiceProvider::class);
-
-        $this->app->bind(CreatePostItemJob::class);
-        $this->app->bind(MigrateFulfilledPostsJob::class);
-        $this->app->bind(MigrateUntaggedVideosJob::class);
 
         Event::listen(
             ChangeStatusEvent::class,

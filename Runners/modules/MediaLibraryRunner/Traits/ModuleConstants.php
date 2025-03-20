@@ -19,4 +19,6 @@ trait ModuleConstants
     public string $POST_CHAT_AI = 'post-chat-ai';
 
     public string $LO_NO_BANDED = 'lc-no-banded';
+
+    public string $LOST_CAUSE = 'lost-cause';
 }

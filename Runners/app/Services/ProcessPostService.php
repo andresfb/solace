@@ -47,7 +47,8 @@ class ProcessPostService
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                RunnerStatus::PUBLISHED
+                RunnerStatus::PUBLISHED,
+                $postItem->source,
             );
 
             return;
@@ -62,7 +63,7 @@ class ProcessPostService
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                RunnerStatus::UNUSABLE
+                RunnerStatus::UNUSABLE,
             );
 
             return;
@@ -96,7 +97,8 @@ class ProcessPostService
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
                 $postItem->libraryPostId,
-                RunnerStatus::PUBLISHED
+                RunnerStatus::PUBLISHED,
+                $postItem->source,
             );
 
             // TODO: create a listener in the Host code for PostCreatedEvent where we can add a random number of likes.
@@ -178,10 +180,6 @@ class ProcessPostService
             $this->extractTag($postItem->content);
         }
 
-        $title = str($postItem->title)
-            ->trim()
-            ->replace('...', '');
-
         $content = str($postItem->content)
             ->replace('**Category:**', '')
             ->replace('*Category:*', '')
@@ -190,6 +188,14 @@ class ProcessPostService
         foreach ($this->extraTags as $extraTag) {
             $content = $content->replace("*$extraTag*", '')
                 ->trim();
+        }
+
+        $title = str($postItem->title)
+            ->trim()
+            ->replace('...', '');
+
+        if ($title->isEmpty()) {
+            return $content->toString();
         }
 
         if ($content->startsWith($title->toString())) {

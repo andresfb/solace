@@ -23,16 +23,22 @@ return Application::configure(basePath: dirname(__DIR__))
 
         Schedule::command(TaskRunnerCommand::class, ['h'])->hourlyAt(05);
 
-        Schedule::command(TaskRunnerCommand::class, ['odd'])->everyOddHour();
+        Schedule::command(TaskRunnerCommand::class, ['odd'])->everyOddHour(10);
 
-        Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours(10);
+        Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours(15);
 
-        Schedule::command(TaskRunnerCommand::class, ['td'])->twiceDaily();
+        Schedule::command(TaskRunnerCommand::class, ['td'])->twiceDaily(3, 15);
+
+        // Three Times a day
+        Schedule::command(TaskRunnerCommand::class, ['ttd'])->cron('20 8,14,20 * * *');
 
         // Every two hours from 11:45 am to 11:45 pm Weekdays
-        Schedule::command(TaskRunnerCommand::class, ['cmw'])->cron('45 11-23/2 * * 1-5');
+        Schedule::command(TaskRunnerCommand::class, ['cm'])->cron('25 11-23/2 * * 1-5');
 
-        // Every two hours from 1:30 pm to 11:30 pm Weekends
-        Schedule::command(TaskRunnerCommand::class, ['cmd'])->cron('30 13-23/2 * * 6-7');
+        // Every two hours from 12:30 pm to 11:30 pm Weekends
+        Schedule::command(TaskRunnerCommand::class, ['cm'])->cron('30 12-23/2 * * 6-7');
+
+        // Three times a week
+        Schedule::command(TaskRunnerCommand::class, ['ttw'])->cron('35 7 * * 2,4,6');
 
     })->create();
