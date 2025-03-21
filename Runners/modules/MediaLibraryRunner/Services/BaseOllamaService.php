@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
@@ -43,6 +44,8 @@ abstract class BaseOllamaService
 
     abstract protected function getTaskName(): string;
 
+    abstract protected function getPrompt(LibraryPost $libraryPost): string;
+
     abstract protected function getRunnerStatus(): RunnerStatus;
 
     abstract protected function loadMediaInfo(LibraryPost $libraryPost): void;
@@ -63,7 +66,7 @@ abstract class BaseOllamaService
                     'temperature' => 0.8,
                 ])
                 ->keepAlive('5m')
-                ->prompt(config("{$this->getTaskName()}.ai_post_prompt_content"));
+                ->prompt($this->getPrompt($libraryPost));
 
             $content = $this->getExtraOllamaOptions($ollama)->ask();
 
@@ -71,8 +74,16 @@ abstract class BaseOllamaService
 
             $this->processPost($libraryPost, $content);
         } catch (NoAiContentException $e) {
-            $this->error($e->getMessage());
-            Log::error($e->getMessage());
+            $this->error($e->getMessage().PHP_EOL);
+
+            Log::error(
+                sprintf(
+                    "Error with LibPost: %s %s\n%s",
+                    $libraryPost->id,
+                    $e->getMessage(),
+                    print_r($e->response, true)
+                )
+            );
 
             ChangeStatusEvent::dispatch(
                 $this->MEDIA_LIBRARY,
@@ -112,7 +123,10 @@ abstract class BaseOllamaService
 
         $content = str($response);
         if (! $content->contains('#') || $content->trim()->contains($this->failureResponses)) {
-            throw new NoAiContentException('The AI did not provide usable content');
+            throw new NoAiContentException(
+                'The AI did not provide usable content',
+                $contentResponse
+            );
         }
 
         [$hashtags, $content] = $this->extractHashtags($content->toString());

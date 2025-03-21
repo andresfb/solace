@@ -28,4 +28,13 @@ class OllamaChatService extends BaseOllamaService
     {
         $this->mediaInfo = MediaItem::loadEmpty();
     }
+
+    protected function getPrompt(LibraryPost $libraryPost): string
+    {
+        return sprintf(
+            config('post-chat-ai.ai_post_prompt_content'),
+            $libraryPost->type,
+            $libraryPost->type,
+        );
+    }
 }

@@ -17,6 +17,11 @@ class OllamaVisionService extends BaseOllamaService
         return $this->POST_VISION_AI;
     }
 
+    protected function getPrompt(LibraryPost $libraryPost): string
+    {
+        return config('post-vision-ai.ai_post_prompt_content');
+    }
+
     /**
      * @throws Exception
      */

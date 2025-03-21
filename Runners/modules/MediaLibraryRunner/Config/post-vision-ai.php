@@ -14,11 +14,11 @@ return [
 
     'ai_api_url' => env('MIGRATE_VISION_AI_API_URL', 'http://127.0.0.1:11434'),
 
-    'ai_agent' => env('MIGRATE_CHAT_AI_AGENT', 'You are a savvy Social Media with a knack for creative content text'),
+    'ai_agent' => env('MIGRATE_CHAT_AI_AGENT', 'You are a savvy Social Media expert with a knack for creative content text'),
 
     'ai_post_prompt_content' => env(
         'MIGRATE_VISION_AI_POST_PROMPT_CONTENT',
-        'Please provide the content for one Social Media post with at least two paragraphs of text and 2 to 6 hashtags from this picture. Please respond with the content only; do not add any extra options or comments or repeat the hashtags in the text.'
+        'Please provide the content for one Social Media post with at least two paragraphs of text, and you must include 2 to 6 hashtags from this picture. Please respond with the content only; do not add any extra options or comments or repeat the hashtags in the text.'
     ),
 
 ];

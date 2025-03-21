@@ -6,8 +6,6 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Modules\MediaLibraryRunner\Factories\ContentSourceFactory;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
 class TestAppCommand extends Command
 {
@@ -19,15 +17,6 @@ class TestAppCommand extends Command
     {
         try {
             $this->info("\nStarting test\n");
-
-            $libraryPost = LibraryPost::query()
-                ->bandedReprocess()
-                ->inRandomOrder()
-                ->firstOrFail();
-
-            $post = ContentSourceFactory::loadContent($libraryPost);
-
-            dd($post->toArray());
 
             $this->info("\nDone at: ".now()."\n");
 

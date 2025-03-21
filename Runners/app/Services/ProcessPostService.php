@@ -195,14 +195,18 @@ class ProcessPostService
         }
 
         $title = str($postItem->title)
-            ->trim()
-            ->replace('...', '');
+            ->replace('...', '')
+            ->trim();
 
-        if ($title->isEmpty()) {
-            return $content->toString();
-        }
+        $contentLow = $content->lower();
+        $titleLow = $title->lower()->toString();
 
-        if ($content->startsWith([$title->toString(), 'Word Definition'])) {
+        if ($title->isEmpty()
+            || $title->contains('Word Definition')
+            || $source->contains(['bible','quran'])
+            || $contentLow->startsWith($titleLow)
+            || str($postItem->generator)->contains('AI_MODEL'))
+        {
             return $content->trim()
                 ->toString();
         }
@@ -211,9 +215,11 @@ class ProcessPostService
             $title->title()
                 ->prepend('**')
                 ->append('**')
+                ->trim()
                 ->append("\n\n")
                 ->toString()
         )
+            ->trim()
             ->toString();
     }
 
