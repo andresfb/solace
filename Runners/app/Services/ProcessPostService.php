@@ -41,7 +41,7 @@ class ProcessPostService
         if (Post::where('hash', $postItem->getHash())->exists()) {
             $message = "Posting $postItem->title already exists for $postItem->libraryPostId";
 
-            $this->line($message);
+            $this->line("$message\n");
             Log::notice($message);
 
             ChangeStatusEvent::dispatch(
@@ -57,7 +57,7 @@ class ProcessPostService
         if ($postItem->mediaFiles->isEmpty()) {
             $message = "No media files found for Library Post: $postItem->libraryPostId";
 
-            $this->line($message);
+            $this->line("$message\n");
             Log::notice($message);
 
             ChangeStatusEvent::dispatch(
@@ -85,7 +85,9 @@ class ProcessPostService
             ]);
 
             if ($post === null) {
-                throw new \RuntimeException("Failed to create post from Library Post: $postItem->libraryPostId");
+                throw new \RuntimeException(
+                    "Failed to create post from Library Post: $postItem->libraryPostId"
+                );
             }
 
             $this->saveMedia($post, $postItem->mediaFiles);

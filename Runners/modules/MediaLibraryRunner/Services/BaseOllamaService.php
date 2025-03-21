@@ -105,7 +105,9 @@ abstract class BaseOllamaService
         $response = $contentResponse['response'] ?? '';
 
         if (empty($response)) {
-            throw new RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
+            throw new RuntimeException(
+                'We did not receive a Content from the AI: '.print_r($contentResponse, true)
+            );
         }
 
         $content = str($response);
@@ -116,7 +118,9 @@ abstract class BaseOllamaService
         [$hashtags, $content] = $this->extractHashtags($content->toString());
 
         if (empty($hashtags) || empty($content)) {
-            throw new RuntimeException('We did not receive a Content from the AI: '.print_r($contentResponse, true));
+            throw new RuntimeException(
+                'We did not receive a Content from the AI: '.print_r($contentResponse, true)
+            );
         }
 
         $postInfo = $libraryPost->getPostableInfo();
@@ -134,7 +138,7 @@ abstract class BaseOllamaService
      */
     private function dispatchEvents(array $postInfo): void
     {
-        $message = "Dispatching %s event for LibraryPost: {$postInfo['libraryPostId']}";
+        $message = "Dispatching %s event for LibraryPost: {$postInfo['libraryPostId']}\n";
 
         if ($this->queueable) {
             $this->line(sprintf($message, 'PostSelectedQueueableEvent'));

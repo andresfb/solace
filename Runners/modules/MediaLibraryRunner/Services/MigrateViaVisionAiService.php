@@ -62,6 +62,7 @@ class MigrateViaVisionAiService implements TaskServiceInterface
             $this->line('Sending Library post to the AI...');
 
             $this->ollamaService->setToScreen($this->toScreen)
+                ->setQueueable($this->queueable)
                 ->execute($libraryPost);
         });
     }

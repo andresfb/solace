@@ -82,7 +82,8 @@ class LibraryPost extends BaseMediaRunnerModel
             ->where(function (Builder $query): void {
                 $query->where(function (Builder $query): void {
                     $query->where('type', 'video')
-                        ->whereIn('source', config('media_runner.banded_tags'));
+                        ->whereIn('source', config('media_runner.banded_tags'))
+                        ->where('runner_status', RunnerStatus::STASIS);
                 })->orWhere('runner_status', RunnerStatus::REPROCESS);
             });
     }
