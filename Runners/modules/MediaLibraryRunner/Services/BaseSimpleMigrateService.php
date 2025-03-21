@@ -57,7 +57,7 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
                 CreatePostItemJob::dispatch($libraryPost)
                     ->onConnection($this->getConnection($this->MODULE_NAME))
                     ->onQueue($this->getQueue($this->MODULE_NAME))
-                    ->delay(now()->addSecond());
+                    ->delay(now()->addSeconds(5));
 
                 return;
             }

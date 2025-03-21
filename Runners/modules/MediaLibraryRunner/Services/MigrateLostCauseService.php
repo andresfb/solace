@@ -12,6 +12,7 @@ use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Factories\ContentSourceFactory;
+use Modules\MediaLibraryRunner\Jobs\ContentSourceJob;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -49,7 +50,16 @@ class MigrateLostCauseService implements TaskServiceInterface
         }
 
         foreach ($libraryPosts as $libraryPost) {
-            // TODO: dispatch a Job if the queueable is true
+            if ($this->queueable) {
+                $this->line('Queueing ContentSourceJob for LibraryPost: '.$libraryPost->id);
+
+                ContentSourceJob::dispatch($libraryPost)
+                    ->onConnection($this->getConnection($this->MODULE_NAME))
+                    ->onQueue($this->getQueue($this->MODULE_NAME))
+                    ->delay(now()->addSeconds(5));
+
+                return;
+            }
 
             $this->line('Loading the Generating new Content...');
 
@@ -57,6 +67,8 @@ class MigrateLostCauseService implements TaskServiceInterface
             if (! $newPost instanceof LibraryPost) {
                 continue;
             }
+
+            $this->line('Dispatching the PostSelectedEvent.');
 
             PostSelectedEvent::dispatch(
                 PostItem::from($newPost->getPostableInfo()),

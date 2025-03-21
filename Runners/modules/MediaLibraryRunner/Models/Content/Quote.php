@@ -6,11 +6,10 @@ namespace Modules\MediaLibraryRunner\Models\Content;
 
 /**
  * @property int $id
- * @property string $title
- * @property string $body
+ * @property string $author
  * @property string $category
  */
-class Joke extends BaseContentModel
+class Quote extends BaseContentModel
 {
-    protected $table = 'cnt_jokes';
+    protected $table = 'cnt_quotes';
 }

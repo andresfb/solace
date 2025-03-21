@@ -170,13 +170,15 @@ class ProcessPostService
 
     private function getContent(PostItem $postItem): string
     {
-        if ($postItem->source === 'quote') {
+        $source = str($postItem->source);
+
+        if ($source->startsWith('quote')) {
             $this->extraTags[] = $postItem->title;
 
             return $postItem->content;
         }
 
-        if ($postItem->source === 'joke') {
+        if ($source->startsWith('joke')) {
             $this->extractTag($postItem->content);
         }
 
@@ -198,7 +200,7 @@ class ProcessPostService
             return $content->toString();
         }
 
-        if ($content->startsWith($title->toString())) {
+        if ($content->startsWith([$title->toString(), 'Word Definition'])) {
             return $content->trim()
                 ->toString();
         }

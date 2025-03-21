@@ -11,10 +11,17 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
+        <testsuite name="MediaRunnersUnit">
+            <directory>modules/MediaLibraryRunner/Tests/Unit</directory>
+        </testsuite>
+        <testsuite name="MediaRunnersFeature">
+            <directory>modules/MediaLibraryRunner/Tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
             <directory>app</directory>
+            <directory>modules</directory>
         </include>
     </source>
     <php>

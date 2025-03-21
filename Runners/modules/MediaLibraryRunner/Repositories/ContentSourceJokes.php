@@ -6,42 +6,25 @@ namespace Modules\MediaLibraryRunner\Repositories;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use Modules\MediaLibraryRunner\Interfaces\ContentSourceInterface;
 use Modules\MediaLibraryRunner\Models\Content\BaseContentModel;
+use Modules\MediaLibraryRunner\Models\Content\ContentItem;
 use Modules\MediaLibraryRunner\Models\Content\Joke;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
-class ContentSourceJokes implements ContentSourceInterface
+class ContentSourceJokes extends BaseContentSource
 {
     public function getName(): string
     {
         return 'joke';
     }
 
-    public function getRandomContent(): ?BaseContentModel
+    public function getModel(): BaseContentModel
     {
-        return Joke::getRandom();
+        return new Joke();
     }
 
-    public function generateContent(LibraryPost $libraryPost, BaseContentModel $model): LibraryPost
+    public function getTitle(ContentItem $content): string
     {
-        $libraryPost->title = $this->getTitle($model);
-        $libraryPost->content = $this->getContent($model);
-        $libraryPost->source = "joke:$model->id";
-
-        return $libraryPost;
-    }
-
-    public function updateSource(int $sourceId): void
-    {
-        Joke::where('id', $sourceId)->update([
-            'used' => 1,
-        ]);
-    }
-
-    public function getTitle(Joke $joke): string
-    {
-        $title = $this->cleanString($joke->title);
+        $title = $this->cleanString($content->title);
         if ($title->length() > 40) {
             return Str::of($title->toString())
                 ->words(6)
@@ -51,18 +34,18 @@ class ContentSourceJokes implements ContentSourceInterface
         return $title->toString();
     }
 
-    public function getContent(Joke $joke): string
+    public function getContent(ContentItem $content): string
     {
-        $jokeBase = $this->cleanString($joke->body);
-        $title = $this->cleanString($joke->title);
+        $jokeBase = $this->cleanString($content->body);
+        $title = $this->cleanString($content->title);
 
         $body = $title->length() > 40 && ! $jokeBase->lower()->contains($title->lower()->toString())
-            ? $title->append("\n\n")->append($joke->body)->toString()
-            : $joke->body;
+            ? $title->append("\n\n")->append($content->body)->toString()
+            : $content->body;
 
         $category = sprintf(
             '**Category:** *%s*',
-            $joke->category,
+            $content->category,
         );
 
         return $body."\n\n".$category;
