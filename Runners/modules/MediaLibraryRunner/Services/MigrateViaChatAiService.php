@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Modules\Common\Exceptions\EmptyRunException;
+use Modules\Common\Factories\EmptyRunFactory;
 use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
@@ -40,7 +41,7 @@ class MigrateViaChatAiService implements TaskServiceInterface
 
             $this->warning($message);
 
-            throw new EmptyRunException(
+            EmptyRunFactory::handler(
                 $this->MODULE_NAME,
                 $this->POST_CHAT_AI,
                 $message

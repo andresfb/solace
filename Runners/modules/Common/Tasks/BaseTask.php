@@ -89,13 +89,11 @@ abstract class BaseTask implements TaskInterface
      */
     private function getModuleSettings(array $settingName): ModuleSettingsInfo
     {
-        $info = [
+        return ModuleSettingsInfo::from([
             'moduleName' => $this->getModuleName(),
             'taskName' => $this->getTaskName(),
             'settingNames' => $settingName,
             'response' => [],
-        ];
-
-        return ModuleSettingsInfo::from($info);
+        ]);
     }
 }

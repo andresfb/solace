@@ -7,6 +7,7 @@ namespace Modules\MediaLibraryRunner\Services;
 use Illuminate\Database\Eloquent\Collection;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Exceptions\EmptyRunException;
+use Modules\Common\Factories\EmptyRunFactory;
 use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
@@ -41,7 +42,7 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
 
             $this->warning($message);
 
-            throw new EmptyRunException(
+            EmptyRunFactory::handler(
                 $this->MODULE_NAME,
                 $this->getTaskName(),
                 $message

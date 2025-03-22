@@ -23,7 +23,7 @@ class MigrateLostCauseTask extends BaseTask
 
     protected function getModuleName(): string
     {
-        return $this->MEDIA_LIBRARY;
+        return $this->MODULE_NAME;
     }
 
     protected function getTaskName(): string

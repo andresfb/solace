@@ -47,7 +47,8 @@ class ModuleSettingsService
 
         if ($request->action === 'increment') {
             $setting = $this->getSetting($request);
-            $updateValue = (int) $setting->response[$settingName]++;
+            $count = (int) $setting->response[$settingName];
+            $updateValue = $count + 1;
         } else {
             $updateValue = $request->response[$settingName];
         }
@@ -55,6 +56,8 @@ class ModuleSettingsService
         ModuleSetting::where('module_name', $request->moduleName)
             ->where('task_name', $request->taskName)
             ->where('name', $settingName)
-            ->update(['value' => $updateValue]);
+            ->update([
+                'value' => $updateValue
+            ]);
     }
 }

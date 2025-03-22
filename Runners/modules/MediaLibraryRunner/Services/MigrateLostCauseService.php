@@ -6,6 +6,7 @@ namespace Modules\MediaLibraryRunner\Services;
 
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Exceptions\EmptyRunException;
+use Modules\Common\Factories\EmptyRunFactory;
 use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
@@ -42,7 +43,7 @@ class MigrateLostCauseService implements TaskServiceInterface
 
             $this->warning($message);
 
-            throw new EmptyRunException(
+            EmptyRunFactory::handler(
                 $this->MODULE_NAME,
                 $this->LOST_CAUSE,
                 $message
