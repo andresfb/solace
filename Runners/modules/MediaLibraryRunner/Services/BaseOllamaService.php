@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
@@ -28,6 +27,8 @@ abstract class BaseOllamaService
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
+
+    protected string $spark = '';
 
     /**
      * @var array|string[]
@@ -55,6 +56,8 @@ abstract class BaseOllamaService
     public function execute(LibraryPost $libraryPost): void
     {
         try {
+            $this->loadSpark();
+
             $this->loadMediaInfo($libraryPost);
 
             $this->line('Asking the AI for Post content');
@@ -63,7 +66,7 @@ abstract class BaseOllamaService
                 ->model(config("{$this->getTaskName()}.ai_model"))
                 ->agent(config("{$this->getTaskName()}.ai_agent"))
                 ->options([
-                    'temperature' => 0.8,
+                    'temperature' => config("{$this->getTaskName()}.ai_temperature"),
                 ])
                 ->keepAlive('5m')
                 ->prompt($this->getPrompt($libraryPost));
@@ -104,6 +107,11 @@ abstract class BaseOllamaService
         }
     }
 
+    private function loadSpark(): void
+    {
+        $this->spark = (string) collect(config('media_runner.ai_sparks'))->random();
+    }
+
     /**
      * processPost Method.
      *
@@ -122,14 +130,20 @@ abstract class BaseOllamaService
         }
 
         $content = str($response);
-        if (! $content->contains('#') || $content->trim()->contains($this->failureResponses)) {
+        if ($content->trim()->contains($this->failureResponses)) {
             throw new NoAiContentException(
                 'The AI did not provide usable content',
                 $contentResponse
             );
         }
 
-        [$hashtags, $content] = $this->extractHashtags($content->toString());
+        if (! $content->contains('#')) {
+            // todo: implement sending to an alternative AI (OpenAI?) to get the hashtags based on the text
+            $hashtags = [];
+            $content = $this->getCleanText($content->toString());
+        } else {
+            [$hashtags, $content] = $this->extractHashtags($content->toString());
+        }
 
         if (empty($hashtags) || empty($content)) {
             throw new RuntimeException(
@@ -137,9 +151,9 @@ abstract class BaseOllamaService
             );
         }
 
-        $postInfo = $libraryPost->getPostableInfo();
+        $postInfo = $libraryPost->getPostableInfo($this->getTaskName());
         $postInfo['fromAi'] = true;
-        $postInfo['generator'] .= strtoupper(':AI_MODEL='.config("{$this->getTaskName()}.ai_model"));
+        $postInfo['generator'] .= strtoupper(':AI_MODEL='.config("{$this->getTaskName()}.ai_model").':SPARK='.$this->spark);
         $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
         $postInfo['content'] = $content;
         $postInfo['responses'] = $contentResponse;
@@ -189,11 +203,7 @@ abstract class BaseOllamaService
         $textWithoutHashtags = preg_replace('/#\w+/', '', $text);
 
         // Trim any extra whitespace
-        $textWithoutHashtags = str($textWithoutHashtags)->trim()
-            ->replace('  ', '')
-            ->rtrim("\n\r")
-            ->rtrim(' ')
-            ->toString();
+        $textWithoutHashtags = $this->getCleanText($textWithoutHashtags);
 
         // Remove the '#' symbol from each hashtag
         $cleanedHashtags = array_map(static fn ($hashtag): string => ltrim($hashtag, '#'), $hashtags);
@@ -202,5 +212,17 @@ abstract class BaseOllamaService
             $cleanedHashtags,
             $textWithoutHashtags,
         ];
+    }
+
+    private function getCleanText(string $text): string
+    {
+        return str($text)
+            ->replace('  ', '')
+            ->ltrim('"')
+            ->rtrim('"')
+            ->rtrim("\n\r")
+            ->rtrim(' ')
+            ->trim()
+            ->toString();
     }
 }

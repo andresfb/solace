@@ -35,6 +35,7 @@ class OllamaChatService extends BaseOllamaService
             config('post-chat-ai.ai_post_prompt_content'),
             $libraryPost->type,
             $libraryPost->type,
+            $this->spark,
         );
     }
 }

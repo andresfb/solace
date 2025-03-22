@@ -55,7 +55,7 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
                 $this->line('Queueing CreatePostItemJob for LibraryPost: '.$libraryPost->id);
 
                 // We use a job here as the process will load the media files
-                CreatePostItemJob::dispatch($libraryPost)
+                CreatePostItemJob::dispatch($libraryPost, $this->getTaskName())
                     ->onConnection($this->getConnection($this->MODULE_NAME))
                     ->onQueue($this->getQueue($this->MODULE_NAME))
                     ->delay(now()->addSeconds(5));
@@ -66,7 +66,9 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
             $this->line('Loading the Media Files and tags...');
 
             PostSelectedEvent::dispatch(
-                PostItem::from($libraryPost->getPostableInfo()),
+                PostItem::from(
+                    $libraryPost->getPostableInfo($this->getTaskName())
+                ),
                 $this->toScreen
             );
 

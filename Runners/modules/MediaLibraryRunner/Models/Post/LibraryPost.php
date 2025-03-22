@@ -97,20 +97,21 @@ class LibraryPost extends BaseMediaRunnerModel
     /**
      * @return array<string, mixed>
      */
-    public function getPostableInfo(): array
+    public function getPostableInfo(string $taskName): array
     {
         return [
             'libraryPostId' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
             'generator' => strtoupper(
-                "POST=$this->id:ITEM=$this->item_id:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"
+                "POST=$this->id:ITEM=$this->item_id:TYPE:$this->type:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"
             ),
             'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,
             'fromAi' => false,
             'mediaFiles' => $this->getMediaFiles(),
             'hashtags' => $this->getTags(),
+            'tasker' => $taskName,
             'responses' => null,
         ];
     }

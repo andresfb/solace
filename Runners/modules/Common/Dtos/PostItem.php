@@ -18,6 +18,7 @@ class PostItem extends Data
         public string $generator,
         public string $source,
         public string $origin,
+        public string $tasker,
         public ?array $responses,
         public Collection $mediaFiles,
         public Collection $hashtags,

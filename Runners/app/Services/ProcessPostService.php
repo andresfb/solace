@@ -78,6 +78,7 @@ class ProcessPostService
                 'hash' => $postItem->getHash(),
                 'user_id' => $this->service->getUser()->id,
                 'content' => $this->getContent($postItem),
+                'tasker' => $postItem->tasker,
                 'generator' => $postItem->generator,
                 'status' => PostStatus::CREATED,
                 'privacy' => PostPrivacy::PUBLIC,

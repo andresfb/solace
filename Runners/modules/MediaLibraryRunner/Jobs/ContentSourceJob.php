@@ -11,6 +11,7 @@ use Modules\Common\Dtos\PostItem;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Factories\ContentSourceFactory;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class ContentSourceJob implements ShouldQueue
 {
@@ -18,6 +19,7 @@ class ContentSourceJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use ModuleConstants;
 
     public function __construct(private readonly LibraryPost $libraryPost) {}
 
@@ -29,7 +31,7 @@ class ContentSourceJob implements ShouldQueue
         }
 
         PostSelectedEvent::dispatch(
-            PostItem::from($newPost->getPostableInfo()),
+            PostItem::from($newPost->getPostableInfo($this->LOST_CAUSE)),
         );
     }
 }

@@ -20,12 +20,14 @@ class CreatePostItemJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly LibraryPost $libraryPost) {}
+    public function __construct(private readonly LibraryPost $libraryPost, private readonly string $taskName) {}
 
     public function handle(): void
     {
         PostSelectedQueueableEvent::dispatch(
-            PostItem::from($this->libraryPost->getPostableInfo())
+            PostItem::from(
+                $this->libraryPost->getPostableInfo($this->taskName)
+            )
         );
     }
 }
