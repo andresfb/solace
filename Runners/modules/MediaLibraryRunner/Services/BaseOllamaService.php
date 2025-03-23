@@ -6,6 +6,7 @@ namespace Modules\MediaLibraryRunner\Services;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
+use JsonException;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
@@ -18,7 +19,8 @@ use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
 use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
-use Modules\OllamaApi\Services\Ollama;
+use Modules\ApiConsumers\Services\Ollama;
+use Modules\MediaLibraryRunner\Traits\HashtagsExtractable;
 use RuntimeException;
 
 abstract class BaseOllamaService
@@ -27,6 +29,7 @@ abstract class BaseOllamaService
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
+    use HashtagsExtractable;
 
     protected string $spark = '';
 
@@ -41,7 +44,10 @@ abstract class BaseOllamaService
 
     protected MediaItem $mediaInfo;
 
-    public function __construct(protected readonly Ollama $ollama) {}
+    public function __construct(
+        protected readonly Ollama $ollama,
+        protected readonly OpenAiHashtagsService $hashtagsService,
+    ) {}
 
     abstract protected function getTaskName(): string;
 
@@ -115,9 +121,11 @@ abstract class BaseOllamaService
     /**
      * processPost Method.
      *
-     * @param  array<string, mixed>  $contentResponse
+     * @param array<string, mixed> $contentResponse
      *
-     * @throws NoAiContentException|RuntimeException
+     * @throws NoAiContentException
+     * @throws RuntimeException
+     * @throws JsonException
      */
     private function processPost(LibraryPost $libraryPost, array $contentResponse): void
     {
@@ -132,17 +140,17 @@ abstract class BaseOllamaService
         $content = str($response);
         if ($content->trim()->contains($this->failureResponses)) {
             throw new NoAiContentException(
-                'The AI did not provide usable content',
+                'The AI refused to produce content',
                 $contentResponse
             );
         }
 
         if (! $content->contains('#')) {
-            // todo: implement sending to an alternative AI (OpenAI?) to get the hashtags based on the text
-            $hashtags = [];
             $content = $this->getCleanText($content->toString());
+            $hashtags = $this->hashtagsService->setToScreen($this->toScreen)
+                ->generateHashtags($content);
         } else {
-            [$hashtags, $content] = $this->extractHashtags($content->toString());
+            [$hashtags, $content] = $this->parseContent($content->toString());
         }
 
         if (empty($hashtags) || empty($content)) {
@@ -152,11 +160,16 @@ abstract class BaseOllamaService
         }
 
         $postInfo = $libraryPost->getPostableInfo($this->getTaskName());
-        $postInfo['fromAi'] = true;
+
         $postInfo['generator'] .= strtoupper(':AI_MODEL='.config("{$this->getTaskName()}.ai_model").':SPARK='.$this->spark);
+        $postInfo['generator'] .= $this->hashtagsService->getGeneratorTag();
+
+        $postInfo['fromAi'] = true;
         $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
         $postInfo['content'] = $content;
-        $postInfo['responses'] = $contentResponse;
+        $postInfo['responses'] = $this->hashtagsService->isGenerated()
+            ? json_encode(['ollama' => $contentResponse, 'openai' => $this->hashtagsService->getOpenAiResponse()], JSON_THROW_ON_ERROR)
+            : $contentResponse;
 
         $this->dispatchEvents($postInfo);
     }
@@ -191,13 +204,10 @@ abstract class BaseOllamaService
      *
      * @return array<int, list<string>|string>
      */
-    private function extractHashtags(string $text): array
+    private function parseContent(string $text): array
     {
-        // Use regex to find hashtags
-        preg_match_all('/#\w+/', $text, $matches);
-
         // Extract hashtags into an array
-        $hashtags = $matches[0];
+        $hashtags = $this->extractHashtags($text);
 
         // Remove hashtags from the original text
         $textWithoutHashtags = preg_replace('/#\w+/', '', $text);
@@ -205,13 +215,7 @@ abstract class BaseOllamaService
         // Trim any extra whitespace
         $textWithoutHashtags = $this->getCleanText($textWithoutHashtags);
 
-        // Remove the '#' symbol from each hashtag
-        $cleanedHashtags = array_map(static fn ($hashtag): string => ltrim($hashtag, '#'), $hashtags);
-
-        return [
-            $cleanedHashtags,
-            $textWithoutHashtags,
-        ];
+        return [$hashtags, $textWithoutHashtags];
     }
 
     private function getCleanText(string $text): string

@@ -8,7 +8,7 @@ use Exception;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
-use Modules\OllamaApi\Services\Ollama;
+use Modules\ApiConsumers\Services\Ollama;
 
 class OllamaVisionService extends BaseOllamaService
 {

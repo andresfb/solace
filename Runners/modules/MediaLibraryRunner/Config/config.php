@@ -14,4 +14,9 @@ return [
 
     'ai_sparks' => explode(',', env('MIGRATE_AI_SPARKS')),
 
+    'ai_hashtags_prompt' => env(
+        'MIGRATE_AI_HASHTAGS_PROMPT',
+        'Can you please generate a list of 2 to 6 hashtags from the given text? Please give me the hashtags only; do not add any extra text or comments. If the hashtags are made up of several words, they should be title-cased and have no spaces between them. For example, #ThisIsAnExample.'
+    ),
+
 ];

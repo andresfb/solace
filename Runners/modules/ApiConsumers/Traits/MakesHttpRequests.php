@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\OllamaApi\Traits;
+namespace Modules\ApiConsumers\Traits;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;

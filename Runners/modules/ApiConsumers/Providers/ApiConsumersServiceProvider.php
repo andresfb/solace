@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Modules\OllamaApi\Providers;
+namespace Modules\ApiConsumers\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Modules\OllamaApi\Services\Ollama;
+use Modules\ApiConsumers\Services\Ollama;
 
 /**
  * This Module based on the code from the cloudstudio/ollama-laravel package
@@ -14,7 +14,7 @@ use Modules\OllamaApi\Services\Ollama;
  * Simplified to ignore the ModelService and modified to be able to use more
  * than one Ollama server (URL)
  */
-class OllamaApiServiceProvider extends ServiceProvider
+class ApiConsumersServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
@@ -23,6 +23,7 @@ class OllamaApiServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'ollama-laravel');
+        $this->mergeConfigFrom(__DIR__.'/../Config/ollama.php', 'ollama-laravel');
+        $this->mergeConfigFrom(__DIR__.'/../Config/openai.php', 'openai');
     }
 }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Modules\OllamaApi\Services;
+namespace Modules\ApiConsumers\Services;
 
 use Illuminate\Http\Client\ConnectionException;
-use Modules\OllamaApi\Traits\MakesHttpRequests;
+use Modules\ApiConsumers\Traits\MakesHttpRequests;
 
 class Ollama
 {
