@@ -10,7 +10,7 @@ namespace Modules\MediaLibraryRunner\Models\Content;
  * @property string $body
  * @property string $category
  */
-class Joke extends BaseContentModel
+class Joke extends ContentModel
 {
     protected $table = 'cnt_jokes';
 }

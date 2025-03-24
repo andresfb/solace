@@ -4,26 +4,37 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Models\Post;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Modules\Common\Enum\LibraryPostStatus;
 use Modules\Common\Enum\RunnerStatus;
-use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
+use Modules\Common\Traits\TagsGettable;
+use Modules\MediaLibraryRunner\Models\MediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 /**
- * @property string $title
+ * @property int $id
  * @property int $item_id
- * @property string $source
  * @property string $type
+ * @property string $slug
+ * @property string $title
+ * @property string $content
+ * @property string|null $source
+ * @property int $status
+ * @property int $runner_status
+ * @property bool $used
+ * @property-read CarbonImmutable|null $deleted_at
+ * @property-read CarbonImmutable|null $created_at
+ * @property-read CarbonImmutable|null $updated_at
  */
-class LibraryPost extends BaseMediaRunnerModel
+class LibraryPost extends MediaRunnerModel
 {
     use ModuleConstants;
+    use TagsGettable;
 
     protected $table = 'posts';
 
@@ -39,6 +50,9 @@ class LibraryPost extends BaseMediaRunnerModel
             'used' => 'boolean',
             'status' => LibraryPostStatus::class,
             'runner_status' => RunnerStatus::class,
+            'deleted_at' => CarbonImmutable::class,
+            'created_at' => CarbonImmutable::class,
+            'updated_at' => CarbonImmutable::class,
         ];
     }
 
@@ -110,9 +124,13 @@ class LibraryPost extends BaseMediaRunnerModel
             'origin' => $this->MEDIA_LIBRARY,
             'fromAi' => false,
             'mediaFiles' => $this->getMediaFiles(),
-            'hashtags' => $this->getTags(),
             'tasker' => $taskName,
             'responses' => null,
+            'hashtags' => $this->getTags(
+                modelId: $this->id,
+                modelType: 'App\Models\Post',
+                connection: $this->getConnectionName()
+            ),
         ];
     }
 
@@ -125,42 +143,5 @@ class LibraryPost extends BaseMediaRunnerModel
         }
 
         return $files;
-    }
-
-    public function getTags(): Collection
-    {
-        $banded = array_merge(
-            config('media_runner.banded_tags'),
-            ['image', 'video']
-        );
-
-        return DB::connection(config('database.media_runner_connection'))
-            ->table('tags')
-            ->select('tags.name')
-            ->join('taggables', 'tags.id', '=', 'taggables.tag_id')
-            ->where('taggables.taggable_type', 'App\Models\Post')
-            ->where('taggables.taggable_id', $this->id)
-            ->get()
-            ->map(function ($tag) use ($banded) {
-                $values = json_decode((string) $tag->name, true, 512, JSON_THROW_ON_ERROR);
-
-                $keys = array_keys($values);
-                if ($keys === []) {
-                    return '';
-                }
-
-                $tag = str($values[$keys[0]])
-                    ->trim()
-                    ->lower();
-
-                if ($tag->contains($banded)) {
-                    return '';
-                }
-
-                return $tag->title()
-                    ->replace(' ', '')
-                    ->toString();
-            })
-            ->reject(fn ($tag): bool => empty($tag));
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Modules\MediaLibraryRunner\Services;
 
-use Modules\Common\Enum\RunnerStatus;
-use Modules\MediaLibraryRunner\Models\Media\MediaItem;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 use Modules\ApiConsumers\Services\Ollama;
+use Modules\Common\Enum\RunnerStatus;
+use Modules\Common\Models\MediaItem;
+use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
 class OllamaChatService extends BaseOllamaService
 {

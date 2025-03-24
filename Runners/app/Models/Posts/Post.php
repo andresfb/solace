@@ -61,7 +61,6 @@ class Post extends BaseModel implements HasMedia
                 'image/jpeg',
             ])->singleFile();
 
-        $this->addMediaCollection('image')
-            ->singleFile();
+        $this->addMediaCollection('image');
     }
 }

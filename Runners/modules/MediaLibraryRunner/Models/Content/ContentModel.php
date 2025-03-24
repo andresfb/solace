@@ -3,13 +3,13 @@
 namespace Modules\MediaLibraryRunner\Models\Content;
 
 use Illuminate\Support\Facades\Cache;
-use Modules\MediaLibraryRunner\Models\BaseMediaRunnerModel;
+use Modules\MediaLibraryRunner\Models\MediaRunnerModel;
 use Random\RandomException;
 
 /**
  * @method static where(...$args)
  */
-abstract class BaseContentModel extends BaseMediaRunnerModel
+abstract class ContentModel extends MediaRunnerModel
 {
     public $timestamps = false;
 

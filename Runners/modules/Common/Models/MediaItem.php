@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\MediaLibraryRunner\Models\Media;
+namespace Modules\Common\Models;
 
 use Spatie\LaravelData\Data;
 

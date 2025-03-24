@@ -2,7 +2,7 @@
 
 namespace Modules\MediaLibraryRunner\Repositories;
 
-use Modules\MediaLibraryRunner\Models\Content\BaseContentModel;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
 use Modules\MediaLibraryRunner\Models\Content\Word;
 
@@ -13,7 +13,7 @@ class ContentSourceWords extends BaseContentSource
         return 'word';
     }
 
-    public function getModel(): BaseContentModel
+    public function getModel(): ContentModel
     {
         return new Word();
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Repositories;
 
-use Modules\MediaLibraryRunner\Models\Content\BaseContentModel;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
 use Modules\MediaLibraryRunner\Models\Content\Quote;
 
@@ -15,7 +15,7 @@ class ContentSourceQuotes extends BaseContentSource
         return 'quote';
     }
 
-    public function getModel(): BaseContentModel
+    public function getModel(): ContentModel
     {
         return new Quote();
     }

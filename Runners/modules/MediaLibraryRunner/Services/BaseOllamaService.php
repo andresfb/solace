@@ -7,20 +7,20 @@ namespace Modules\MediaLibraryRunner\Services;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use JsonException;
+use Modules\ApiConsumers\Services\Ollama;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
+use Modules\Common\Models\MediaItem;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
 use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
-use Modules\MediaLibraryRunner\Models\Media\MediaItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
-use Modules\MediaLibraryRunner\Traits\ModuleConstants;
-use Modules\ApiConsumers\Services\Ollama;
 use Modules\MediaLibraryRunner\Traits\HashtagsExtractable;
+use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 use RuntimeException;
 
 abstract class BaseOllamaService

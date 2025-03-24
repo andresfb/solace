@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Modules\MediaLibraryRunner\Models;
+namespace Modules\NewsFeedRunner\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-abstract class BaseMediaRunnerModel extends Model
+abstract class NewsFeedRunnerModel extends Model
 {
+    use SoftDeletes;
+
     /**
      * @phpstan-ignore missingType.iterableValue
      */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setConnection(config('database.media_runner_connection'));
+        $this->setConnection(config('database.news_feed_runner_connection'));
     }
 }

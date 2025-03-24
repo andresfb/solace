@@ -9,7 +9,7 @@ namespace Modules\MediaLibraryRunner\Models\Content;
  * @property string $author
  * @property string $category
  */
-class Quote extends BaseContentModel
+class Quote extends ContentModel
 {
     protected $table = 'cnt_quotes';
 }

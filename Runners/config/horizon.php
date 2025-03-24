@@ -209,6 +209,8 @@ return [
 
     'environments' => [
 
+        // Check each module to see what environment they configure
+
         'tiger-mox' => [
             'supervisor-1' => [
                 'maxProcesses' => 10,
@@ -229,7 +231,6 @@ return [
                 'timeout' => 900, // 15 Minutes
                 'tries' => 1,
             ],
-
         ],
 
         'dell-mox' => [
@@ -237,32 +238,6 @@ return [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
-            ],
-
-            'media-runner-supervisor' => [
-                'connection' => 'horizon',
-                'queue' => ['media-runner'],
-                'memory' => 124,
-                'autoScalingStrategy' => 'size',
-                'minProcesses' => 1,
-                'maxProcesses' => 5,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-                'timeout' => 300, // 5 minutes
-                'tries' => 1,
-            ],
-
-            'gen-users-supervisor' => [
-                'connection' => 'horizon',
-                'queue' => ['genusers'],
-                'memory' => 124,
-                'autoScalingStrategy' => 'size',
-                'minProcesses' => 1,
-                'maxProcesses' => 3,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-                'timeout' => 180, // 3 minutes
-                'tries' => 1,
             ],
         ],
 

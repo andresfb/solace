@@ -7,4 +7,5 @@ return [
     Modules\ApiConsumers\Providers\ApiConsumersServiceProvider::class,
     Modules\MediaLibraryRunner\Providers\MediaLibraryRunnerServiceProvider::class,
     Modules\UserGeneratorRunner\Providers\UserGeneratorRunnerServiceProvider::class,
+    Modules\NewsFeedRunner\Providers\NewsFeedRunnerServiceProvider::class,
 ];

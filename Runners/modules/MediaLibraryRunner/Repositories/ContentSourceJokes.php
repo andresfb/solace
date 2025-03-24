@@ -6,7 +6,7 @@ namespace Modules\MediaLibraryRunner\Repositories;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use Modules\MediaLibraryRunner\Models\Content\BaseContentModel;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
 use Modules\MediaLibraryRunner\Models\Content\Joke;
 
@@ -17,7 +17,7 @@ class ContentSourceJokes extends BaseContentSource
         return 'joke';
     }
 
-    public function getModel(): BaseContentModel
+    public function getModel(): ContentModel
     {
         return new Joke();
     }

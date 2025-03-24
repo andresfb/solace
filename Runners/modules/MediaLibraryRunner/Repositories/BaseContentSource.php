@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Repositories;
 
 use Modules\MediaLibraryRunner\Interfaces\ContentSourceInterface;
-use Modules\MediaLibraryRunner\Models\Content\BaseContentModel;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
@@ -15,7 +15,7 @@ abstract class BaseContentSource implements ContentSourceInterface
 
     abstract public function getTitle(ContentItem $content): string;
 
-    abstract public function getModel(): BaseContentModel;
+    abstract public function getModel(): ContentModel;
 
     abstract public function getContent(ContentItem $content): string;
 
