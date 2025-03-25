@@ -14,6 +14,9 @@ class ArticleMedia extends Media
 
     protected $table = 'media';
 
+    /**
+     * @phpstan-ignore missingType.iterableValue
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

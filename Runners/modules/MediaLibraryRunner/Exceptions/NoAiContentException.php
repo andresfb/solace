@@ -6,6 +6,10 @@ use Exception;
 
 class NoAiContentException extends Exception
 {
+    /**
+     * @param string $message
+     * @param array<string, mixed>|List<string> $response
+     */
     public function __construct(string $message, public readonly array $response)
     {
         parent::__construct($message);

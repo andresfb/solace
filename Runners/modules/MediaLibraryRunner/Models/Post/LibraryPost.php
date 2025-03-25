@@ -129,7 +129,7 @@ class LibraryPost extends MediaRunnerModel
             'hashtags' => $this->getTags(
                 modelId: $this->id,
                 modelType: 'App\Models\Post',
-                connection: $this->getConnectionName()
+                connection: $this->getConnectionName() ?? config('database.media_runner_connection')
             ),
         ];
     }

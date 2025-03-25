@@ -115,7 +115,9 @@ abstract class BaseOllamaService
 
     private function loadSpark(): void
     {
-        $this->spark = (string) collect(config('media_runner.ai_sparks'))->random();
+        $this->spark = (string) str(config('media_runner.ai_sparks'))
+            ->explode(',')
+            ->random();
     }
 
     /**
@@ -202,7 +204,7 @@ abstract class BaseOllamaService
     /**
      * extractHashtags Method.
      *
-     * @return array<int, list<string>|string>
+     * @return array<int, array<string>|string>
      */
     private function parseContent(string $text): array
     {
@@ -210,7 +212,7 @@ abstract class BaseOllamaService
         $hashtags = $this->extractHashtags($text);
 
         // Remove hashtags from the original text
-        $textWithoutHashtags = preg_replace('/#\w+/', '', $text);
+        $textWithoutHashtags = (string) preg_replace('/#\w+/', '', $text);
 
         // Trim any extra whitespace
         $textWithoutHashtags = $this->getCleanText($textWithoutHashtags);

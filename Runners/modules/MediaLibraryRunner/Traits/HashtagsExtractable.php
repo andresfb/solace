@@ -4,6 +4,9 @@ namespace Modules\MediaLibraryRunner\Traits;
 
 trait HashtagsExtractable
 {
+    /**
+     * @return array<string>
+     */
     private function extractHashtags(string $text): array
     {
         // Use regex to find hashtags

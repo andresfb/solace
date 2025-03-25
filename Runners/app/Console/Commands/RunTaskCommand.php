@@ -28,7 +28,7 @@ class RunTaskCommand extends Command
             $list = [];
             foreach ($tasks as $task) {
                 $word = collect(explode('\\', (string) $task))->last();
-                $parts = preg_split('/(?=[A-Z])/', (string) $word);
+                $parts = (array) preg_split('/(?=[A-Z])/', (string) $word);
                 $key = implode(' ', $parts);
                 $list[$key] = $task;
             }

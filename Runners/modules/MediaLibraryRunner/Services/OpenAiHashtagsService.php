@@ -38,6 +38,7 @@ class OpenAiHashtagsService
     }
 
     /**
+     * @return array<string>
      * @throws NoAiContentException
      */
     public function generateHashtags(string $text): array

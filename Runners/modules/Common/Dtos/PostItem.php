@@ -11,6 +11,9 @@ class PostItem extends Data
 {
     private string $hash;
 
+    /**
+     * @param array<string, mixed>|null $responses
+     */
     public function __construct(
         public int $libraryPostId,
         public string $title,

@@ -94,6 +94,9 @@ class OpenAiClient
         return OpenAiResponse::fromResponse($response);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function prepareOptions(): array
     {
         return [
