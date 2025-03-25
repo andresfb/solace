@@ -12,7 +12,7 @@ return [
 
     'horizon_queue' => env('MEDIA_RUNNER_HORIZON_QUEUE', 'media-runner'),
 
-    'ai_sparks' => explode(',', env('MIGRATE_AI_SPARKS')),
+    'ai_sparks' => explode(',', (string) env('MIGRATE_AI_SPARKS')),
 
     'ai_hashtags_prompt' => env(
         'MIGRATE_AI_HASHTAGS_PROMPT',

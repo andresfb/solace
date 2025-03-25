@@ -56,7 +56,9 @@ class OpenAiHashtagsService
 
             throw new NoAiContentException(
                 'Failed to generate hashtags.',
-                $aiResponse->response ? (array) $aiResponse->response : []
+                $aiResponse->response !== '' && $aiResponse->response !== '0'
+                    ? (array) $aiResponse->response
+                    : []
             );
         }
 

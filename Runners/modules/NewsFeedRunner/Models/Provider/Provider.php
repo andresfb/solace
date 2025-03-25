@@ -52,7 +52,7 @@ class Provider extends NewsFeedRunnerModel
 
     public function scopeWithImagedArticles(Builder $query): Builder
     {
-        return $query->with(['articles' => function ($query) {
+        return $query->with(['articles' => function ($query): void {
             $query->where('published_at', '>=', now()->subDays($this->go_back_days))
                 ->whereNotNull('thumbnail')
                 ->orderBy('published_at');

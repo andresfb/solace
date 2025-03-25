@@ -57,7 +57,7 @@ class OpenAiClient
 
     public function getAgentPrompt(): string
     {
-        if (empty($this->userPrompt)) {
+        if ($this->userPrompt === '' || $this->userPrompt === '0') {
             throw new \RuntimeException('Agent Prompt not set');
         }
 
@@ -72,7 +72,7 @@ class OpenAiClient
 
     public function getUserPrompt(): string
     {
-        if (empty($this->userPrompt)) {
+        if ($this->userPrompt === '' || $this->userPrompt === '0') {
             throw new \RuntimeException('User Prompt not set');
         }
 
