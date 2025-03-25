@@ -29,6 +29,7 @@ class OpenAiClient
     public function setModel(string $model): OpenAiClient
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -40,18 +41,21 @@ class OpenAiClient
     public function setMaxTokens(int $maxTokens): OpenAiClient
     {
         $this->maxTokens = $maxTokens;
+
         return $this;
     }
 
     public function setPresencePenalty(float $presencePenalty): OpenAiClient
     {
         $this->presencePenalty = $presencePenalty;
+
         return $this;
     }
 
     public function setAgentPrompt(string $agentPrompt): OpenAiClient
     {
         $this->agentPrompt = $agentPrompt;
+
         return $this;
     }
 
@@ -67,6 +71,7 @@ class OpenAiClient
     public function setUserPrompt(string $userPrompt): OpenAiClient
     {
         $this->userPrompt = $userPrompt;
+
         return $this;
     }
 
@@ -97,11 +102,11 @@ class OpenAiClient
             'presence_penalty' => $this->presencePenalty,
             'messages' => [[
                 'role' => 'system',
-                'content' => $this->getAgentPrompt()
+                'content' => $this->getAgentPrompt(),
             ], [
                 'role' => 'user',
-                'content' => $this->getUserPrompt()
-            ]]
+                'content' => $this->getUserPrompt(),
+            ]],
         ];
     }
 }

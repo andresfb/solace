@@ -13,11 +13,11 @@ class OpenAiResponse extends Data
     public function __construct(
         public string $content = '',
         public string $response = '',
-    ) { }
+    ) {}
 
     public static function fromResponse(CreateResponse $response): self
     {
-        $aiResponse = new self();
+        $aiResponse = new self;
 
         $choice = collect($response->choices)->first();
         if (! $choice instanceof CreateResponseChoice) {

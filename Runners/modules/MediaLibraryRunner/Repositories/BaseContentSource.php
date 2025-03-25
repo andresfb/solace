@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Repositories;
 
 use Modules\MediaLibraryRunner\Interfaces\ContentSourceInterface;
-use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
 
 abstract class BaseContentSource implements ContentSourceInterface

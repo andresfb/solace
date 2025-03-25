@@ -2,8 +2,8 @@
 
 namespace Modules\MediaLibraryRunner\Repositories;
 
-use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\Word;
 
 class ContentSourceWords extends BaseContentSource
@@ -15,7 +15,7 @@ class ContentSourceWords extends BaseContentSource
 
     public function getModel(): ContentModel
     {
-        return new Word();
+        return new Word;
     }
 
     public function getTitle(ContentItem $content): string
@@ -27,10 +27,10 @@ class ContentSourceWords extends BaseContentSource
     {
         $word = sprintf(
             '**[%s](%s)**',
-            ucwords(str_replace("_", " ", $content->word)),
-            config('lost-cause.search_url') . urlencode(strtolower($content->word)),
+            ucwords(str_replace('_', ' ', $content->word)),
+            config('lost-cause.search_url').urlencode(strtolower($content->word)),
         );
 
-        return $word . "\n\n" . ucfirst($content->definition);
+        return $word."\n\n".ucfirst($content->definition);
     }
 }

@@ -204,10 +204,9 @@ class ProcessPostService
 
         if ($title->isEmpty()
             || $title->contains('Word Definition')
-            || $source->contains(['bible','quran'])
+            || $source->contains(['bible', 'quran'])
             || $contentLow->startsWith($titleLow)
-            || str($postItem->generator)->contains('AI_MODEL'))
-        {
+            || str($postItem->generator)->contains('AI_MODEL')) {
             return $content->trim()
                 ->toString();
         }

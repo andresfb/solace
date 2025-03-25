@@ -6,6 +6,4 @@ namespace Modules\Common\Exceptions;
 
 use Exception;
 
-class EmptyRunException extends Exception
-{
-}
+class EmptyRunException extends Exception {}

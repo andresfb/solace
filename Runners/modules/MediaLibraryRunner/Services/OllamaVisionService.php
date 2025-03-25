@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Exception;
+use Modules\ApiConsumers\Services\Ollama;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
 use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
-use Modules\ApiConsumers\Services\Ollama;
 
 class OllamaVisionService extends BaseOllamaService
 {

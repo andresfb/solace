@@ -15,6 +15,5 @@ class ContentItem extends Data
         public string $author = '',
         public string $word = '',
         public string $definition = '',
-    ) {
-    }
+    ) {}
 }

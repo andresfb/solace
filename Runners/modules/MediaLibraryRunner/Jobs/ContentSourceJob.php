@@ -17,9 +17,9 @@ class ContentSourceJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
+    use ModuleConstants;
     use Queueable;
     use SerializesModels;
-    use ModuleConstants;
 
     public function __construct(private readonly LibraryPost $libraryPost) {}
 

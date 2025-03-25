@@ -6,13 +6,13 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-
 use Modules\Common\Interfaces\TaskInterface;
-use function Laravel\Prompts\select;
-use function Laravel\Prompts\pause;
-use function Laravel\Prompts\info;
-use function Laravel\Prompts\warning;
+
 use function Laravel\Prompts\clear;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\pause;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\warning;
 
 class RunTaskCommand extends Command
 {

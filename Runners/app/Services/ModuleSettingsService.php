@@ -57,7 +57,7 @@ class ModuleSettingsService
             ->where('task_name', $request->taskName)
             ->where('name', $settingName)
             ->update([
-                'value' => $updateValue
+                'value' => $updateValue,
             ]);
     }
 }

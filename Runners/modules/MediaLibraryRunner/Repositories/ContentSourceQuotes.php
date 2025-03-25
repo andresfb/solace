@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Repositories;
 
-use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\ContentItem;
+use Modules\MediaLibraryRunner\Models\Content\ContentModel;
 use Modules\MediaLibraryRunner\Models\Content\Quote;
 
 class ContentSourceQuotes extends BaseContentSource
@@ -17,7 +17,7 @@ class ContentSourceQuotes extends BaseContentSource
 
     public function getModel(): ContentModel
     {
-        return new Quote();
+        return new Quote;
     }
 
     public function getTitle(ContentItem $content): string
@@ -28,11 +28,11 @@ class ContentSourceQuotes extends BaseContentSource
     public function getContent(ContentItem $content): string
     {
         $author = sprintf(
-            "*—[%s](%s)*",
+            '*—[%s](%s)*',
             $content->author,
             config('lost-cause.search_url').urlencode($content->author)
         );
 
-        return $content->quote . "\n\n" . $author;
+        return $content->quote."\n\n".$author;
     }
 }

@@ -11,9 +11,9 @@ use Illuminate\Support\Collection;
 use Modules\Common\Enum\LibraryPostStatus;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
-use Modules\MediaLibraryRunner\Models\MediaRunnerModel;
 use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
+use Modules\MediaLibraryRunner\Models\MediaRunnerModel;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 /**

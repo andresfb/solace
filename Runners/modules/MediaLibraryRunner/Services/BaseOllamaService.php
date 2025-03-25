@@ -25,11 +25,11 @@ use RuntimeException;
 
 abstract class BaseOllamaService
 {
+    use HashtagsExtractable;
     use ModuleConstants;
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
-    use HashtagsExtractable;
 
     protected string $spark = '';
 
@@ -121,7 +121,7 @@ abstract class BaseOllamaService
     /**
      * processPost Method.
      *
-     * @param array<string, mixed> $contentResponse
+     * @param  array<string, mixed>  $contentResponse
      *
      * @throws NoAiContentException
      * @throws RuntimeException

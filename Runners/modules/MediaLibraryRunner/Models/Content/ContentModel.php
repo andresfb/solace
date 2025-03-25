@@ -16,7 +16,7 @@ abstract class ContentModel extends MediaRunnerModel
     protected function casts(): array
     {
         return [
-            'used' => 'boolean'
+            'used' => 'boolean',
         ];
     }
 
