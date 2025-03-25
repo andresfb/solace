@@ -2,7 +2,12 @@
     "preset": "base",
     "ignore": {
         "words": [
-            "php"
-        ]
+            "php",
+            "namer",
+            "queueable",
+            "sluggable",
+            "svg"
+        ],
+        "paths": []
     }
 }
