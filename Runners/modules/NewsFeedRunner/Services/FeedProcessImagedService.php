@@ -23,10 +23,11 @@ class FeedProcessImagedService
 
     public function execute(Provider $provider): void
     {
-        if ($provider->feeds?->isEmpty()) {
+        if ($provider->feeds->isEmpty()) {
             return;
         }
 
+        /** @var Feed $feed */
         foreach ($provider->feeds as $feed) {
             $this->processArticles($feed);
         }
@@ -34,14 +35,14 @@ class FeedProcessImagedService
 
     private function processArticles(Feed $feed): void
     {
-        /** @var Collection<Article> $articles */
         Article::query()
             ->where('feed_id', $feed->id)
             ->where('thumbnail', '!=', '')
             ->where('title', '!=', '')
             ->where('permalink', '!=', '')
-            ->where('published_at', '>=', now()->subDays($feed->provider->go_back_days))
-            ->chunk('50', function (Collection $articles): void {
+            ->where('published_at', '>=', now()->subDays($feed->provider->go_back_days ?? 1))
+            /** @var Collection<Article> $articles */
+            ->chunk(50, function (Collection $articles): void {
                 if ($this->queueable) {
                     ImagedArticlesJob::dispatch($articles->pluck('id'))
                         ->onQueue(config('news_feed_runner.horizon_queue'))

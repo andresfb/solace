@@ -16,11 +16,12 @@ use Modules\NewsFeedRunner\Models\Provider\Provider;
 /**
  * @property-read int $id
  * @property-read int $provider_id
- * @property-read string $tile
+ * @property-read string $title
  * @property-read string $url
  * @property-read string|null $logo
  * @property-read bool $status
  * @property-read int $order
+ * @property-read Provider|null $provider
  * @property-read DateTimeInterface|null $refreshed_at
  * @property-read CarbonImmutable|null $deleted_at
  * @property-read CarbonImmutable|null $created_at

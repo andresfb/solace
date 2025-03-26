@@ -173,28 +173,28 @@ class ProcessPostService
 
     private function getContent(PostItem $postItem): string
     {
-        $trimmedContent = trim($postItem->content);
-        $trimmedTitle = str($postItem->title)
+        $contentTrimmed = trim($postItem->content);
+        $titleTrimmed = str($postItem->title)
             ->replace('...', '')
             ->trim();
 
         $source = str($postItem->source);
 
         if ($source->startsWith('quote')) {
-            $this->extraTags[] = $trimmedTitle->value();
+            $this->extraTags[] = $titleTrimmed->value();
 
-            return $trimmedContent === '' ? $trimmedTitle->value() : $trimmedContent;
+            return $contentTrimmed === '' ? $titleTrimmed->value() : $contentTrimmed;
         }
 
         if ($source->startsWith('joke')) {
             $this->extractTag($postItem->content);
         }
 
-        if ($trimmedContent === '') {
-            return $trimmedTitle->value();
+        if ($contentTrimmed === '') {
+            return $titleTrimmed->value();
         }
 
-        $content = str($trimmedContent)
+        $content = str($contentTrimmed)
             ->replace('**Category:**', '')
             ->replace('*Category:*', '')
             ->trim();
@@ -205,10 +205,10 @@ class ProcessPostService
         }
 
         $contentLow = $content->lower();
-        $titleLow = $trimmedTitle->lower()->value();
+        $titleLow = $titleTrimmed->lower()->value();
 
-        if ($title->isEmpty()
-            || $title->contains('Word Definition')
+        if ($titleTrimmed->isEmpty()
+            || $titleTrimmed->contains('Word Definition')
             || $source->contains(['bible', 'quran'])
             || $contentLow->startsWith($titleLow)
             || str($postItem->generator)->contains('AI_MODEL')) {
@@ -217,7 +217,7 @@ class ProcessPostService
         }
 
         return $content->prepend(
-            $title->title()
+            $titleTrimmed->title()
                 ->prepend('**')
                 ->append('**')
                 ->trim()

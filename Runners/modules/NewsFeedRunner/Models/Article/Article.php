@@ -70,12 +70,12 @@ class Article extends NewsFeedRunnerModel
      */
     public function getPostableInfo(string $taskName): array
     {
-        $providerName = str($this->feed->provider->name)
+        $providerName = str($this->feed->provider->name ?? '')
             ->replace(' ', '_')
             ->trim()
             ->value();
 
-        $feedName = str($this->feed->tile)
+        $feedName = str($this->feed->title ?? '')
             ->replace(' ', '_')
             ->trim()
             ->value();
@@ -106,7 +106,7 @@ class Article extends NewsFeedRunnerModel
         $files = collect();
 
         /** @var ArticleMedia $media */
-        foreach ($this->item?->media as $media) {
+        foreach ($this->media as $media) {
             $files->push($media->getFileInfo());
         }
 
