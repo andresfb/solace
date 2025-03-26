@@ -115,11 +115,7 @@ class Article extends NewsFeedRunnerModel
 
     private function parseContent(): string
     {
-        if (trim($this->content) === '' && trim($this->description) === '') {
-            return '';
-        }
-
-        $content = str($this->content)
+        $content = str($this->content ?? '')
             ->replace('    ', ' ')
             ->replace('   ', ' ')
             ->replace('  ', ' ')
@@ -129,7 +125,7 @@ class Article extends NewsFeedRunnerModel
             ->replace("\t", ' ')
             ->trim();
 
-        $description = str($this->description)
+        $description = str($this->description ?? '')
             ->replace('    ', ' ')
             ->replace('   ', ' ')
             ->replace('  ', ' ')
