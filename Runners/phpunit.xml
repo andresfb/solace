@@ -17,6 +17,12 @@
         <testsuite name="MediaRunnersFeature">
             <directory>modules/MediaLibraryRunner/Tests/Feature</directory>
         </testsuite>
+        <testsuite name="NewsFeedRunnersUnit">
+            <directory>modules/NewsFeedRunner/Tests/Unit</directory>
+        </testsuite>
+        <testsuite name="NewsFeedRunnersFeature">
+            <directory>modules/NewsFeedRunner/Tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

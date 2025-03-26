@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
 use Modules\Common\Traits\TagsGettable;
 use Modules\NewsFeedRunner\Models\Article\Scopes\ArticleMediaScope;
 use Modules\NewsFeedRunner\Models\Feed\Feed;
@@ -115,31 +116,23 @@ class Article extends NewsFeedRunnerModel
 
     private function parseContent(): string
     {
-        // todo: test the value of content and description
+        // Helper function to clean text
+        $cleanText = static function (string $text): Stringable {
+            return str($text)
+                ->replaceMatches('/\s{2,}/', ' ')    // Replace multiple spaces with a single space
+                ->replaceMatches('/\n{2,}/', "\n")   // Replace multiple newlines with a single newline
+                ->replace("\t", ' ')                 // Replace tabs with spaces
+                ->trim();                            // Remove leading/trailing whitespace
+        };
 
-        $content = str($this->content ?? '')
-            ->replace('    ', ' ')
-            ->replace('   ', ' ')
-            ->replace('  ', ' ')
-            ->replace("\n\n\n\n", "\n")
-            ->replace("\n\n\n", "\n")
-            ->replace("\n\n", "\n")
-            ->replace("\t", ' ')
-            ->trim();
-
-        $description = str($this->description ?? '')
-            ->replace('    ', ' ')
-            ->replace('   ', ' ')
-            ->replace('  ', ' ')
-            ->replace("\n\n\n\n", "\n")
-            ->replace("\n\n\n", "\n")
-            ->replace("\n\n", "\n")
-            ->replace("\t", ' ')
-            ->trim();
+        // Clean and prepare both strings
+        $content = $cleanText($this->content ?? '');
+        $description = $cleanText($this->description ?? '');
 
         $lowerContent = $content->lower();
         $lowerDescription = $description->lower();
 
+        // Handle empty cases
         if ($lowerContent->isEmpty()) {
             return $description->value();
         }
@@ -148,10 +141,12 @@ class Article extends NewsFeedRunnerModel
             return $content->value();
         }
 
+        // Handle identical content
         if ($lowerContent === $lowerDescription) {
             return $content->value();
         }
 
+        // Handle truncated content
         if ($lowerContent->endsWith(['...', '[...]'])) {
             return $description->value();
         }
@@ -160,25 +155,21 @@ class Article extends NewsFeedRunnerModel
             return $content->value();
         }
 
-        $startsContent = $lowerContent->substr(0, 100);
-        $startsDescription = $lowerDescription->substr(0, 100);
+        // Check if they start with the same text (first 100 chars)
+        $startsWithSameText = $lowerContent->substr(0, 100) === $lowerDescription->substr(0, 100);
 
-        if ($startsContent === $startsDescription) {
-            if ($lowerContent->length() > $lowerDescription->length()) {
-                return $content->value();
-            }
-
-            return $description->value();
+        if ($startsWithSameText) {
+            // Return the longer version when both start the same
+            return ($lowerContent->length() > $lowerDescription->length())
+                ? $content->value()
+                : $description->value();
         }
 
+        // Combine content based on length
         if ($lowerContent->length() < $lowerDescription->length()) {
-            return $content->append("\n\n")
-                ->append($description->value())
-                ->value();
+            return "{$content->value()}\n\n{$description->value()}";
         }
 
-        return $description->append("\n\n")
-            ->append($content->value())
-            ->value();
+        return "{$description->value()}\n\n{$content->value()}";
     }
 }
