@@ -12,20 +12,20 @@ class PostItem extends Data
     private string $hash;
 
     /**
-     * @param array<string, mixed>|null $responses
+     * @param  array<string, mixed>|null  $responses
      */
     public function __construct(
-        public int        $modelId,
-        public string     $title,
-        public string     $content,
-        public string     $generator,
-        public string     $source,
-        public string     $origin,
-        public string     $tasker,
-        public ?array     $responses,
+        public int $modelId,
+        public string $title,
+        public string $content,
+        public string $generator,
+        public string $source,
+        public string $origin,
+        public string $tasker,
+        public ?array $responses,
         public Collection $mediaFiles,
         public Collection $hashtags,
-        public bool       $fromAi = false,
+        public bool $fromAi = false,
     ) {}
 
     public function getHash(): string

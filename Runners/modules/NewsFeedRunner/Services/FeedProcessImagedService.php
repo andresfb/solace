@@ -19,9 +19,7 @@ class FeedProcessImagedService
     use Screenable;
     use SendToQueue;
 
-    public function __construct(private readonly ImagedArticlesService $articlesService)
-    {
-    }
+    public function __construct(private readonly ImagedArticlesService $articlesService) {}
 
     public function execute(Provider $provider): void
     {

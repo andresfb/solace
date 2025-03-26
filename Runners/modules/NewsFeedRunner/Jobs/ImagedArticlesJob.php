@@ -21,11 +21,9 @@ class ImagedArticlesJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * @param Collection<int> $articleIds
+     * @param  Collection<int>  $articleIds
      */
-    public function __construct(private readonly Collection $articleIds)
-    {
-    }
+    public function __construct(private readonly Collection $articleIds) {}
 
     public function handle(ImagedArticlesService $service): void
     {

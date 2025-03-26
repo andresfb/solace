@@ -26,7 +26,7 @@ class ImagedArticlesService
     ) {}
 
     /**
-     * @param Collection<Article> $articles
+     * @param  Collection<Article>  $articles
      */
     public function execute(Collection $articles): void
     {

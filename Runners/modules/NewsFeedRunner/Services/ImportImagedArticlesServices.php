@@ -21,9 +21,7 @@ class ImportImagedArticlesServices implements TaskServiceInterface
     use Screenable;
     use SendToQueue;
 
-    public function __construct(private readonly FeedProcessImagedService $feedService)
-    {
-    }
+    public function __construct(private readonly FeedProcessImagedService $feedService) {}
 
     /**
      * @throws EmptyRunException

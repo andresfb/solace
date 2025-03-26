@@ -19,9 +19,7 @@ class FeedProcessJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly Provider $provider)
-    {
-    }
+    public function __construct(private readonly Provider $provider) {}
 
     public function handle(FeedProcessImagedService $service): void
     {
