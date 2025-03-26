@@ -114,7 +114,7 @@ class LibraryPost extends MediaRunnerModel
     public function getPostableInfo(string $taskName): array
     {
         return [
-            'libraryPostId' => $this->id,
+            'modelId' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
             'generator' => strtoupper(

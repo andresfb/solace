@@ -39,14 +39,14 @@ class ProcessPostService
     public function execute(PostItem $postItem): void
     {
         if (Post::where('hash', $postItem->getHash())->exists()) {
-            $message = "Posting $postItem->title already exists for $postItem->libraryPostId";
+            $message = "Posting $postItem->title already exists for $postItem->modelId";
 
             $this->line("$message\n");
             Log::notice($message);
 
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
-                $postItem->libraryPostId,
+                $postItem->modelId,
                 RunnerStatus::PUBLISHED,
                 $postItem->source,
             );
@@ -55,14 +55,14 @@ class ProcessPostService
         }
 
         if ($postItem->mediaFiles->isEmpty()) {
-            $message = "No media files found for Library Post: $postItem->libraryPostId";
+            $message = "No media files found for Library Post: $postItem->modelId";
 
             $this->line("$message\n");
             Log::notice($message);
 
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
-                $postItem->libraryPostId,
+                $postItem->modelId,
                 RunnerStatus::UNUSABLE,
             );
 
@@ -72,7 +72,7 @@ class ProcessPostService
         DB::beginTransaction();
 
         try {
-            $this->line('Saving Post '.$postItem->libraryPostId);
+            $this->line('Saving Post '.$postItem->modelId);
 
             $post = Post::create([
                 'hash' => $postItem->getHash(),
@@ -87,7 +87,7 @@ class ProcessPostService
 
             if ($post === null) {
                 throw new \RuntimeException(
-                    "Failed to create post from Library Post: $postItem->libraryPostId"
+                    "Failed to create post from Library Post: $postItem->modelId"
                 );
             }
 
@@ -99,7 +99,7 @@ class ProcessPostService
 
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
-                $postItem->libraryPostId,
+                $postItem->modelId,
                 RunnerStatus::PUBLISHED,
                 $postItem->source,
             );
@@ -113,11 +113,11 @@ class ProcessPostService
 
             $message = 'File error: '.$e->getMessage();
             $this->error($message);
-            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->libraryPostId: $message");
+            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->modelId: $message");
 
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
-                $postItem->libraryPostId,
+                $postItem->modelId,
                 RunnerStatus::UNUSABLE
             );
 
@@ -127,7 +127,7 @@ class ProcessPostService
 
             $message = 'Error while processing post: '.$e->getMessage();
             $this->error($message);
-            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->libraryPostId: $message");
+            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->modelId: $message");
 
             throw $e;
         } finally {
@@ -173,19 +173,28 @@ class ProcessPostService
 
     private function getContent(PostItem $postItem): string
     {
+        $trimmedContent = trim($postItem->content);
+        $trimmedTitle = str($postItem->title)
+            ->replace('...', '')
+            ->trim();
+
         $source = str($postItem->source);
 
         if ($source->startsWith('quote')) {
-            $this->extraTags[] = $postItem->title;
+            $this->extraTags[] = $trimmedTitle->value();
 
-            return $postItem->content;
+            return $trimmedContent === '' ? $trimmedTitle->value() : $trimmedContent;
         }
 
         if ($source->startsWith('joke')) {
             $this->extractTag($postItem->content);
         }
 
-        $content = str($postItem->content)
+        if ($trimmedContent === '') {
+            return $trimmedTitle->value();
+        }
+
+        $content = str($trimmedContent)
             ->replace('**Category:**', '')
             ->replace('*Category:*', '')
             ->trim();
@@ -195,12 +204,8 @@ class ProcessPostService
                 ->trim();
         }
 
-        $title = str($postItem->title)
-            ->replace('...', '')
-            ->trim();
-
         $contentLow = $content->lower();
-        $titleLow = $title->lower()->toString();
+        $titleLow = $trimmedTitle->lower()->value();
 
         if ($title->isEmpty()
             || $title->contains('Word Definition')
@@ -208,7 +213,7 @@ class ProcessPostService
             || $contentLow->startsWith($titleLow)
             || str($postItem->generator)->contains('AI_MODEL')) {
             return $content->trim()
-                ->toString();
+                ->value();
         }
 
         return $content->prepend(
@@ -217,10 +222,10 @@ class ProcessPostService
                 ->append('**')
                 ->trim()
                 ->append("\n\n")
-                ->toString()
+                ->value()
         )
             ->trim()
-            ->toString();
+            ->value();
     }
 
     private function extractTag(string $text): void
@@ -251,7 +256,7 @@ class ProcessPostService
 
         $cleanedResults = array_map(static fn ($item) => str($item)->title()
             ->replace(' ', '')
-            ->toString(), $cleanedResults);
+            ->value(), $cleanedResults);
 
         $this->extraTags = array_unique(array_merge($this->extraTags, $cleanedResults));
     }

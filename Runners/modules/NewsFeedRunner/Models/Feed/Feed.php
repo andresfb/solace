@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\NewsFeedRunner\Models\Article\Article;
+use Modules\NewsFeedRunner\Models\Feed\Scopes\ProviderScope;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
 use Modules\NewsFeedRunner\Models\Provider\Provider;
 
@@ -28,6 +29,12 @@ use Modules\NewsFeedRunner\Models\Provider\Provider;
 class Feed extends NewsFeedRunnerModel
 {
     protected $guarded = ['id'];
+
+    protected static function booted(): void
+    {
+        parent::booted();
+        static::addGlobalScope(new ProviderScope);
+    }
 
     protected function casts(): array
     {

@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Modules\NewsFeedRunner\Models\Provider;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Query\Builder;
-use Modules\NewsFeedRunner\Models\Article\Article;
 use Modules\NewsFeedRunner\Models\Feed\Feed;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
+use Modules\NewsFeedRunner\Models\Provider\Scopes\FeedsScope;
 
 /**
  * @property-read int $id
@@ -28,6 +27,12 @@ class Provider extends NewsFeedRunnerModel
 {
     protected $guarded = ['id'];
 
+    protected static function booted(): void
+    {
+        parent::booted();
+        static::addGlobalScope(new FeedsScope);
+    }
+
     protected function casts(): array
     {
         return [
@@ -42,21 +47,14 @@ class Provider extends NewsFeedRunnerModel
 
     public function feeds(): HasMany
     {
-        return $this->hasMany(Feed::class);
+        return $this->hasMany(Feed::class)
+            ->where('status', true)
+            ->orderBy('order');
     }
 
-    public function articles(): HasManyThrough
+    public function scopeActiveWithFeeds(Builder $query): Builder
     {
-        return $this->hasManyThrough(Article::class, Feed::class);
-    }
-
-    public function scopeWithImagedArticles(Builder $query): Builder
-    {
-        return $query->select('providers.*')
-            ->join('feeds', 'feeds.provider_id', '=', 'providers.id')
-            ->join('articles', 'articles.feed_id', '=', 'feeds.id')
-            ->where('articles.published_at', '>=', now()->subDays($this->go_back_days))
-            ->whereNotNull('articles.thumbnail')
-            ->orderBy('articles.published_at');
+        return $query->where('status', true)
+            ->orderBy('order');
     }
 }

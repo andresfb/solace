@@ -10,7 +10,7 @@ class NewsFeedRunnerServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // TODO add the news feed task
+        $this->app->register(ImportImagedArticlesServiceProvider::class);
     }
 
     public function boot(): void

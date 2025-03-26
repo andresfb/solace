@@ -15,23 +15,23 @@ class PostItem extends Data
      * @param array<string, mixed>|null $responses
      */
     public function __construct(
-        public int $libraryPostId,
-        public string $title,
-        public string $content,
-        public string $generator,
-        public string $source,
-        public string $origin,
-        public string $tasker,
-        public ?array $responses,
+        public int        $modelId,
+        public string     $title,
+        public string     $content,
+        public string     $generator,
+        public string     $source,
+        public string     $origin,
+        public string     $tasker,
+        public ?array     $responses,
         public Collection $mediaFiles,
         public Collection $hashtags,
-        public bool $fromAi = false,
+        public bool       $fromAi = false,
     ) {}
 
     public function getHash(): string
     {
         if (! isset($this->hash) || ($this->hash === '' || $this->hash === '0')) {
-            $this->hash = md5("$this->libraryPostId|$this->title");
+            $this->hash = md5("$this->modelId|$this->title");
         }
 
         return $this->hash;
