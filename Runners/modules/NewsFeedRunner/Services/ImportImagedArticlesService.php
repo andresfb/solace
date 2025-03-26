@@ -14,7 +14,7 @@ use Modules\NewsFeedRunner\Jobs\FeedProcessJob;
 use Modules\NewsFeedRunner\Models\Provider\Provider;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
-class ImportImagedArticlesServices implements TaskServiceInterface
+class ImportImagedArticlesService implements TaskServiceInterface
 {
     use ModuleConstants;
     use QueueSelectable;
@@ -28,6 +28,8 @@ class ImportImagedArticlesServices implements TaskServiceInterface
      */
     public function execute(): void
     {
+        $this->line('Loading Providers...');
+
         $providers = Provider::query()
             ->activeWithFeeds()
             ->get();
@@ -44,22 +46,28 @@ class ImportImagedArticlesServices implements TaskServiceInterface
             );
         }
 
+        $this->line('Found '.$providers->count().' Providers');
+
         $providers->each(function (Provider $provider): void {
+            $this->line('Processing Provider: '.$provider->name);
+
             if ($this->queueable) {
                 $this->line('Queueing FeedProcessJob for Provider: '.$provider->id);
 
                 FeedProcessJob::dispatch($provider)
                     ->onQueue(config('news_feed_runner.horizon_queue'))
-                    ->delay(now()->addMinutes(5));
+                    ->delay(now()->addSeconds(5));
 
                 return;
             }
 
-            $this->line('Sending feed for processing...');
+            $this->line('Sending feeds for processing...');
 
             $this->feedService->setToScreen($this->toScreen)
                 ->setQueueable($this->queueable)
                 ->execute($provider);
+
+            $this->line("Feed processing completed for Provider: $provider->name\n");
         });
     }
 }

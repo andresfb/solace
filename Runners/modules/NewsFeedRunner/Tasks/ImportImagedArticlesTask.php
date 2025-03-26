@@ -6,7 +6,7 @@ namespace Modules\NewsFeedRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
-use Modules\NewsFeedRunner\Services\ImportImagedArticlesServices;
+use Modules\NewsFeedRunner\Services\ImportImagedArticlesService;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
 class ImportImagedArticlesTask extends BaseTask
@@ -14,8 +14,8 @@ class ImportImagedArticlesTask extends BaseTask
     use ModuleConstants;
 
     public function __construct(
-        ImportImagedArticlesServices $taskTaskService,
-        ModuleSettingsService $settingsService
+        ImportImagedArticlesService $taskTaskService,
+        ModuleSettingsService       $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }

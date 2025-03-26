@@ -31,12 +31,6 @@ class Feed extends NewsFeedRunnerModel
 {
     protected $guarded = ['id'];
 
-    protected static function booted(): void
-    {
-        parent::booted();
-        static::addGlobalScope(new ProviderScope);
-    }
-
     protected function casts(): array
     {
         return [

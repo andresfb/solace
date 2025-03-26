@@ -27,6 +27,8 @@ class FeedProcessImagedService
             return;
         }
 
+        $this->line('Processing Feeds...');
+
         /** @var Feed $feed */
         foreach ($provider->feeds as $feed) {
             $this->processArticles($feed);
@@ -35,21 +37,32 @@ class FeedProcessImagedService
 
     private function processArticles(Feed $feed): void
     {
+        $this->line('Loading Articles for Feed: '.$feed->title);
+
+        $feed->load('provider');
+
         Article::query()
             ->where('feed_id', $feed->id)
             ->where('thumbnail', '!=', '')
             ->where('title', '!=', '')
             ->where('permalink', '!=', '')
             ->where('published_at', '>=', now()->subDays($feed->provider->go_back_days ?? 1))
+            ->limit(
+                config("$this->IMPORT_IMAGED_ARTICLES.posts_limit")
+            )
             /** @var Collection<Article> $articles */
             ->chunk(50, function (Collection $articles): void {
                 if ($this->queueable) {
+                    $this->line('Queueing ImagedArticlesJob for Articles: '.$articles->count());
+
                     ImagedArticlesJob::dispatch($articles->pluck('id'))
                         ->onQueue(config('news_feed_runner.horizon_queue'))
                         ->delay(now()->addSeconds(5));
 
                     return;
                 }
+
+                $this->line('Processing Articles: '.$articles->count());
 
                 $this->articlesService->setQueueable($this->queueable)
                     ->setToScreen($this->toScreen)

@@ -31,9 +31,15 @@ class ImagedArticlesService
     public function execute(Collection $articles): void
     {
         foreach ($articles as $article) {
+            $this->line('Checking if the article exists...');
+
             if ($this->postExistsService->exists($article->permalink)) {
+                $this->line('Article already exists, skipping...');
+
                 continue;
             }
+
+            $this->line('Article does not exist, processing...');
 
             if ($this->queueable) {
                 $this->line('Queuing ImagedArticleJob job...');

@@ -115,6 +115,8 @@ class Article extends NewsFeedRunnerModel
 
     private function parseContent(): string
     {
+        // todo: test the value of content and description
+
         $content = str($this->content ?? '')
             ->replace('    ', ' ')
             ->replace('   ', ' ')

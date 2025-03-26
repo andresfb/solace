@@ -55,7 +55,7 @@ class ProcessPostService
         }
 
         if ($postItem->mediaFiles->isEmpty()) {
-            $message = "No media files found for Library Post: $postItem->modelId";
+            $message = "No media files found for Model Id: $postItem->modelId";
 
             $this->line("$message\n");
             Log::notice($message);

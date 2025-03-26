@@ -12,6 +12,6 @@ class MediaModelTypeScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('model_type', 'App\Models\Item');
+        $builder->where('model_type', 'App\Models\Article');
     }
 }

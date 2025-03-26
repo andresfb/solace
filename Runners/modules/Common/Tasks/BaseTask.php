@@ -60,6 +60,8 @@ abstract class BaseTask implements TaskInterface
 
     private function isEnabled(): bool
     {
+        $this->line('Checking if the task is enabled...');
+
         $settings = $this->settingsService->getSetting(
             $this->getModuleSettings([
                 'is_enabled',
@@ -69,6 +71,8 @@ abstract class BaseTask implements TaskInterface
 
         $isEnabled = (bool) $settings->response['is_enabled'];
         if (! $isEnabled) {
+            $this->line('Not enabled.');
+
             return false;
         }
 
@@ -81,6 +85,8 @@ abstract class BaseTask implements TaskInterface
             );
         }
 
+        $this->line('Enabled.');
+
         return $isEnabled;
     }
 
@@ -89,6 +95,8 @@ abstract class BaseTask implements TaskInterface
      */
     private function getModuleSettings(array $settingName): ModuleSettingsInfo
     {
+        $this->line('Getting module settings...');
+
         return ModuleSettingsInfo::from([
             'moduleName' => $this->getModuleName(),
             'taskName' => $this->getTaskName(),

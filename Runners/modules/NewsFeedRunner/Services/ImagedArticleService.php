@@ -31,6 +31,8 @@ class ImagedArticleService
             $this->toScreen
         );
 
+        dd('just one');
+
         $this->line('PostSelectedEvent Event dispatched.');
     }
 }
