@@ -24,8 +24,8 @@ class RegisterUserService
     public function execute(RandomUserItem $userItem): void
     {
         try {
-            if (User::where('email', $userItem->email)->exists()) {
-                $message = "User with email '$userItem->email' already exists.";
+            if (User::where('username', $userItem->username)->exists()) {
+                $message = "User with username '$userItem->username' already exists.";
 
                 $this->line($message);
                 Log::notice($message);
@@ -33,10 +33,11 @@ class RegisterUserService
                 return;
             }
 
-            $this->line('Creating User '.$userItem->email);
+            $this->line('Creating User '.$userItem->username);
 
             $user = User::create([
                 'name' => $userItem->name,
+                'username' => $userItem->username,
                 'email' => $userItem->email,
                 'password' => bcrypt($userItem->password),
                 'email_verified_at' => $userItem->registered->addMinutes(random_int(1, 30)),

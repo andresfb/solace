@@ -56,6 +56,7 @@ class RandomUserService
         return $response->map(fn (array $user): RandomUserItem => new RandomUserItem(
             gender: $user['gender'],
             name: sprintf('%s %s', $user['name']['first'], $user['name']['last']),
+            username: $user['login']['username'],
             email: $user['email'],
             password: $user['login']['sha256'],
             phone: $user['cell'] ?? $user['phone'],

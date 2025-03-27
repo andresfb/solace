@@ -11,6 +11,7 @@ readonly class RandomUserItem
     public function __construct(
         public string $gender,
         public string $name,
+        public string $username,
         public string $email,
         public string $password,
         public string $phone,

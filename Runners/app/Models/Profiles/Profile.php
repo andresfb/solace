@@ -38,18 +38,10 @@ class Profile extends BaseModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
+            ->withResponsiveImages()
             ->acceptsMimeTypes([
                 'image/jpeg',
                 'image/png',
             ])->singleFile();
-
-        foreach (config('settings.profile_image_sizes') as $item) {
-            $this->addMediaConversion((string) $item)
-                ->performOnCollections('avatar')
-                ->format('jpg')
-                ->width($item)
-                ->height($item)
-                ->sharpen(10);
-        }
     }
 }
