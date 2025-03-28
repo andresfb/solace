@@ -33,8 +33,8 @@ class ImagedArticlesService
         foreach ($articles as $article) {
             $this->line('Checking if the article exists...');
 
-            if ($this->postExistsService->exists($article->permalink)) {
-                $this->line('Article already exists, skipping...');
+            if ($this->postExistsService->exists($article->permalink, $article->title)) {
+                $this->line("Article already exists, skipping...\n");
 
                 continue;
             }

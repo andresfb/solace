@@ -49,7 +49,7 @@ class ImportImagedArticlesService implements TaskServiceInterface
         $this->line('Found '.$providers->count().' Providers');
 
         $providers->each(function (Provider $provider): void {
-            $this->line('Processing Provider: '.$provider->name);
+            $this->line("Processing Provider: $provider->name\n");
 
             if ($this->queueable) {
                 $this->line('Queueing FeedProcessJob for Provider: '.$provider->id);

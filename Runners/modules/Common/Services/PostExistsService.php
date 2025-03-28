@@ -8,12 +8,13 @@ use Modules\Common\Events\PostExistsEvent;
 
 class PostExistsService
 {
-    public function exists(string $identifier): bool
+    public function exists(string $identifier, string $title): bool
     {
         $response = null;
 
         PostExistsEvent::dispatch(
             $identifier,
+            $title,
             static function (bool $result) use (&$response): void {
                 $response = $result;
             }

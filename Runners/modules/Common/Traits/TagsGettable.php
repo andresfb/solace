@@ -39,6 +39,8 @@ trait TagsGettable
                     return '';
                 }
 
+                // TODO: split tags like this Populism (Theory and Philosophy)
+
                 return $tag->title()
                     ->replace(' ', '')
                     ->toString();

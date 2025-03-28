@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\NewsFeedRunner\Models\Article;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use DateTime;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,8 +28,8 @@ use Modules\NewsFeedRunner\Traits\ModuleConstants;
  * @property-read string|null $content
  * @property-read string|null $description
  * @property-read string|null $thumbnail
- * @property-read DateTimeInterface|null $read_at
- * @property-read CarbonImmutable|null $published_at
+ * @property-read DateTime|null $read_at
+ * @property-read DateTime|null $published_at
  * @property-read CarbonImmutable|null $deleted_at
  * @property-read CarbonImmutable|null $created_at
  * @property-read CarbonImmutable|null $updated_at
@@ -49,7 +51,7 @@ class Article extends NewsFeedRunnerModel
     {
         return [
             'read_at' => 'datetime',
-            'published_at' => CarbonImmutable::class,
+            'published_at' => 'datetime',
             'deleted_at' => CarbonImmutable::class,
             'created_at' => CarbonImmutable::class,
             'updated_at' => CarbonImmutable::class,
@@ -83,8 +85,11 @@ class Article extends NewsFeedRunnerModel
 
         return [
             'modelId' => $this->id,
+            'identifier' => $this->permalink,
             'title' => $this->title,
-            'content' => $this->parseContent(),
+            'content' => $this->addLinkDateInfo(
+                $this->parseContent()
+            ),
             'generator' => strtoupper(
                 "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED"
             ),
@@ -96,7 +101,7 @@ class Article extends NewsFeedRunnerModel
             'responses' => null,
             'hashtags' => $this->getTags(
                 modelId: $this->id,
-                modelType: 'App\Models\Item',
+                modelType: 'App\Models\Article',
                 connection: $this->getConnectionName() ?? config('database.news_feed_runner_connection')
             ),
         ];
@@ -142,7 +147,7 @@ class Article extends NewsFeedRunnerModel
         }
 
         // Handle identical content
-        if ($lowerContent === $lowerDescription) {
+        if ($lowerContent->exactly($lowerDescription)) {
             return $content->value();
         }
 
@@ -171,5 +176,19 @@ class Article extends NewsFeedRunnerModel
         }
 
         return "{$description->value()}\n\n{$content->value()}";
+    }
+
+    private function addLinkDateInfo(string $content): string
+    {
+        return str($content)
+            ->trim()
+            ->append("\n\n")
+            ->append("[source]($this->permalink)")
+            ->append("\n")
+            ->append(sprintf(
+                "<small><em>Published: %s</em></small>",
+                CarbonImmutable::parse($this->published_at)->diffForHumans()
+            ))
+            ->value();
     }
 }

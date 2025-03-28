@@ -16,6 +16,7 @@ class PostItem extends Data
      */
     public function __construct(
         public int $modelId,
+        public string $identifier,
         public string $title,
         public string $content,
         public string $generator,
@@ -31,7 +32,7 @@ class PostItem extends Data
     public function getHash(): string
     {
         if (! isset($this->hash) || ($this->hash === '' || $this->hash === '0')) {
-            $this->hash = md5("$this->modelId|$this->title");
+            $this->hash = md5("$this->identifier|$this->title");
         }
 
         return $this->hash;

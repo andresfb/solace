@@ -6,6 +6,7 @@ namespace Modules\NewsFeedRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
+use Modules\NewsFeedRunner\Jobs\ImportImagedArticlesJob;
 use Modules\NewsFeedRunner\Services\ImportImagedArticlesService;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
@@ -32,6 +33,10 @@ class ImportImagedArticlesTask extends BaseTask
 
     protected function dispatchEvent(): void
     {
-        // TODO: Implement dispatchEvent() method.
+        $this->line('Sending request to ImportImagedArticlesJob');
+
+        ImportImagedArticlesJob::dispatch($this->queueable)
+            ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
+            ->delay(now()->addSecond());
     }
 }

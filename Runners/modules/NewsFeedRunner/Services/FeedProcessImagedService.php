@@ -27,7 +27,7 @@ class FeedProcessImagedService
             return;
         }
 
-        $this->line('Processing Feeds...');
+        $this->line("Processing Feeds...\n");
 
         /** @var Feed $feed */
         foreach ($provider->feeds as $feed) {
@@ -37,7 +37,7 @@ class FeedProcessImagedService
 
     private function processArticles(Feed $feed): void
     {
-        $this->line('Loading Articles for Feed: '.$feed->title);
+        $this->line("Loading Articles for Feed: $feed->title\n");
 
         $feed->load('provider');
 

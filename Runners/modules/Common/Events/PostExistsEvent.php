@@ -15,8 +15,11 @@ class PostExistsEvent
      */
     public $callback;
 
-    public function __construct(public string $identifier, callable $callback)
-    {
+    public function __construct(
+        public string $identifier,
+        public string $title,
+        callable $callback
+    ) {
         $this->callback = $callback;
     }
 }

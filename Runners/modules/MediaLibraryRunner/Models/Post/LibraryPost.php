@@ -115,6 +115,7 @@ class LibraryPost extends MediaRunnerModel
     {
         return [
             'modelId' => $this->id,
+            'identifier' => $this->slug,
             'title' => $this->title,
             'content' => $this->content,
             'generator' => strtoupper(
