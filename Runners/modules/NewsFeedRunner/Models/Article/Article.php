@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\NewsFeedRunner\Models\Article;
 
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use DateTime;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -83,22 +81,27 @@ class Article extends NewsFeedRunnerModel
             ->trim()
             ->value();
 
+        $mediaFiles = $this->getMediaFiles();
+
         return [
             'modelId' => $this->id,
             'identifier' => $this->permalink,
             'title' => $this->title,
-            'content' => $this->addLinkDateInfo(
-                $this->parseContent()
-            ),
+            'content' => str(
+                nl2br($this->addLinkDateInfo($this->parseContent()))
+            )
+            ->replace('<br /><br /><br /><br />', '<br /><br />')
+            ->value(),
             'generator' => strtoupper(
                 "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED"
             ),
             'source' => $providerName,
             'origin' => $this->NEWS_FEED,
-            'fromAi' => false,
-            'mediaFiles' => $this->getMediaFiles(),
             'tasker' => $taskName,
+            'image' => $mediaFiles->isEmpty() ? $this->thumbnail : '',
+            'fromAi' => false,
             'responses' => null,
+            'mediaFiles' => $mediaFiles,
             'hashtags' => $this->getTags(
                 modelId: $this->id,
                 modelType: 'App\Models\Article',
@@ -124,20 +127,22 @@ class Article extends NewsFeedRunnerModel
         // Helper function to clean text
         $cleanText = static function (string $text): Stringable {
             return str($text)
-                ->replaceMatches('/\s{2,}/', ' ')    // Replace multiple spaces with a single space
-                ->replaceMatches('/\n{2,}/', "\n")   // Replace multiple newlines with a single newline
-                ->replace("\t", ' ')                 // Replace tabs with spaces
-                ->trim();                            // Remove leading/trailing whitespace
+                ->replaceMatches('/\s{2,}/', ' ')        // Replace multiple spaces with a single space
+                ->replaceMatches('/\n{2,}/', "<br />")   // Replace multiple newlines with a single newline
+                ->replace("\t", ' ')                     // Replace tabs with spaces
+                ->replace("\r", '')
+                ->replace(
+                    "<br /><br /><br /><br />", '<br /><br />'
+                )                                        // Replace multiple br with two br
+                ->trim();                                // Remove leading/trailing whitespace
         };
 
-        // Clean and prepare both strings
         $content = $cleanText($this->content ?? '');
         $description = $cleanText($this->description ?? '');
 
         $lowerContent = $content->lower();
         $lowerDescription = $description->lower();
 
-        // Handle empty cases
         if ($lowerContent->isEmpty()) {
             return $description->value();
         }
@@ -160,8 +165,8 @@ class Article extends NewsFeedRunnerModel
             return $content->value();
         }
 
-        // Check if they start with the same text (first 100 chars)
-        $startsWithSameText = $lowerContent->substr(0, 100) === $lowerDescription->substr(0, 100);
+        // Check if they start with the same text (first 65 chars)
+        $startsWithSameText = $lowerContent->substr(0, 65) === $lowerDescription->substr(0, 65);
 
         if ($startsWithSameText) {
             // Return the longer version when both start the same
@@ -172,22 +177,22 @@ class Article extends NewsFeedRunnerModel
 
         // Combine content based on length
         if ($lowerContent->length() < $lowerDescription->length()) {
-            return "{$content->value()}\n\n{$description->value()}";
+            return "{$content->value()}<br /><br />{$description->value()}";
         }
 
-        return "{$description->value()}\n\n{$content->value()}";
+        return "{$description->value()}<br /><br />{$content->value()}";
     }
 
     private function addLinkDateInfo(string $content): string
     {
         return str($content)
             ->trim()
-            ->append("\n\n")
+            ->append("<br /><br />")
             ->append("[source]($this->permalink)")
-            ->append("\n")
+            ->append("<br />")
             ->append(sprintf(
                 "<small><em>Published: %s</em></small>",
-                CarbonImmutable::parse($this->published_at)->diffForHumans()
+                CarbonImmutable::parse($this->published_at)->format('D, M j, Y')
             ))
             ->value();
     }

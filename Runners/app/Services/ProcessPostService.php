@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
+use Modules\Common\Exceptions\NoImageException;
 use Modules\Common\Models\MediaItem;
 use Modules\Common\Traits\Screenable;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 use Throwable;
@@ -33,7 +35,6 @@ class ProcessPostService
     public function __construct(private readonly RandomUserSelectorService $service) {}
 
     /**
-     * @throws Exception
      * @throws Throwable
      */
     public function execute(PostItem $postItem): void
@@ -69,15 +70,20 @@ class ProcessPostService
             return;
         }
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             $this->line('Saving Post '.$postItem->modelId);
 
             $post = Post::create([
                 'hash' => $postItem->getHash(),
                 'user_id' => $this->service->getUser()->id,
-                'content' => $this->getContent($postItem),
+                'content' => str(
+                    nl2br($this->getContent($postItem))
+                )
+                ->replace("\r", '')
+                ->replace('<br /><br /><br /><br />', '<br /><br />')
+                ->value(),
                 'tasker' => $postItem->tasker,
                 'generator' => $postItem->generator,
                 'status' => PostStatus::CREATED,
@@ -91,7 +97,11 @@ class ProcessPostService
                 );
             }
 
-            $this->saveMedia($post, $postItem->mediaFiles);
+            if ($postItem->mediaFiles->isEmpty()) {
+                $this->saveImage($post, $postItem->image);
+            } else {
+                $this->saveMedia($post, $postItem->mediaFiles);
+            }
 
             $this->saveHashtags($post, $postItem->hashtags);
 
@@ -108,7 +118,7 @@ class ProcessPostService
             // TODO: create another listener in the Host code for PostCreatedEvent where we can add random AI generated comments (ollama).
 
             $this->line('Post saved...');
-        } catch (FileDoesNotExist|FileIsTooBig $e) {
+        } catch (FileDoesNotExist|FileIsTooBig|FileCannotBeAdded|NoImageException $e) {
             DB::rollBack();
 
             $message = 'File error: '.$e->getMessage();
@@ -133,6 +143,26 @@ class ProcessPostService
         } finally {
             $this->line("\n");
         }
+    }
+
+    /**
+     * @throws NoImageException
+     * @throws FileCannotBeAdded
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     */
+    private function saveImage(Post $post, string $image): void
+    {
+        if (blank($image)) {
+            throw new NoImageException("$post->generator doesn't have a image");
+        }
+
+        $this->line("Saving image Files: $image");
+
+        $post->addMediaFromUrl($image)
+            ->toMediaCollection('image');
+
+        $this->line('Image Saved.');
     }
 
     /**
@@ -212,8 +242,7 @@ class ProcessPostService
             || $source->contains(['bible', 'quran'])
             || $contentLow->startsWith($titleLow)
             || str($postItem->generator)->contains('AI_MODEL')) {
-            return $content->trim()
-                ->value();
+            return $content->trim()->value();
         }
 
         return $content->prepend(
@@ -221,11 +250,11 @@ class ProcessPostService
                 ->prepend('**')
                 ->append('**')
                 ->trim()
-                ->append("\n\n")
+                ->append("<br /><br />")
                 ->value()
         )
-            ->trim()
-            ->value();
+        ->trim()
+        ->value();
     }
 
     private function extractTag(string $text): void

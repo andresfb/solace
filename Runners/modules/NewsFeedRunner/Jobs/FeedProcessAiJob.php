@@ -10,9 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\NewsFeedRunner\Models\Provider\Provider;
-use Modules\NewsFeedRunner\Services\FeedProcessImagedService;
+use Modules\NewsFeedRunner\Services\FeedProcessAiService;
 
-class FeedProcessJob implements ShouldQueue
+class FeedProcessAiJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -21,7 +21,7 @@ class FeedProcessJob implements ShouldQueue
 
     public function __construct(private readonly Provider $provider) {}
 
-    public function handle(FeedProcessImagedService $service): void
+    public function handle(FeedProcessAiService $service): void
     {
         $service->execute($this->provider);
     }

@@ -27,6 +27,7 @@ class PostItem extends Data
         public Collection $mediaFiles,
         public Collection $hashtags,
         public bool $fromAi = false,
+        public string $image = '',
     ) {}
 
     public function getHash(): string

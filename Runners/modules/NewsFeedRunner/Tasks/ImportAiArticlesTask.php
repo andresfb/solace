@@ -6,36 +6,36 @@ namespace Modules\NewsFeedRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
-use Modules\NewsFeedRunner\Jobs\ImportImagedArticlesJob;
-use Modules\NewsFeedRunner\Services\ImportImagedArticlesService;
+use Modules\NewsFeedRunner\Jobs\ImportAiArticlesJob;
+use Modules\NewsFeedRunner\Services\ImportAiArticlesService;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
-class ImportImagedArticlesTask extends BaseTask
+class ImportAiArticlesTask extends BaseTask
 {
     use ModuleConstants;
 
     public function __construct(
-        ImportImagedArticlesService $taskTaskService,
-        ModuleSettingsService       $settingsService
+        ImportAiArticlesService $taskTaskService,
+        ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }
 
     protected function getModuleName(): string
     {
-        return $this->MODULE_NAME;
+        return $this->NEWS_FEED;
     }
 
     protected function getTaskName(): string
     {
-        return $this->IMPORT_IMAGED_ARTICLES;
+        return $this->IMPORT_AI_ARTICLE;
     }
 
     protected function dispatchEvent(): void
     {
-        $this->line('Sending request to ImportImagedArticlesJob');
+        $this->line('Sending request to ImportAiArticlesJob');
 
-        ImportImagedArticlesJob::dispatch()
+        ImportAiArticlesJob::dispatch()
             ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
             ->delay(now()->addSecond());
     }

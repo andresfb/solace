@@ -9,7 +9,7 @@ use Modules\Common\Services\PostExistsService;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\NewsFeedRunner\Jobs\ImagedArticleJob;
+use Modules\NewsFeedRunner\Jobs\ArticleJob;
 use Modules\NewsFeedRunner\Models\Article\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
@@ -22,7 +22,7 @@ class ImagedArticlesService
 
     public function __construct(
         private readonly PostExistsService $postExistsService,
-        private readonly ImagedArticleService $articleService,
+        private readonly ArticleService    $articleService,
     ) {}
 
     /**
@@ -44,7 +44,7 @@ class ImagedArticlesService
             if ($this->queueable) {
                 $this->line('Queuing ImagedArticleJob job...');
 
-                ImagedArticleJob::dispatch($article->id)
+                ArticleJob::dispatch($article->id, $this->IMPORT_IMAGED_ARTICLES)
                     ->onConnection($this->getConnection($this->NEWS_FEED))
                     ->onQueue($this->getQueue($this->NEWS_FEED))
                     ->delay(now()->addSeconds(5));
@@ -55,7 +55,10 @@ class ImagedArticlesService
             $this->line('Importing the article...');
 
             $this->articleService->setToScreen($this->toScreen)
-                ->execute($article);
+                ->execute(
+                    $article,
+                    $this->IMPORT_IMAGED_ARTICLES
+                );
         }
     }
 }

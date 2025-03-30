@@ -123,10 +123,11 @@ class LibraryPost extends MediaRunnerModel
             ),
             'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,
-            'fromAi' => false,
-            'mediaFiles' => $this->getMediaFiles(),
             'tasker' => $taskName,
+            'image' => '',
+            'fromAi' => false,
             'responses' => null,
+            'mediaFiles' => $this->getMediaFiles(),
             'hashtags' => $this->getTags(
                 modelId: $this->id,
                 modelType: 'App\Models\Post',

@@ -8,6 +8,7 @@ enum TaskRunnerSchedule: string
 {
     case HALF_HOUR = 'lf';
     case HOURLY = 'h';
+    case HOURLY_05 = 'h5';
     case ODD_HOUR = 'odd';
     case EVERY_TWO_HOURS = 'eth';
     case ONCE_DAILY = 'od';
@@ -22,6 +23,7 @@ enum TaskRunnerSchedule: string
     {
         return match (strtolower($frequency)) {
             'h' => self::HOURLY,
+            'h5' => self::HOURLY_05,
             'odd' => self::ODD_HOUR,
             'eth' => self::EVERY_TWO_HOURS,
             'od' => self::ONCE_DAILY,

@@ -11,4 +11,6 @@ trait ModuleConstants
     public string $NEWS_FEED = 'news_feed';
 
     public string $IMPORT_IMAGED_ARTICLES = 'imaged-article-importer';
+
+    public string $IMPORT_AI_ARTICLE = 'ai-article-importer';
 }

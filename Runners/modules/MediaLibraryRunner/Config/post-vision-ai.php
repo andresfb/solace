@@ -6,7 +6,7 @@ return [
 
     'max_empty_runs' => (int) env('MIGRATE_VISION_AI_MAX_EMPTY_RUN', 10),
 
-    'queue_connection' => env('MIGRATE_AI_REDIS_CNN', 'via-ai-cnn'),
+    'queue_connection' => env('MIGRATE_AI_REDIS_CNN', 'ai-runner-cnn'),
 
     'queues' => env('MIGRATE_VISION_AI_QUEUES', 'skynet'),
 
