@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\NewsFeedRunner\Services;
 
 use Illuminate\Database\Eloquent\Collection;
+use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\NewsFeedRunner\Jobs\ImagedArticlesJob;
@@ -46,8 +47,9 @@ class FeedProcessImagedService
             ->where('thumbnail', '!=', '')
             ->where('title', '!=', '')
             ->where('permalink', '!=', '')
-            ->whereNull('read_at')
+            ->where('runner_status', RunnerStatus::STASIS)
             ->where('published_at', '>=', now()->subDays($feed->provider->go_back_days ?? 1))
+            ->orderBy('published_at', 'desc')
             ->limit(
                 config("$this->IMPORT_IMAGED_ARTICLES.posts_limit")
             )

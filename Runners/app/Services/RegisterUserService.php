@@ -8,9 +8,11 @@ use App\Enums\ProfileGender;
 use App\Models\Profiles\Profile;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\RandomUserItem;
 use Modules\Common\Traits\Screenable;
+use Throwable;
 
 class RegisterUserService
 {
@@ -19,10 +21,12 @@ class RegisterUserService
     public function __construct(protected readonly ProfileImageGenService $imageGenService) {}
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
     public function execute(RandomUserItem $userItem): void
     {
+        $commit = false;
+
         try {
             if (User::where('username', $userItem->username)->exists()) {
                 $message = "User with username '$userItem->username' already exists.";
@@ -34,6 +38,9 @@ class RegisterUserService
             }
 
             $this->line('Creating User '.$userItem->username);
+
+            DB::beginTransaction();
+            $commit = true;
 
             $user = User::create([
                 'name' => $userItem->name,
@@ -75,8 +82,20 @@ class RegisterUserService
 
             $profile->addMedia($image)
                 ->toMediaCollection('avatar');
+        } catch (Exception|Throwable $e) {
+            $commit = false;
+
+            $this->error($e->getMessage());
+
+            Log::error($e->getMessage());
+
+            DB::rollBack();
         } finally {
             $this->line('');
+
+            if ($commit) {
+                DB::commit();
+            }
         }
     }
 }

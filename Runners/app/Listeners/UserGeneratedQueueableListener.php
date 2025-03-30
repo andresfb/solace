@@ -28,8 +28,6 @@ class UserGeneratedQueueableListener implements ShouldQueue
             $this->service->execute($event->user);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
-
-            throw $e;
         }
     }
 

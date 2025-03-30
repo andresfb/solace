@@ -119,7 +119,7 @@ class LibraryPost extends MediaRunnerModel
             'title' => $this->title,
             'content' => $this->content,
             'generator' => strtoupper(
-                "POST=$this->id:ITEM=$this->item_id:TYPE:$this->type:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY"
+                "POST=$this->id:ITEM=$this->item_id:TYPE:$this->type:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY:TASK=$taskName"
             ),
             'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,
@@ -127,6 +127,7 @@ class LibraryPost extends MediaRunnerModel
             'image' => '',
             'fromAi' => false,
             'responses' => null,
+            'attribution' => '',
             'mediaFiles' => $this->getMediaFiles(),
             'hashtags' => $this->getTags(
                 modelId: $this->id,

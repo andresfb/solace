@@ -11,20 +11,18 @@ use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\NewsFeedRunner\Jobs\AiArticleJob;
+use Modules\NewsFeedRunner\Jobs\PicsumArticleJob;
 use Modules\NewsFeedRunner\Models\Article\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
-class ImportAiArticlesService implements TaskServiceInterface
+class ImportPicsumArticlesService implements TaskServiceInterface
 {
     use ModuleConstants;
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
 
-    public function __construct(
-        private readonly AiArticleService $articleService
-    ) {}
+    public function __construct(private readonly PicsumArticleService $articleService) {}
 
     /**
      * @throws EmptyRunException
@@ -37,11 +35,11 @@ class ImportAiArticlesService implements TaskServiceInterface
             ->where('thumbnail', '=', '')
             ->where('title', '!=', '')
             ->where('permalink', '!=', '')
-            ->where('runner_status', RunnerStatus::UNUSABLE)
+            ->where('runner_status', RunnerStatus::STASIS)
             ->where('published_at', '>=', now()->subDays(10))
             ->orderBy('published_at', 'desc')
             ->limit(
-                config("$this->IMPORT_AI_ARTICLE.posts_limit")
+                config("$this->IMPORT_PICSUM_ARTICLE.posts_limit")
             )
             ->get();
 
@@ -52,18 +50,18 @@ class ImportAiArticlesService implements TaskServiceInterface
 
             EmptyRunFactory::handler(
                 $this->MODULE_NAME,
-                $this->IMPORT_AI_ARTICLE,
+                $this->IMPORT_PICSUM_ARTICLE,
                 $message
             );
         }
 
         $articles->map(function (Article $article): void {
             if ($this->queueable) {
-                $this->line("Queueing AiArticleJob for Article: $article->title");
+                $this->line("Queueing PicsumArticleJob for Article: $article->title");
 
-                AiArticleJob::dispatch($article->id)
-                    ->onConnection($this->getConnection($this->IMPORT_AI_ARTICLE))
-                    ->onQueue($this->getQueue($this->IMPORT_AI_ARTICLE))
+                PicsumArticleJob::dispatch($article->id)
+                    ->onConnection($this->getConnection($this->IMPORT_PICSUM_ARTICLE))
+                    ->onQueue($this->getQueue($this->IMPORT_PICSUM_ARTICLE))
                     ->delay(now()->addMinutes(5));
 
                 return;
@@ -74,8 +72,6 @@ class ImportAiArticlesService implements TaskServiceInterface
             $this->articleService->setQueueable($this->queueable)
                 ->setToScreen($this->toScreen)
                 ->execute($article);
-
-            dd('just one');
         });
     }
 }

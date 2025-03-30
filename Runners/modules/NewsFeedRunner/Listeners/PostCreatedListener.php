@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\NewsFeedRunner\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
 use Modules\NewsFeedRunner\Models\Article\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
@@ -17,14 +16,15 @@ class PostCreatedListener implements ShouldQueue
     public function handle(ChangeStatusEvent $event): void
     {
         Article::where('id', $event->modelId)
-            ->update(['read_at' => now()]);
+            ->update([
+                'read_at' => now(),
+                'runner_status' => $event->runnerStatus,
+            ]);
     }
 
     public function shouldQueue(ChangeStatusEvent $event): bool
     {
-        return $event->origin === $this->NEWS_FEED
-            && ($event->runnerStatus === RunnerStatus::PUBLISHED
-                || $event->runnerStatus === RunnerStatus::UNUSABLE);
+        return $event->origin === $this->NEWS_FEED;
     }
 
     public function viaQueue(): string

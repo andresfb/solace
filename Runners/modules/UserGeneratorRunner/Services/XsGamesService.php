@@ -6,11 +6,11 @@ namespace Modules\UserGeneratorRunner\Services;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
-use Modules\UserGeneratorRunner\Traits\ProfileImageCatchable;
+use Modules\Common\Traits\ImageCatchable;
 
 class XsGamesService
 {
-    use ProfileImageCatchable;
+    use ImageCatchable;
 
     public function getImage(): string
     {
@@ -31,7 +31,8 @@ class XsGamesService
             }
 
             $image = $this->checkImage(
-                $response->handlerStats()['url']
+                $response->handlerStats()['url'],
+                config('user_generator.max_new_users')
             );
 
             if ($image === '') {

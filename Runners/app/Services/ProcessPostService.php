@@ -55,8 +55,8 @@ class ProcessPostService
             return;
         }
 
-        if ($postItem->mediaFiles->isEmpty()) {
-            $message = "No media files found for Model Id: $postItem->modelId";
+        if ($postItem->mediaFiles->isEmpty() && blank($postItem->image)) {
+            $message = "No media files or images found for Model Id: $postItem->modelId";
 
             $this->line("$message\n");
             Log::notice($message);
@@ -78,12 +78,7 @@ class ProcessPostService
             $post = Post::create([
                 'hash' => $postItem->getHash(),
                 'user_id' => $this->service->getUser()->id,
-                'content' => str(
-                    nl2br($this->getContent($postItem))
-                )
-                ->replace("\r", '')
-                ->replace('<br /><br /><br /><br />', '<br /><br />')
-                ->value(),
+                'content' => $this->parseContent($postItem),
                 'tasker' => $postItem->tasker,
                 'generator' => $postItem->generator,
                 'status' => PostStatus::CREATED,
@@ -199,6 +194,27 @@ class ProcessPostService
         );
 
         $this->line('Hashtags Saved.');
+    }
+
+    private function parseContent(PostItem $postItem): string
+    {
+        $text = str(nl2br(
+            $this->getContent($postItem)
+        ))
+        ->replace("\r", '')
+        ->replace('<br /><br /><br /><br />', '<br /><br />')
+        ->append('<br />');
+
+        if (! empty($postItem->attribution)) {
+            return $text->append('<br />')
+                ->append('<small>')
+                ->append($postItem->attribution)
+                ->append('</small>')
+                ->append('<br />')
+                ->value();
+        }
+
+        return $text->value();
     }
 
     private function getContent(PostItem $postItem): string

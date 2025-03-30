@@ -13,9 +13,6 @@ readonly class UserGeneratedListener
 {
     public function __construct(private RegisterUserService $service) {}
 
-    /**
-     * @throws Throwable
-     */
     public function handle(UserGeneratedEvent $event): void
     {
         try {
@@ -23,8 +20,6 @@ readonly class UserGeneratedListener
                 ->execute($event->user);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
-
-            throw $e;
         }
     }
 }

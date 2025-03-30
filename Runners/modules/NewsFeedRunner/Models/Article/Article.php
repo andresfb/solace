@@ -8,8 +8,10 @@ use Carbon\CarbonImmutable;
 use DateTime;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
+use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
 use Modules\NewsFeedRunner\Models\Article\Scopes\ArticleMediaScope;
 use Modules\NewsFeedRunner\Models\Feed\Feed;
@@ -26,6 +28,8 @@ use Modules\NewsFeedRunner\Traits\ModuleConstants;
  * @property-read string|null $content
  * @property-read string|null $description
  * @property-read string|null $thumbnail
+ * @property-read string|null $attribution
+ * @property-read int $runner_status
  * @property-read DateTime|null $read_at
  * @property-read DateTime|null $published_at
  * @property-read CarbonImmutable|null $deleted_at
@@ -50,9 +54,7 @@ class Article extends NewsFeedRunnerModel
         return [
             'read_at' => 'datetime',
             'published_at' => 'datetime',
-            'deleted_at' => CarbonImmutable::class,
-            'created_at' => CarbonImmutable::class,
-            'updated_at' => CarbonImmutable::class,
+            'runner_status' => RunnerStatus::class,
         ];
     }
 
@@ -93,13 +95,14 @@ class Article extends NewsFeedRunnerModel
             ->replace('<br /><br /><br /><br />', '<br /><br />')
             ->value(),
             'generator' => strtoupper(
-                "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED"
+                "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED:TASK=$taskName"
             ),
             'source' => $providerName,
             'origin' => $this->NEWS_FEED,
             'tasker' => $taskName,
             'image' => $mediaFiles->isEmpty() ? $this->thumbnail : '',
-            'fromAi' => false,
+            'attribution' => $this->attribution ?? '',
+            'fromAi' => $taskName === $this->IMPORT_AI_ARTICLE,
             'responses' => null,
             'mediaFiles' => $mediaFiles,
             'hashtags' => $this->getTags(

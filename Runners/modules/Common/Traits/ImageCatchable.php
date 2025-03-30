@@ -2,22 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Modules\UserGeneratorRunner\Traits;
+namespace Modules\Common\Traits;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\UserGeneratorRunner\Dtos\UserPicture;
 
-trait ProfileImageCatchable
+trait ImageCatchable
 {
-    public function checkImage(string $pictureUrl): string
+    public function checkImage(string $pictureUrl, int $maxUsages): string
     {
+        if (empty($pictureUrl)) {
+            return '';
+        }
+
         $key = md5($pictureUrl);
         if (! Cache::has($key)) {
             return $this->cacheImage($pictureUrl);
         }
 
         $cachedPicture = Cache::get($key);
-        if ($cachedPicture->usage > config('user_generator.max_new_users')) {
+        if ($cachedPicture->usage > $maxUsages) {
             return '';
         }
 

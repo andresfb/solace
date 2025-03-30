@@ -9,20 +9,21 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\NewsFeedRunner\Models\Provider\Provider;
-use Modules\NewsFeedRunner\Services\FeedProcessAiService;
+use Modules\Common\Exceptions\EmptyRunException;
+use Modules\NewsFeedRunner\Services\ImportPicsumArticlesService;
 
-class FeedProcessAiJob implements ShouldQueue
+class ImportPicsumArticlesJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly Provider $provider) {}
-
-    public function handle(FeedProcessAiService $service): void
+    /**
+     * @throws EmptyRunException
+     */
+    public function handle(ImportPicsumArticlesService $service): void
     {
-        $service->execute($this->provider);
+        $service->execute();
     }
 }
