@@ -10,9 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\NewsFeedRunner\Models\Article\Article;
-use Modules\NewsFeedRunner\Services\ImagedArticleService;
+use Modules\NewsFeedRunner\Services\AiArticleService;
 
-class ImagedArticleJob implements ShouldQueue
+class AiArticlesJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -21,7 +21,7 @@ class ImagedArticleJob implements ShouldQueue
 
     public function __construct(private readonly int $articleId) {}
 
-    public function handle(ImagedArticleService $service): void
+    public function handle(AiArticleService $service): void
     {
         $article = Article::where('id', $this->articleId)
             ->firstOrFail();

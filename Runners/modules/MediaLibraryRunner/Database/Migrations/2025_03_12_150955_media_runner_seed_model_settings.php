@@ -14,7 +14,7 @@ return new class extends Migration
                 ['module_name' => 'media_runner', 'task_name' => 'fulfilled', 'name' => 'schedule', 'value' => 'odd', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'fulfilled', 'name' => 'empty_runs_count', 'value' => '0', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'untagged_videos', 'name' => 'is_enabled', 'value' => '1', 'created_at' => now(), 'updated_at' => now()],
-                ['module_name' => 'media_runner', 'task_name' => 'untagged_videos', 'name' => 'schedule', 'value' => 'h', 'created_at' => now(), 'updated_at' => now()],
+                ['module_name' => 'media_runner', 'task_name' => 'untagged_videos', 'name' => 'schedule', 'value' => 'h5', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'untagged_videos', 'name' => 'empty_runs_count', 'value' => '0', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'post-vision-ai', 'name' => 'is_enabled', 'value' => '1', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'media_runner', 'task_name' => 'post-vision-ai', 'name' => 'schedule', 'value' => 'cm', 'created_at' => now(), 'updated_at' => now()],

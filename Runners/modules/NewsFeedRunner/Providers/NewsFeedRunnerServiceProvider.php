@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Modules\NewsFeedRunner\Providers;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Common\Events\ChangeStatusEvent;
+use Modules\NewsFeedRunner\Listeners\PostCreatedListener;
 
 class NewsFeedRunnerServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->register(ImportImagedArticlesServiceProvider::class);
+        $this->app->register(ImportAiArticlesServiceProvider::class);
     }
 
     public function boot(): void
@@ -24,5 +28,9 @@ class NewsFeedRunnerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/queue.php', 'queue.connections');
         $this->mergeConfigFrom(__DIR__.'/../Config/horizon.php', 'horizon.environments.tiger-mox');
 
+        Event::listen(
+            ChangeStatusEvent::class,
+            [PostCreatedListener::class, 'handle']
+        );
     }
 }

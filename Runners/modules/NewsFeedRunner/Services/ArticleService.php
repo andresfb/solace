@@ -12,26 +12,24 @@ use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\NewsFeedRunner\Models\Article\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
-class ImagedArticleService
+class ArticleService
 {
     use ModuleConstants;
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
 
-    public function execute(Article $article): void
+    public function execute(Article $article, string $taskName): void
     {
         $this->line('Loading the Media Files and tags...');
 
         PostSelectedEvent::dispatch(
             PostItem::from(
                 $article->load('feed.provider')
-                    ->getPostableInfo($this->IMPORT_IMAGED_ARTICLES)
+                    ->getPostableInfo($taskName)
             ),
             $this->toScreen
         );
-
-        dd('just one');
 
         $this->line('PostSelectedEvent Event dispatched.');
     }

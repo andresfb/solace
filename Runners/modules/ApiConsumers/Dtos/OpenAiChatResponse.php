@@ -8,7 +8,7 @@ use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateResponseChoice;
 use Spatie\LaravelData\Data;
 
-class OpenAiResponse extends Data
+class OpenAiChatResponse extends Data
 {
     public function __construct(
         public string $content = '',

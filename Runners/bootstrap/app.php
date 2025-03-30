@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         Schedule::command(TaskRunnerCommand::class, ['lf'])->everyThirtyMinutes();
 
+        Schedule::command(TaskRunnerCommand::class, ['h'])->hourly();
+
         Schedule::command(TaskRunnerCommand::class, ['h'])->hourlyAt(05);
 
         Schedule::command(TaskRunnerCommand::class, ['odd'])->everyOddHour(10);
@@ -40,5 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Three times a week
         Schedule::command(TaskRunnerCommand::class, ['ttw'])->cron('35 7 * * 2,4,6');
+
+        // Week days at 7 am
+        Schedule::command(TaskRunnerCommand::class, ['od'])->weekdays()->at('7:00');
 
     })->create();

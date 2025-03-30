@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\ApiConsumers\Services;
 
-use Modules\ApiConsumers\Dtos\OpenAiResponse;
+use Modules\ApiConsumers\Dtos\OpenAiChatResponse;
+
+use Modules\ApiConsumers\Dtos\OpenAiImageResponse;
 use OpenAI\Laravel\Facades\OpenAI;
 
 class OpenAiClient
@@ -84,14 +86,24 @@ class OpenAiClient
         return $this->userPrompt;
     }
 
-    public function ask(): OpenAiResponse
+    public function ask(): OpenAiChatResponse
     {
         $response = OpenAI::chat()
             ->create(
                 $this->prepareOptions()
             );
 
-        return OpenAiResponse::fromResponse($response);
+        return OpenAiChatResponse::fromResponse($response);
+    }
+
+    public function image(): OpenAiImageResponse
+    {
+        $response = OpenAI::images()
+            ->create(
+                $this->prepareImageOptions()
+            );
+
+        return OpenAiImageResponse::fromResponse($response);
     }
 
     /**
@@ -110,6 +122,20 @@ class OpenAiClient
                 'role' => 'user',
                 'content' => $this->getUserPrompt(),
             ]],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function prepareImageOptions(): array
+    {
+        return [
+            'model' => $this->getModel(),
+            'prompt' => $this->getUserPrompt(),
+            'n' => 1,
+            'size' => '1024x1024',
+            'response_format' => 'url',
         ];
     }
 }

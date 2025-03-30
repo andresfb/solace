@@ -17,7 +17,9 @@ class PostCreatedListener implements ShouldQueue
 
     public function handle(ChangeStatusEvent $event): void
     {
-        LibraryPost::where('id', $event->libraryPostId)
+        // Check the shouldQueue() method for the condition
+        // to when this is skipped.
+        LibraryPost::where('id', $event->modelId)
             ->update([
                 'runner_status' => $event->runnerStatus,
             ]);

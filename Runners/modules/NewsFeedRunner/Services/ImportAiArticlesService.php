@@ -10,20 +10,18 @@ use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\NewsFeedRunner\Jobs\FeedProcessImagedJob;
+use Modules\NewsFeedRunner\Jobs\FeedProcessAiJob;
 use Modules\NewsFeedRunner\Models\Provider\Provider;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
-class ImportImagedArticlesService implements TaskServiceInterface
+class ImportAiArticlesService implements TaskServiceInterface
 {
     use ModuleConstants;
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
 
-    private string $taskName = '';
-
-    public function __construct(private readonly FeedProcessImagedService $feedService) {}
+    public function __construct(private readonly FeedProcessAiService $feedService) {}
 
     /**
      * @throws EmptyRunException
@@ -43,7 +41,7 @@ class ImportImagedArticlesService implements TaskServiceInterface
 
             EmptyRunFactory::handler(
                 $this->MODULE_NAME,
-                $this->IMPORT_IMAGED_ARTICLES,
+                $this->IMPORT_AI_ARTICLE,
                 $message
             );
         }
@@ -56,7 +54,7 @@ class ImportImagedArticlesService implements TaskServiceInterface
             if ($this->queueable) {
                 $this->line('Queueing FeedProcessJob for Provider: '.$provider->id);
 
-                FeedProcessImagedJob::dispatch($provider)
+                FeedProcessAiJob::dispatch($provider)
                     ->onQueue(config('news_feed_runner.horizon_queue'))
                     ->delay(now()->addSeconds(5));
 
