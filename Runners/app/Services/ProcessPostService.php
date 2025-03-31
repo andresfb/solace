@@ -83,6 +83,7 @@ class ProcessPostService
                 'generator' => $postItem->generator,
                 'status' => PostStatus::CREATED,
                 'privacy' => PostPrivacy::PUBLIC,
+                'priority' => $postItem->priority,
                 'responses' => $postItem->responses,
             ]);
 

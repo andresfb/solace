@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('privacy', 1)->default('V');
             $table->text('content');
             $table->string('tasker');
+            $table->unsignedSmallInteger('priority')->default(0);
             $table->string('generator');
             $table->json('responses')->nullable();
             $table->unsignedInteger('likes_count')->default(0);

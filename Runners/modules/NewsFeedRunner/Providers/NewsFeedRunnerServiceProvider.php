@@ -13,9 +13,7 @@ class NewsFeedRunnerServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->register(ImportImagedArticlesServiceProvider::class);
-        $this->app->register(ImportPicsumArticlesServiceProvider::class);
-        $this->app->register(ImportAiArticlesServiceProvider::class);
+        $this->app->register(NewsFeedRunnerTasksServiceProvider::class);
     }
 
     public function boot(): void

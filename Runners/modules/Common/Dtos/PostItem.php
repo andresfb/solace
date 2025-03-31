@@ -23,6 +23,7 @@ class PostItem extends Data
         public string $source,
         public string $origin,
         public string $tasker,
+        public int $priority,
         public ?array $responses,
         public Collection $mediaFiles,
         public Collection $hashtags,

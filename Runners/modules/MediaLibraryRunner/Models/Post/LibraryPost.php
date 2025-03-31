@@ -113,6 +113,12 @@ class LibraryPost extends MediaRunnerModel
      */
     public function getPostableInfo(string $taskName): array
     {
+        try {
+            $priority = random_int(500, 599);
+        } catch (\Exception) {
+            $priority = 500;
+        }
+
         return [
             'modelId' => $this->id,
             'identifier' => $this->slug,
@@ -124,6 +130,7 @@ class LibraryPost extends MediaRunnerModel
             'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,
             'tasker' => $taskName,
+            'priority' => $priority,
             'image' => '',
             'fromAi' => false,
             'responses' => null,
