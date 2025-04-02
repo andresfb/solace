@@ -2,14 +2,18 @@
 
 namespace App\Services;
 
+use App\Models\Riddles\Riddle;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Modules\Common\Traits\Screenable;
 use RuntimeException;
 
 class RiddlesService
 {
+    use Screenable;
+
     /**
      * @throws Exception
      */
@@ -17,13 +21,18 @@ class RiddlesService
     {
         $category = (string) collect(Config::array('riddles.categories'))->random();
 
+        $this->line('Loading category: '.$category);
+
         $endPoint = sprintf(
             Config::string('riddles.endpoint'),
             $category,
             Config::integer('riddles.max_items'),
         );
 
-        $riddles = $this->callApi($endPoint);
+        $this->saveData(
+            $category,
+            $this->callApi($endPoint)
+        );
     }
 
     /**
@@ -31,6 +40,8 @@ class RiddlesService
      */
     private function callApi(string $url): Collection
     {
+        $this->line('Calling '.$url);
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])
@@ -43,6 +54,43 @@ class RiddlesService
 
         $data = $response->json();
 
-        return collect($data);
+        if (! array_key_exists('riddlesArray', $data)) {
+            throw new RuntimeException('Invalid data');
+        }
+
+        $this->line('Got response from API');
+
+        return collect($data['riddlesArray']);
+    }
+
+    private function saveData(string $category, Collection $riddles): void
+    {
+        $this->line('Saving the riddles...');
+
+        foreach ($riddles as $riddle) {
+            $hash = md5(sprintf(
+                '%s:/%s:/%s',
+                $category,
+                $riddle['riddle'],
+                $riddle['answer'],
+            ));
+
+            if (Riddle::where('hash', $hash)->exists()) {
+                $this->character('x');
+
+                continue;
+            }
+
+            $this->character('.');
+
+            Riddle::create([
+                'hash' => $hash,
+                'category' => $category,
+                'question' => $riddle['riddle'],
+                'answer' => $riddle['answer'],
+            ]);
+        }
+
+        $this->line('');
     }
 }

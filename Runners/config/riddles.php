@@ -2,11 +2,11 @@
 
 return [
 
-    'endpoint' => 'https://riddles-api.netlify.app/%s/%s',
+    'endpoint' => 'https://riddles-api-eight.vercel.app/%s/%s',
 
     'categories' => [
-        'funny',
         'science',
+        'funny',
         'math',
         'mystery',
         'logic',

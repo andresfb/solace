@@ -250,10 +250,8 @@ return [
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'size',
                 'minProcesses' => 1,
-                'maxProcesses' => 2,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-                'timeout' => 300, // 5 Minutes
+                'maxProcesses' => 1,
+                'timeout' => 120, // 2 Minutes
                 'tries' => 1,
             ],
 

@@ -32,8 +32,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         Schedule::command(TaskRunnerCommand::class, ['td'])->twiceDaily(3, 15);
 
-        Schedule::job(app(RiddlesCollectorJob::class), 'riddles')->twiceDaily(5, 17);
-
         // Three Times a day
         Schedule::command(TaskRunnerCommand::class, ['ttd'])->cron('20 8,14,20 * * *');
 
@@ -43,7 +41,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Every two hours from 12:30 pm to 11:30 pm Weekends
         Schedule::command(TaskRunnerCommand::class, ['cm'])->cron('30 12-23/2 * * 6-7');
 
-        // Three times a week
+        // Three times a week Mon, Wed, Fri at 2:43 am
+        Schedule::job(app(RiddlesCollectorJob::class), 'riddles')->cron('43 2 * * 1,3,5');
+
+        // Three times a week Tue, Thu, Sat at 7:35 am
         Schedule::command(TaskRunnerCommand::class, ['ttw'])->cron('35 7 * * 2,4,6');
 
         // Week days at 7 am

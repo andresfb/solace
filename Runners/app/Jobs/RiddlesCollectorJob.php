@@ -2,11 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Services\RiddlesService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class RiddlesCollectorJob implements ShouldQueue
 {
@@ -15,11 +18,17 @@ class RiddlesCollectorJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct()
+    /**
+     * @throws Exception
+     */
+    public function handle(RiddlesService $service): void
     {
-    }
+        try {
+            $service->execute();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
 
-    public function handle(): void
-    {
+            throw $e;
+        }
     }
 }

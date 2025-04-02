@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('hash')->unique();
             $table->string('category');
-            $table->string('question');
+            $table->text('question');
             $table->string('answer');
             $table->timestamps();
         });

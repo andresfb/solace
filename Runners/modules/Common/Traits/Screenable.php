@@ -15,6 +15,15 @@ trait Screenable
         return $this;
     }
 
+    public function character(string $character): void
+    {
+        if (! $this->toScreen) {
+            return;
+        }
+
+        echo $character;
+    }
+
     public function line(string $message): void
     {
         if (! $this->toScreen) {
