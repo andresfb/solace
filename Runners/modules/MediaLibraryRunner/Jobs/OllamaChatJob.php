@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Services\OllamaChatService;
 
 class OllamaChatJob implements ShouldQueue

@@ -11,7 +11,7 @@ use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\NewsFeedRunner\Jobs\FeedProcessImagedJob;
-use Modules\NewsFeedRunner\Models\Provider\Provider;
+use Modules\NewsFeedRunner\Models\Providers\Provider;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
 class ImportImagedArticlesService implements TaskServiceInterface

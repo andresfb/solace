@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\NewsFeedRunner\Models\Article\Scopes;
+namespace Modules\NewsFeedRunner\Models\Articles\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

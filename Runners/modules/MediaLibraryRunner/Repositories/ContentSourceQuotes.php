@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\MediaLibraryRunner\Repositories;
 
-use Modules\MediaLibraryRunner\Models\Content\ContentItem;
-use Modules\MediaLibraryRunner\Models\Content\ContentModel;
-use Modules\MediaLibraryRunner\Models\Content\Quote;
+use Modules\MediaLibraryRunner\Models\Contents\ContentItem;
+use Modules\MediaLibraryRunner\Models\Contents\ContentModel;
+use Modules\MediaLibraryRunner\Models\Contents\Quote;
 
 class ContentSourceQuotes extends BaseContentSource
 {

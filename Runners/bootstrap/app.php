@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\TaskRunnerCommand;
+use App\Jobs\RiddlesCollectorJob;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -30,6 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
         Schedule::command(TaskRunnerCommand::class, ['eth'])->everyTwoHours(15);
 
         Schedule::command(TaskRunnerCommand::class, ['td'])->twiceDaily(3, 15);
+
+        Schedule::job(app(RiddlesCollectorJob::class), 'riddles')->twiceDaily(5, 17);
 
         // Three Times a day
         Schedule::command(TaskRunnerCommand::class, ['ttd'])->cron('20 8,14,20 * * *');

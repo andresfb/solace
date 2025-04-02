@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use Modules\NewsFeedRunner\Models\Article\Article;
+use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Services\ImagedArticlesService;
 
 class ImagedArticlesJob implements ShouldQueue

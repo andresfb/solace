@@ -212,6 +212,7 @@ return [
         // Check each module to see what environment they configure
 
         'tiger-mox' => [
+
             'supervisor-1' => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
@@ -231,14 +232,31 @@ return [
                 'timeout' => 900, // 15 Minutes
                 'tries' => 1,
             ],
+
         ],
 
         'dell-mox' => [
+
             'supervisor-1' => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+
+            'riddles-supervisor' => [
+                'connection' => 'horizon',
+                'queue' => ['riddles'],
+                'memory' => 128,
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'size',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+                'timeout' => 300, // 5 Minutes
+                'tries' => 1,
+            ],
+
         ],
 
     ],

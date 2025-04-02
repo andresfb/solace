@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Modules\Common\Dtos\PostItem;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Factories\ContentSourceFactory;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class ContentSourceJob implements ShouldQueue

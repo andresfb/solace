@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Illuminate\Database\Eloquent\Collection;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 
 class MigrateLostCauseNoBandedService extends BaseSimpleMigrateService
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Factories;
 
 use Modules\MediaLibraryRunner\Interfaces\ContentSourceInterface;
-use Modules\MediaLibraryRunner\Models\Content\ContentItem;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Contents\ContentItem;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 
 class ContentSourceFactory
 {

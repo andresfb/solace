@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\MediaLibraryRunner\Models\Content;
+namespace Modules\MediaLibraryRunner\Models\Contents;
 
 /**
  * @property int $id

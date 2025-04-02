@@ -6,7 +6,7 @@ namespace Modules\NewsFeedRunner\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Common\Events\ChangeStatusEvent;
-use Modules\NewsFeedRunner\Models\Article\Article;
+use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
 class PostCreatedListener implements ShouldQueue

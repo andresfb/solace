@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Modules\NewsFeedRunner\Models\Feed;
+namespace Modules\NewsFeedRunner\Models\Feeds;
 
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Modules\NewsFeedRunner\Models\Article\Article;
-use Modules\NewsFeedRunner\Models\Feed\Scopes\ProviderScope;
+use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
-use Modules\NewsFeedRunner\Models\Provider\Provider;
+use Modules\NewsFeedRunner\Models\Providers\Provider;
 
 /**
  * @property-read int $id

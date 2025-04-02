@@ -18,7 +18,7 @@ use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
 use Modules\MediaLibraryRunner\Exceptions\NoAiContentException;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\HashtagsExtractable;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 use RuntimeException;

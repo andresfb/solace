@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Modules\NewsFeedRunner\Models\Provider;
+namespace Modules\NewsFeedRunner\Models\Providers;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Modules\NewsFeedRunner\Models\Feed\Feed;
+use Modules\NewsFeedRunner\Models\Feeds\Feed;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
-use Modules\NewsFeedRunner\Models\Provider\Scopes\FeedsScope;
+use Modules\NewsFeedRunner\Models\Providers\Scopes\FeedsScope;
 
 /**
  * @property-read int $id

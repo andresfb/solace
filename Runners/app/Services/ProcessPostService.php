@@ -18,6 +18,7 @@ use Modules\Common\Events\ChangeStatusEvent;
 use Modules\Common\Exceptions\NoImageException;
 use Modules\Common\Models\MediaItem;
 use Modules\Common\Traits\Screenable;
+use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -88,7 +89,7 @@ class ProcessPostService
             ]);
 
             if ($post === null) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     "Failed to create post from Library Post: $postItem->modelId"
                 );
             }
@@ -113,7 +114,7 @@ class ProcessPostService
             // TODO: create a listener in the Host code for PostCreatedEvent where we can add a random number of likes.
             // TODO: create another listener in the Host code for PostCreatedEvent where we can add random AI generated comments (ollama).
 
-            $this->line('Post saved...');
+            $this->line('Posts saved...');
         } catch (FileDoesNotExist|FileIsTooBig|FileCannotBeAdded|NoImageException $e) {
             DB::rollBack();
 

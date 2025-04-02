@@ -2,19 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Modules\NewsFeedRunner\Models\Article;
+namespace Modules\NewsFeedRunner\Models\Articles;
 
 use Carbon\CarbonImmutable;
 use DateTime;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
-use Modules\NewsFeedRunner\Models\Article\Scopes\ArticleMediaScope;
-use Modules\NewsFeedRunner\Models\Feed\Feed;
+use Modules\NewsFeedRunner\Models\Articles\Scopes\ArticleMediaScope;
+use Modules\NewsFeedRunner\Models\Feeds\Feed;
 use Modules\NewsFeedRunner\Models\Media\ArticleMedia;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;

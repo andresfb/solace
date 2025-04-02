@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Modules\MediaLibraryRunner\Models\Item\Scopes;
+namespace Modules\NewsFeedRunner\Models\Providers\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
-class LibraryItemScope implements Scope
+class FeedsScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->with('item');
+        $builder->with('feeds');
     }
 }

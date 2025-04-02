@@ -10,4 +10,4 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$media\.$#'
 			identifier: property.notFound
 			count: 1
-			path: modules/MediaLibraryRunner/Models/Post/LibraryPost.php
+			path: modules/MediaLibraryRunner/Models/Posts/LibraryPost.php

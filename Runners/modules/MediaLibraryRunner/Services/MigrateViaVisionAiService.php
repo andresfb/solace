@@ -11,7 +11,7 @@ use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Jobs\OllamaVisionJob;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class MigrateViaVisionAiService implements TaskServiceInterface

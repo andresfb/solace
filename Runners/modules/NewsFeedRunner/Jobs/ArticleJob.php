@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\NewsFeedRunner\Models\Article\Article;
+use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Services\ArticleService;
 
 class ArticleJob implements ShouldQueue

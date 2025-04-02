@@ -7,7 +7,7 @@ namespace Modules\MediaLibraryRunner\Models\Media;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Common\Models\Media;
-use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
+use Modules\MediaLibraryRunner\Models\Items\LibraryItem;
 use Modules\MediaLibraryRunner\Models\Media\Scopes\MediaModelTypeScope;
 
 class LibraryMedia extends Media

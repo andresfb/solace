@@ -12,7 +12,7 @@ use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\NewsFeedRunner\Jobs\AiArticleJob;
-use Modules\NewsFeedRunner\Models\Article\Article;
+use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
 class ImportAiArticlesService implements TaskServiceInterface
@@ -74,8 +74,6 @@ class ImportAiArticlesService implements TaskServiceInterface
             $this->articleService->setQueueable($this->queueable)
                 ->setToScreen($this->toScreen)
                 ->execute($article);
-
-            dd('just one');
         });
     }
 }

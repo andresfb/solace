@@ -2,9 +2,9 @@
 
 namespace Modules\MediaLibraryRunner\Repositories;
 
-use Modules\MediaLibraryRunner\Models\Content\ContentItem;
-use Modules\MediaLibraryRunner\Models\Content\ContentModel;
-use Modules\MediaLibraryRunner\Models\Content\Word;
+use Modules\MediaLibraryRunner\Models\Contents\ContentItem;
+use Modules\MediaLibraryRunner\Models\Contents\ContentModel;
+use Modules\MediaLibraryRunner\Models\Contents\Word;
 
 class ContentSourceWords extends BaseContentSource
 {

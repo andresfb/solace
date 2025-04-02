@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Common\Dtos\PostItem;
 use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 
 class CreatePostItemJob implements ShouldQueue
 {

@@ -6,9 +6,9 @@ namespace Modules\MediaLibraryRunner\Repositories;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use Modules\MediaLibraryRunner\Models\Content\ContentItem;
-use Modules\MediaLibraryRunner\Models\Content\ContentModel;
-use Modules\MediaLibraryRunner\Models\Content\Joke;
+use Modules\MediaLibraryRunner\Models\Contents\ContentItem;
+use Modules\MediaLibraryRunner\Models\Contents\ContentModel;
+use Modules\MediaLibraryRunner\Models\Contents\Joke;
 
 class ContentSourceJokes extends BaseContentSource
 {

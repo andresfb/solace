@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Modules\Common\Dtos\RandomUserItem;
 use Modules\Common\Traits\Screenable;
+use RuntimeException;
 
 class RandomUserService
 {
@@ -40,7 +41,7 @@ class RandomUserService
         if ($response->failed()) {
             $this->error('Error found '.$response->body());
 
-            throw new \RuntimeException($response->body());
+            throw new RuntimeException($response->body());
         }
 
         $data = $response->json();

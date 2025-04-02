@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\NewsFeedRunner\Models\Provider\Provider;
+use Modules\NewsFeedRunner\Models\Providers\Provider;
 use Modules\NewsFeedRunner\Services\FeedProcessImagedService;
 
 class FeedProcessImagedJob implements ShouldQueue

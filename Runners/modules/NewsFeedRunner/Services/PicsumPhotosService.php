@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\Common\Traits\ImageCatchable;
 use Modules\Common\Traits\Screenable;
 use Modules\NewsFeedRunner\Dtos\PicsumItem;
+use RuntimeException;
 
 class PicsumPhotosService
 {
@@ -91,7 +92,7 @@ class PicsumPhotosService
             if ($response->failed()) {
                 $this->error('Error found ' . $response->body());
 
-                throw new \RuntimeException($response->body());
+                throw new RuntimeException($response->body());
             }
 
             return $response;

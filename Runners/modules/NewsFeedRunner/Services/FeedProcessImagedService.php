@@ -9,9 +9,9 @@ use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\NewsFeedRunner\Jobs\ImagedArticlesJob;
-use Modules\NewsFeedRunner\Models\Article\Article;
-use Modules\NewsFeedRunner\Models\Feed\Feed;
-use Modules\NewsFeedRunner\Models\Provider\Provider;
+use Modules\NewsFeedRunner\Models\Articles\Article;
+use Modules\NewsFeedRunner\Models\Feeds\Feed;
+use Modules\NewsFeedRunner\Models\Providers\Provider;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
 class FeedProcessImagedService

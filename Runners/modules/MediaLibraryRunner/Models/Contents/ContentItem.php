@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\MediaLibraryRunner\Models\Content;
+namespace Modules\MediaLibraryRunner\Models\Contents;
 
 use Spatie\LaravelData\Data;
 

@@ -9,7 +9,7 @@ use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
-use Modules\NewsFeedRunner\Models\Article\Article;
+use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Traits\ModuleConstants;
 
 class ArticleService

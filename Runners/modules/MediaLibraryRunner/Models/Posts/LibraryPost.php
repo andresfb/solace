@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\MediaLibraryRunner\Models\Post;
+namespace Modules\MediaLibraryRunner\Models\Posts;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,8 +11,8 @@ use Illuminate\Support\Collection;
 use Modules\Common\Enum\LibraryPostStatus;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
-use Modules\MediaLibraryRunner\Models\Item\LibraryItem;
-use Modules\MediaLibraryRunner\Models\Item\Scopes\LibraryItemScope;
+use Modules\MediaLibraryRunner\Models\Items\LibraryItem;
+use Modules\MediaLibraryRunner\Models\Items\Scopes\LibraryItemScope;
 use Modules\MediaLibraryRunner\Models\MediaRunnerModel;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
@@ -125,7 +125,8 @@ class LibraryPost extends MediaRunnerModel
             'title' => $this->title,
             'content' => $this->content,
             'generator' => strtoupper(
-                "POST=$this->id:ITEM=$this->item_id:TYPE:$this->type:LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY:TASK=$taskName"
+                "POST=$this->id:ITEM=$this->item_id:TYPE:$this->type:"
+                ."LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY:TASK=$taskName"
             ),
             'source' => $this->source,
             'origin' => $this->MEDIA_LIBRARY,

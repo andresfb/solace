@@ -14,7 +14,7 @@ use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 abstract class BaseSimpleMigrateService implements TaskServiceInterface

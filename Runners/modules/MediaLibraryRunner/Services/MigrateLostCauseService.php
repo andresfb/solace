@@ -14,7 +14,7 @@ use Modules\Common\Traits\SendToQueue;
 use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Factories\ContentSourceFactory;
 use Modules\MediaLibraryRunner\Jobs\ContentSourceJob;
-use Modules\MediaLibraryRunner\Models\Post\LibraryPost;
+use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
 class MigrateLostCauseService implements TaskServiceInterface

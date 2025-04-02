@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\MediaLibraryRunner\Models\Content;
+namespace Modules\MediaLibraryRunner\Models\Contents;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\MediaLibraryRunner\Models\MediaRunnerModel;
