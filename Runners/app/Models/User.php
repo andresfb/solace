@@ -7,7 +7,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Posts\Post;
 use App\Models\Profiles\Profile;
-use App\Models\Profiles\Scopes\ProfileScope;
+use App\Models\Scopes\ProfileScope;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;

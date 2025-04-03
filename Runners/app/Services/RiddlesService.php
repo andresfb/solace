@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Libraries\Cyphers\CypherFactory;
 use App\Models\Riddles\Riddle;
 use Exception;
 use Illuminate\Support\Collection;
@@ -45,6 +48,7 @@ class RiddlesService
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])
+        ->connectTimeout(60)
         ->timeout(120)
         ->get($url);
 
@@ -83,10 +87,14 @@ class RiddlesService
 
             $this->character('.');
 
+            $cypherItem = CypherFactory::encodeWithRandom($riddle['riddle']);
+
             Riddle::create([
                 'hash' => $hash,
+                'cypher_id' => $cypherItem->id,
                 'category' => $category,
                 'question' => $riddle['riddle'],
+                'encoded' => $cypherItem->encodedText,
                 'answer' => $riddle['answer'],
             ]);
         }

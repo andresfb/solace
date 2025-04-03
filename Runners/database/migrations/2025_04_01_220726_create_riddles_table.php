@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('riddles', static function (Blueprint $table) {
             $table->id();
+            $table->foreignId('cypher_id')->constrained('cyphers')
+                ->cascadeOnDelete();
             $table->string('hash')->unique();
             $table->string('category');
             $table->text('question');
+            $table->text('encoded');
             $table->string('answer');
-            $table->timestamps();
         });
     }
 

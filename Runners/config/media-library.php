@@ -78,12 +78,12 @@ return [
     /*
      * This is the class that is responsible for naming generated files.
      */
-    'file_namer' => \App\Libraries\MediaFileNamer::class,
+    'file_namer' => \App\Libraries\Media\MediaFileNamer::class,
 
     /*
      * The class that contains the strategy for determining a media file's path.
      */
-    'path_generator' => \App\Libraries\MediaPathGenerator::class,
+    'path_generator' => \App\Libraries\Media\MediaPathGenerator::class,
 
     /*
      * The class that contains the strategy for determining how to remove files.
