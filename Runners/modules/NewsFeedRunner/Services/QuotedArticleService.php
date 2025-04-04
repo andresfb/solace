@@ -60,9 +60,12 @@ class QuotedArticleService
 
         $this->line('Executing ArticleService...');
 
+        $updatedArticle = $article->where('id', $article->id)
+            ->firstOrFail();
+
         $this->articleService->setToScreen($this->toScreen)
             ->execute(
-                Article::find($article->id),
+                $updatedArticle,
                 $this->IMPORT_QUOTED_ARTICLE
             );
     }
@@ -119,7 +122,7 @@ class QuotedArticleService
         // Draw each line manually
         $yOffset = $y;
         foreach ($wrappedLines as $index => $line) {
-            $image->text($line, $imageWidth / 2, $yOffset, function ($font) use ($fontPath, $fontSize): void {
+            $image->text($line, $imageWidth / 2, (int) $yOffset, function ($font) use ($fontPath, $fontSize): void {
                 $font->file($fontPath);
                 $font->size($fontSize);
                 $font->color('#16151c');
@@ -140,6 +143,9 @@ class QuotedArticleService
         return $imageFile;
     }
 
+    /**
+     * @return array<string>
+     */
     private function wrapTextToFit(string $text, string $fontPath, int $fontSize, float $maxWidth): array
     {
         $words = explode(' ', $text);
@@ -149,6 +155,10 @@ class QuotedArticleService
         foreach ($words as $word) {
             $testLine = $currentLine === '' ? $word : $currentLine.' '.$word;
             $box = imagettfbbox($fontSize, 0, $fontPath, $testLine);
+            if (! $box) {
+                continue;
+            }
+
             $textWidth = abs($box[2] - $box[0]);
 
             if ($textWidth > $maxWidth) {
@@ -166,6 +176,10 @@ class QuotedArticleService
         return $lines;
     }
 
+    /**
+     * @param array<string> $lines
+     * @return array{float|int, list<float>}
+     */
     private function getMultiLineCenteredText(
         array $lines,
         string $fontPath,
@@ -177,13 +191,17 @@ class QuotedArticleService
         $lineHeights = [];
 
         foreach ($lines as $line) {
-            $box = imagettfbbox($fontSize, 0, $fontPath, (string) $line);
+            $box = imagettfbbox($fontSize, 0, $fontPath, $line);
+            if (! $box) {
+                continue;
+            }
+
             $lineHeight = abs($box[7] - $box[1]) * $lineHeightMultiplier;
             $lineHeights[] = $lineHeight;
             $totalHeight += $lineHeight;
         }
 
-        $y = ($imageHeight - $totalHeight) / 2; // Start Y position
+        $y = ($imageHeight - $totalHeight) / 2;
 
         return [$y, $lineHeights];
     }

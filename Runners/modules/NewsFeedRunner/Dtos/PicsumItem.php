@@ -20,6 +20,9 @@ class PicsumItem
         return "Picture Credit: [$this->author]($this->url)";
     }
 
+    /**
+     * @param array<string, string> $response
+     */
     public static function fromResponse(array $response): self
     {
         return new self(

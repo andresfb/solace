@@ -44,8 +44,12 @@ class Article extends NewsFeedRunnerModel
 
     protected $guarded = ['id'];
 
+    /** @var array<int> */
     private array $quoteBasedFeeds;
 
+    /**
+     * @phpstan-ignore missingType.iterableValue
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -131,7 +135,7 @@ class Article extends NewsFeedRunnerModel
             'image' => $mediaFiles->isEmpty() ? $this->thumbnail : '',
             'attribution' => $this->attribution ?? '',
             'fromAi' => $taskName === $this->IMPORT_AI_ARTICLE,
-            'priority' => $this->feed?->provider?->order ?? 100,
+            'priority' => $this->feed->provider->order ?? 100,
             'responses' => null,
             'mediaFiles' => $mediaFiles,
             'hashtags' => $this->getTags(

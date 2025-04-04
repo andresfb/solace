@@ -19,10 +19,13 @@ class QuotedArticleJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly Article $article) {}
+    public function __construct(private readonly int $articleId) {}
 
     public function handle(QuotedArticleService $service): void
     {
-        $service->execute($this->article);
+        $article = Article::where('id', $this->articleId)
+            ->firstOrFail();
+
+        $service->execute($article);
     }
 }

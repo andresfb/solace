@@ -78,8 +78,6 @@ class ImportQuotedArticlesService implements TaskServiceInterface
             $this->quotedArticleService->setQueueable($this->queueable)
                 ->setToScreen($this->toScreen)
                 ->execute($article);
-
-            dd('just one');
         });
     }
 }
