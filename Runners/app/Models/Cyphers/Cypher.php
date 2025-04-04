@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read string $name
  * @property-read string $clue
  * @property-read string $class
- * @property-read boolean $active
+ * @property-read bool $active
  */
 class Cypher extends Model
 {

@@ -19,6 +19,7 @@ class PicsumPhotosService
     use Screenable;
 
     private int $maxCalls = 5;
+
     private int $calls = 1;
 
     public function getImage(): PicsumItem
@@ -40,13 +41,13 @@ class PicsumPhotosService
     private function getServiceImage(): PicsumItem
     {
         $response = $this->callApi();
-        if (!$response instanceof Response) {
+        if (! $response instanceof Response) {
             $this->error('We did not get an image from Picsum');
 
             return PicsumItem::empty();
         }
 
-        $this->line(sprintf("Api call finished at %s", now()));
+        $this->line(sprintf('Api call finished at %s', now()));
 
         $responses = collect($response->json());
         $maxUsages = config('picsum-article-importer.max_empty_runs');
@@ -85,16 +86,16 @@ class PicsumPhotosService
                 $page
             );
 
-            $this->line('Calling the picsum.photos API ' . now());
+            $this->line('Calling the picsum.photos API '.now());
 
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])
-            ->timeout(60)
-            ->get($url);
+                ->timeout(60)
+                ->get($url);
 
             if ($response->failed()) {
-                $this->error('Error found ' . $response->body());
+                $this->error('Error found '.$response->body());
 
                 throw new RuntimeException($response->body());
             }

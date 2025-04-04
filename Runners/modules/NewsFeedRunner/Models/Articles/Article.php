@@ -120,8 +120,8 @@ class Article extends NewsFeedRunnerModel
             'content' => str(
                 nl2br($this->addLinkDateInfo($this->parseContent()))
             )
-            ->replace('<br /><br /><br /><br />', '<br /><br />')
-            ->value(),
+                ->replace('<br /><br /><br /><br />', '<br /><br />')
+                ->value(),
             'generator' => strtoupper(
                 "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED:TASK=$taskName"
             ),
@@ -165,11 +165,11 @@ class Article extends NewsFeedRunnerModel
         $cleanText = static function (string $text): Stringable {
             return str($text)
                 ->replaceMatches('/\s{2,}/', ' ')        // Replace multiple spaces with a single space
-                ->replaceMatches('/\n{2,}/', "<br />")   // Replace multiple newlines with a single newline
+                ->replaceMatches('/\n{2,}/', '<br />')   // Replace multiple newlines with a single newline
                 ->replace("\t", ' ')                     // Replace tabs with spaces
                 ->replace("\r", '')
                 ->replace(
-                    "<br /><br /><br /><br />", '<br /><br />'
+                    '<br /><br /><br /><br />', '<br /><br />'
                 )                                        // Replace multiple br with two br
                 ->trim();                                // Remove leading/trailing whitespace
         };
@@ -228,9 +228,9 @@ class Article extends NewsFeedRunnerModel
     {
         $linked = str($content)
             ->trim()
-            ->append("<br /><br />")
+            ->append('<br /><br />')
             ->append("[source]($this->permalink)")
-            ->append("<br />");
+            ->append('<br />');
 
         if ($this->isQuoteBased()) {
             return $linked->value();
@@ -238,17 +238,17 @@ class Article extends NewsFeedRunnerModel
 
         return $linked->trim()
             ->append(sprintf(
-                "<small><em>Published: %s</em></small>",
+                '<small><em>Published: %s</em></small>',
                 CarbonImmutable::parse($this->published_at)->format('D, M j, Y')
             ))
-            ->append("<br />")
+            ->append('<br />')
             ->value();
     }
 
     private function prepareQuoteContent(Stringable $content): string
     {
         return $content->trim()
-            ->append("<br /><br />")
+            ->append('<br /><br />')
             ->append('— ')
             ->append($this->title)
             ->value();

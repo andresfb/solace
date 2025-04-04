@@ -16,7 +16,8 @@ final readonly class RailFenceLibrary extends BaseCypherLibrary implements Cyphe
     public function encode(string $text): string
     {
         $fence = array_fill(0, self::RAILS, []);
-        $rail = 0; $direction = 1;
+        $rail = 0;
+        $direction = 1;
 
         foreach (str_split($text) as $char) {
             $fence[$rail][] = $char;
@@ -34,7 +35,8 @@ final readonly class RailFenceLibrary extends BaseCypherLibrary implements Cyphe
     {
         $len = strlen($text);
         $fence = array_fill(0, self::RAILS, array_fill(0, $len, '\n'));
-        $rail = 0; $direction = 1;
+        $rail = 0;
+        $direction = 1;
 
         for ($i = 0; $i < $len; $i++) {
             $fence[$rail][$i] = '*';
@@ -54,7 +56,8 @@ final readonly class RailFenceLibrary extends BaseCypherLibrary implements Cyphe
         }
 
         $output = '';
-        $rail = 0; $direction = 1;
+        $rail = 0;
+        $direction = 1;
         for ($i = 0; $i < $len; $i++) {
             $output .= $fence[$rail][$i];
             $rail += $direction;

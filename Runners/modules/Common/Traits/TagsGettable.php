@@ -26,7 +26,7 @@ trait TagsGettable
             ->get()
             ->map(function ($tag) use ($banded) {
                 try {
-                    $values = json_decode((string)$tag->name, true, 512, JSON_THROW_ON_ERROR);
+                    $values = json_decode((string) $tag->name, true, 512, JSON_THROW_ON_ERROR);
                 } catch (JsonException) {
                     return '';
                 }

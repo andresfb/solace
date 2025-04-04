@@ -17,9 +17,9 @@ use Modules\NewsFeedRunner\Traits\ModuleConstants;
 class AiArticleService
 {
     use ModuleConstants;
+    use QueueSelectable;
     use Screenable;
     use SendToQueue;
-    use QueueSelectable;
 
     public function __construct(
         private readonly OpenAiClient $aiClient,
@@ -46,7 +46,7 @@ class AiArticleService
 
         Article::where('id', $article->id)
             ->update([
-                'thumbnail' => $response->image
+                'thumbnail' => $response->image,
             ]);
 
         if ($this->queueable) {

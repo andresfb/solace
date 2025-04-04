@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\ApiConsumers\Services;
 
 use Modules\ApiConsumers\Dtos\OpenAiChatResponse;
-
 use Modules\ApiConsumers\Dtos\OpenAiImageResponse;
 use OpenAI\Laravel\Facades\OpenAI;
 

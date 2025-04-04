@@ -16,9 +16,9 @@ use Modules\NewsFeedRunner\Traits\ModuleConstants;
 class PicsumArticleService
 {
     use ModuleConstants;
+    use QueueSelectable;
     use Screenable;
     use SendToQueue;
-    use QueueSelectable;
 
     public function __construct(
         private readonly PicsumPhotosService $photosService,
@@ -45,7 +45,7 @@ class PicsumArticleService
         Article::where('id', $article->id)
             ->update([
                 'thumbnail' => $image->imageUrl,
-                'attribution' => $image->getAttribution()
+                'attribution' => $image->getAttribution(),
             ]);
 
         if ($this->queueable) {

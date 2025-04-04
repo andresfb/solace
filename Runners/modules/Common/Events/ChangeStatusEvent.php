@@ -12,9 +12,9 @@ class ChangeStatusEvent
     use Dispatchable;
 
     public function __construct(
-        public readonly string       $origin,
-        public readonly int          $modelId,
+        public readonly string $origin,
+        public readonly int $modelId,
         public readonly RunnerStatus $runnerStatus,
-        public readonly string       $source = '',
+        public readonly string $source = '',
     ) {}
 }

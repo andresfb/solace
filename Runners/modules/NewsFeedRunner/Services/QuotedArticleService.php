@@ -20,9 +20,9 @@ use Modules\NewsFeedRunner\Traits\ModuleConstants;
 class QuotedArticleService
 {
     use ModuleConstants;
+    use QueueSelectable;
     use Screenable;
     use SendToQueue;
-    use QueueSelectable;
 
     public function __construct(private readonly ArticleService $articleService) {}
 
@@ -74,8 +74,8 @@ class QuotedArticleService
             ->replace("\n", ' ')
             ->replace("\r", ' ')
             ->replace("\t", ' ')
-            ->replace("<br>", ' ')
-            ->replace("<br />", ' ')
+            ->replace('<br>', ' ')
+            ->replace('<br />', ' ')
             ->replace('    ', ' ')
             ->replace('   ', ' ')
             ->replace('  ', ' ')
@@ -86,7 +86,7 @@ class QuotedArticleService
         $tempPath = md5("$article->id:$article->feed_id");
         $processPath = Storage::disk('processing')->path($tempPath);
 
-        if (!file_exists($processPath) && !mkdir($processPath, 0775, true) && !is_dir($processPath)) {
+        if (! file_exists($processPath) && ! mkdir($processPath, 0775, true) && ! is_dir($processPath)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $processPath));
         }
 
@@ -110,7 +110,7 @@ class QuotedArticleService
         );
 
         // Create the manager
-        $manager = new ImageManager(new Driver());
+        $manager = new ImageManager(new Driver);
 
         // Create image
         $image = $manager->create($imageWidth, $imageHeight)
@@ -133,7 +133,7 @@ class QuotedArticleService
         // Save or output
         $image->save($imageFile);
 
-        if (!file_exists($imageFile)) {
+        if (! file_exists($imageFile)) {
             throw new \RuntimeException("Could not create image for $article->id: $imageFile");
         }
 
@@ -142,12 +142,12 @@ class QuotedArticleService
 
     private function wrapTextToFit(string $text, string $fontPath, int $fontSize, float $maxWidth): array
     {
-        $words = explode(" ", $text);
+        $words = explode(' ', $text);
         $lines = [];
-        $currentLine = "";
+        $currentLine = '';
 
         foreach ($words as $word) {
-            $testLine = $currentLine === "" ? $word : $currentLine . " " . $word;
+            $testLine = $currentLine === '' ? $word : $currentLine.' '.$word;
             $box = imagettfbbox($fontSize, 0, $fontPath, $testLine);
             $textWidth = abs($box[2] - $box[0]);
 
@@ -159,18 +159,19 @@ class QuotedArticleService
             }
         }
 
-        if ($currentLine !== "") {
+        if ($currentLine !== '') {
             $lines[] = $currentLine;
         }
 
         return $lines;
     }
 
-    private function getMultiLineCenteredText(array  $lines,
-                                              string $fontPath,
-                                              int    $fontSize,
-                                              int    $imageHeight,
-                                              float  $lineHeightMultiplier = 1.6): array
+    private function getMultiLineCenteredText(
+        array $lines,
+        string $fontPath,
+        int $fontSize,
+        int $imageHeight,
+        float $lineHeightMultiplier = 1.6): array
     {
         $totalHeight = 0;
         $lineHeights = [];

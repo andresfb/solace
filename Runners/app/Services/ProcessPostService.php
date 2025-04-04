@@ -194,9 +194,9 @@ class ProcessPostService
         $text = str(nl2br(
             $this->getContent($postItem)
         ))
-        ->replace("\r", '')
-        ->replace('<br /><br /><br /><br />', '<br /><br />')
-        ->append('<br />');
+            ->replace("\r", '')
+            ->replace('<br /><br /><br /><br />', '<br /><br />')
+            ->append('<br />');
 
         if ($postItem->attribution !== '' && $postItem->attribution !== '0') {
             return $text->append('<br />')
@@ -259,11 +259,11 @@ class ProcessPostService
                 ->prepend('**')
                 ->append('**')
                 ->trim()
-                ->append("<br /><br />")
+                ->append('<br /><br />')
                 ->value()
         )
-        ->trim()
-        ->value();
+            ->trim()
+            ->value();
     }
 
     private function extractTag(string $text): void
@@ -307,8 +307,8 @@ class ProcessPostService
         $this->line('Saving Hashtags. '.$hashtags->count());
 
         $post->hashtags()->sync(
-            $hashtags->map(fn($tag) => Hashtag::firstOrCreate([
-                'slug' => str($tag)->slug()->value()
+            $hashtags->map(fn ($tag) => Hashtag::firstOrCreate([
+                'slug' => str($tag)->slug()->value(),
             ], [
                 'name' => $tag,
             ]))->pluck('id')

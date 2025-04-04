@@ -33,8 +33,8 @@ class RandomUserService
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])
-        ->timeout(120)
-        ->get($url);
+            ->timeout(120)
+            ->get($url);
 
         $this->line(sprintf("Api call finished at %s\n", now()));
 

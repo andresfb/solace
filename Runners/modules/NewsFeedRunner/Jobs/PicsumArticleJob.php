@@ -19,9 +19,7 @@ class PicsumArticleJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $articleId)
-    {
-    }
+    public function __construct(private readonly int $articleId) {}
 
     public function handle(PicsumArticleService $service): void
     {

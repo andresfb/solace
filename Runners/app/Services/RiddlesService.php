@@ -48,9 +48,9 @@ class RiddlesService
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])
-        ->connectTimeout(60)
-        ->timeout(120)
-        ->get($url);
+            ->connectTimeout(60)
+            ->timeout(120)
+            ->get($url);
 
         if ($response->failed()) {
             throw new RuntimeException($response->body());

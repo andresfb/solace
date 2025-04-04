@@ -35,14 +35,14 @@ class ImportQuotedArticlesService implements TaskServiceInterface
         $this->line("Loading Quote-based Articles\n");
 
         $articles = Article::select('articles.*')
-            ->join('feeds', fn(JoinClause $join) => $join->on('feeds.id', '=', 'articles.feed_id')
+            ->join('feeds', fn (JoinClause $join) => $join->on('feeds.id', '=', 'articles.feed_id')
                 ->whereIn('feeds.id', Config::array('news_feed_runner.quote-based-feeds')))
-            ->join('providers', fn(JoinClause $join) => $join->on('providers.id', '=', 'feeds.provider_id')
+            ->join('providers', fn (JoinClause $join) => $join->on('providers.id', '=', 'feeds.provider_id')
                 ->whereIn('providers.id', Config::array('news_feed_runner.quote-based-providers')))
             ->where('articles.title', '!=', '')
             ->where('articles.permalink', '!=', '')
             ->where('articles.runner_status', RunnerStatus::STASIS)
-            ->where('articles.published_at', '>=', DB::raw("DATE_ADD(NOW(), INTERVAL -providers.go_back_days DAY)"))
+            ->where('articles.published_at', '>=', DB::raw('DATE_ADD(NOW(), INTERVAL -providers.go_back_days DAY)'))
             ->orderBy('articles.published_at', 'desc')
             ->limit(
                 config("$this->IMPORT_QUOTED_ARTICLE.posts_limit")

@@ -22,7 +22,7 @@ class ImagedArticlesService
 
     public function __construct(
         private readonly PostExistsService $postExistsService,
-        private readonly ArticleService    $articleService,
+        private readonly ArticleService $articleService,
     ) {}
 
     /**

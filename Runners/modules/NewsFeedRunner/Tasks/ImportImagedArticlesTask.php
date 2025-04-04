@@ -16,7 +16,7 @@ class ImportImagedArticlesTask extends BaseTask
 
     public function __construct(
         ImportImagedArticlesService $taskTaskService,
-        ModuleSettingsService       $settingsService
+        ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }

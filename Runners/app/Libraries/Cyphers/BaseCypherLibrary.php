@@ -12,7 +12,7 @@ abstract readonly class BaseCypherLibrary
 
     public function __construct()
     {
-        $this->model =  Cypher::where('name', $this->getIdentifier())
+        $this->model = Cypher::where('name', $this->getIdentifier())
             ->firstOrFail();
     }
 

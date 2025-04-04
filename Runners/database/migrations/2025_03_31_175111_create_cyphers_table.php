@@ -2,7 +2,6 @@
 
 use App\Libraries\Cyphers\AffineLibrary;
 use App\Libraries\Cyphers\AtbashLibrary;
-use App\Libraries\Cyphers\BaconLibrary;
 use App\Libraries\Cyphers\RailFenceLibrary;
 use App\Libraries\Cyphers\Rot13Library;
 use Illuminate\Database\Migrations\Migration;

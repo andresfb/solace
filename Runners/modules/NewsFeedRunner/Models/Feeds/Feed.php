@@ -9,7 +9,6 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Config;
 use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;

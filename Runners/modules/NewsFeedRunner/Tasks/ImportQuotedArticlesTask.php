@@ -16,7 +16,7 @@ class ImportQuotedArticlesTask extends BaseTask
 
     public function __construct(
         ImportQuotedArticlesService $taskTaskService,
-        ModuleSettingsService       $settingsService
+        ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
     }
