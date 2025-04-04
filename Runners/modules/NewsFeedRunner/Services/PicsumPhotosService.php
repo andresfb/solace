@@ -40,7 +40,7 @@ class PicsumPhotosService
     private function getServiceImage(): PicsumItem
     {
         $response = $this->callApi();
-        if ($response === null) {
+        if (!$response instanceof Response) {
             $this->error('We did not get an image from Picsum');
 
             return PicsumItem::empty();
@@ -59,7 +59,11 @@ class PicsumPhotosService
                 $maxUsages
             );
 
-            if (empty($image)) {
+            if ($image === '') {
+                continue;
+            }
+
+            if ($image === '0') {
                 continue;
             }
 

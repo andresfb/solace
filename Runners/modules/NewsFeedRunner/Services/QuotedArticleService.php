@@ -119,7 +119,7 @@ class QuotedArticleService
         // Draw each line manually
         $yOffset = $y;
         foreach ($wrappedLines as $index => $line) {
-            $image->text($line, $imageWidth / 2, $yOffset, function ($font) use ($fontPath, $fontSize) {
+            $image->text($line, $imageWidth / 2, $yOffset, function ($font) use ($fontPath, $fontSize): void {
                 $font->file($fontPath);
                 $font->size($fontSize);
                 $font->color('#16151c');
@@ -140,7 +140,7 @@ class QuotedArticleService
         return $imageFile;
     }
 
-    private function wrapTextToFit($text, $fontPath, $fontSize, $maxWidth): array
+    private function wrapTextToFit(string $text, string $fontPath, int $fontSize, float $maxWidth): array
     {
         $words = explode(" ", $text);
         $lines = [];
@@ -166,13 +166,17 @@ class QuotedArticleService
         return $lines;
     }
 
-    private function getMultiLineCenteredText($lines, $fontPath, $fontSize, $imageHeight, $lineHeightMultiplier = 1.6): array
+    private function getMultiLineCenteredText(array  $lines,
+                                              string $fontPath,
+                                              int    $fontSize,
+                                              int    $imageHeight,
+                                              float  $lineHeightMultiplier = 1.6): array
     {
         $totalHeight = 0;
         $lineHeights = [];
 
         foreach ($lines as $line) {
-            $box = imagettfbbox($fontSize, 0, $fontPath, $line);
+            $box = imagettfbbox($fontSize, 0, $fontPath, (string) $line);
             $lineHeight = abs($box[7] - $box[1]) * $lineHeightMultiplier;
             $lineHeights[] = $lineHeight;
             $totalHeight += $lineHeight;

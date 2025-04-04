@@ -11,7 +11,7 @@ trait ImageCatchable
 {
     public function checkImage(string $pictureUrl, int $maxUsages): string
     {
-        if (empty($pictureUrl)) {
+        if ($pictureUrl === '' || $pictureUrl === '0') {
             return '';
         }
 

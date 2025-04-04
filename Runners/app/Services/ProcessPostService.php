@@ -198,7 +198,7 @@ class ProcessPostService
         ->replace('<br /><br /><br /><br />', '<br /><br />')
         ->append('<br />');
 
-        if (! empty($postItem->attribution)) {
+        if ($postItem->attribution !== '' && $postItem->attribution !== '0') {
             return $text->append('<br />')
                 ->append('<small>')
                 ->append($postItem->attribution)
@@ -307,13 +307,11 @@ class ProcessPostService
         $this->line('Saving Hashtags. '.$hashtags->count());
 
         $post->hashtags()->sync(
-            $hashtags->map(function ($tag) {
-                return Hashtag::firstOrCreate([
-                    'slug' => str($tag)->slug()->value()
-                ], [
-                    'name' => $tag,
-                ]);
-            })->pluck('id')
+            $hashtags->map(fn($tag) => Hashtag::firstOrCreate([
+                'slug' => str($tag)->slug()->value()
+            ], [
+                'name' => $tag,
+            ]))->pluck('id')
         );
 
         $this->line('Hashtags Saved.');

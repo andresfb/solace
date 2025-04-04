@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('riddles', static function (Blueprint $table) {
+        Schema::create('riddles', static function (Blueprint $table): void {
             $table->id();
             $table->foreignId('cypher_id')->constrained('cyphers')
                 ->cascadeOnDelete();

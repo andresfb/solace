@@ -35,14 +35,10 @@ class ImportQuotedArticlesService implements TaskServiceInterface
         $this->line("Loading Quote-based Articles\n");
 
         $articles = Article::select('articles.*')
-            ->join('feeds', function (JoinClause $join) {
-                return $join->on('feeds.id', '=', 'articles.feed_id')
-                    ->whereIn('feeds.id', Config::array('news_feed_runner.quote-based-feeds'));
-            })
-            ->join('providers', function (JoinClause $join) {
-                return $join->on('providers.id', '=', 'feeds.provider_id')
-                    ->whereIn('providers.id', Config::array('news_feed_runner.quote-based-providers'));
-            })
+            ->join('feeds', fn(JoinClause $join) => $join->on('feeds.id', '=', 'articles.feed_id')
+                ->whereIn('feeds.id', Config::array('news_feed_runner.quote-based-feeds')))
+            ->join('providers', fn(JoinClause $join) => $join->on('providers.id', '=', 'feeds.provider_id')
+                ->whereIn('providers.id', Config::array('news_feed_runner.quote-based-providers')))
             ->where('articles.title', '!=', '')
             ->where('articles.permalink', '!=', '')
             ->where('articles.runner_status', RunnerStatus::STASIS)

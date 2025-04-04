@@ -33,8 +33,8 @@ class Riddle extends Model
     public function encoded(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => base64_decode($value),
-            set: fn ($value) => base64_encode($value),
+            get: fn ($value): string => base64_decode((string) $value),
+            set: fn ($value): string => base64_encode((string) $value),
         );
     }
 
