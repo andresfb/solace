@@ -38,7 +38,7 @@ class AiArticleService
             ChangeStatusEvent::dispatch(
                 $this->NEWS_FEED,
                 $article->id,
-                RunnerStatus::REPROCESS,
+                RunnerStatus::LOST_CAUSE,
             );
 
             return;

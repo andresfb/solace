@@ -6,8 +6,11 @@ namespace Modules\NewsFeedRunner\Models\Feeds;
 
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Config;
 use Modules\NewsFeedRunner\Models\Articles\Article;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
 use Modules\NewsFeedRunner\Models\Providers\Provider;
@@ -50,5 +53,11 @@ class Feed extends NewsFeedRunnerModel
     public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
+    }
+
+    public function scopeQuoteBased(Builder $query): Builder
+    {
+        return $query->whereIn('id', Config::array('news_feed_runner.quote-based-feeds'))
+            ->whereIn('provider_id', Config::array('news_feed_runner.quote-based-providers'));
     }
 }

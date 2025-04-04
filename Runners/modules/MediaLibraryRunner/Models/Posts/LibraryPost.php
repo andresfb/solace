@@ -113,6 +113,8 @@ class LibraryPost extends MediaRunnerModel
      */
     public function getPostableInfo(string $taskName): array
     {
+        // TODO: change this function to return a PostItem class
+
         try {
             $priority = random_int(500, 599);
         } catch (\Exception) {

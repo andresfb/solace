@@ -15,4 +15,6 @@ trait ModuleConstants
     public string $IMPORT_PICSUM_ARTICLE = 'picsum-article-importer';
 
     public string $IMPORT_AI_ARTICLE = 'ai-article-importer';
+
+    public string $IMPORT_QUOTED_ARTICLE = 'quoted-article-importer';
 }

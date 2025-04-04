@@ -39,7 +39,7 @@ class RunTaskCommand extends Command
             $key = select(
                 label: 'Select a task to run',
                 options: array_keys($list),
-                scroll: 10,
+                scroll: 12,
             );
 
             $taskClass = $list[$key];

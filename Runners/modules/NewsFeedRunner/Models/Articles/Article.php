@@ -6,9 +6,11 @@ namespace Modules\NewsFeedRunner\Models\Articles;
 
 use Carbon\CarbonImmutable;
 use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Stringable;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
@@ -42,6 +44,15 @@ class Article extends NewsFeedRunnerModel
 
     protected $guarded = ['id'];
 
+    private array $quoteBasedFeeds;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->quoteBasedFeeds = Config::array('news_feed_runner.quote-based-feeds');
+    }
+
     protected static function booted(): void
     {
         parent::booted();
@@ -67,11 +78,29 @@ class Article extends NewsFeedRunnerModel
         return $this->hasMany(ArticleMedia::class, 'model_id', 'id');
     }
 
+    public function scopeWithoutQuoteBased(Builder $query): Builder
+    {
+        return $query->whereNotIn(
+            'feed_id',
+            Config::array('news_feed_runner.quote-based-feeds')
+        );
+    }
+
+    public function scopeWithQuoteBased(Builder $query): Builder
+    {
+        return $query->whereIn(
+            'feed_id',
+            Config::array('news_feed_runner.quote-based-feeds')
+        );
+    }
+
     /**
      * @return array<string, mixed>
      */
     public function getPostableInfo(string $taskName): array
     {
+        // TODO: change this function to return a PostItem class
+
         $providerName = str($this->feed->provider->name ?? '')
             ->replace(' ', '_')
             ->trim()
@@ -96,7 +125,7 @@ class Article extends NewsFeedRunnerModel
             'generator' => strtoupper(
                 "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED:TASK=$taskName"
             ),
-            'source' => $providerName,
+            'source' => $this->isQuoteBased() ? 'quote' : $providerName,
             'origin' => $this->NEWS_FEED,
             'tasker' => $taskName,
             'image' => $mediaFiles->isEmpty() ? $this->thumbnail : '',
@@ -125,7 +154,12 @@ class Article extends NewsFeedRunnerModel
         return $files;
     }
 
-    private function parseContent(): string
+    public function isQuoteBased(): bool
+    {
+        return in_array($this->feed_id, $this->quoteBasedFeeds, true);
+    }
+
+    public function parseContent(): string
     {
         // Helper function to clean text
         $cleanText = static function (string $text): Stringable {
@@ -142,6 +176,10 @@ class Article extends NewsFeedRunnerModel
 
         $content = $cleanText($this->content ?? '');
         $description = $cleanText($this->description ?? '');
+
+        if ($this->isQuoteBased()) {
+            return $this->prepareQuoteContent($content);
+        }
 
         $lowerContent = $content->lower();
         $lowerDescription = $description->lower();
@@ -188,15 +226,31 @@ class Article extends NewsFeedRunnerModel
 
     private function addLinkDateInfo(string $content): string
     {
-        return str($content)
+        $linked = str($content)
             ->trim()
             ->append("<br /><br />")
             ->append("[source]($this->permalink)")
-            ->append("<br />")
+            ->append("<br />");
+
+        if ($this->isQuoteBased()) {
+            return $linked->value();
+        }
+
+        return $linked->trim()
             ->append(sprintf(
                 "<small><em>Published: %s</em></small>",
                 CarbonImmutable::parse($this->published_at)->format('D, M j, Y')
             ))
+            ->append("<br />")
+            ->value();
+    }
+
+    private function prepareQuoteContent(Stringable $content): string
+    {
+        return $content->trim()
+            ->append("<br /><br />")
+            ->append('— ')
+            ->append($this->title)
             ->value();
     }
 }

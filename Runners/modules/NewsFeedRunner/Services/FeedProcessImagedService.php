@@ -43,6 +43,7 @@ class FeedProcessImagedService
         $feed->load('provider');
 
         Article::query()
+            ->withoutQuoteBased()
             ->where('feed_id', $feed->id)
             ->where('thumbnail', '!=', '')
             ->where('title', '!=', '')

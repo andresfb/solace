@@ -120,7 +120,7 @@ class ProcessPostService
 
             $message = 'File error: '.$e->getMessage();
             $this->error($message);
-            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->modelId: $message");
+            Log::error("@ProcessPostService.execute. Error Tasker: $postItem->tasker with Model Id $postItem->modelId: $message");
 
             ChangeStatusEvent::dispatch(
                 $postItem->origin,
@@ -134,7 +134,7 @@ class ProcessPostService
 
             $message = 'Error while processing post: '.$e->getMessage();
             $this->error($message);
-            Log::error("@ProcessPostService.execute. Error with LibraryPostingId $postItem->modelId: $message");
+            Log::error("@ProcessPostService.execute. Error Tasker: $postItem->tasker with Model Id $postItem->modelId: $message");
 
             throw $e;
         } finally {
@@ -156,8 +156,13 @@ class ProcessPostService
 
         $this->line("Saving image Files: $image");
 
-        $post->addMediaFromUrl($image)
-            ->toMediaCollection('image');
+        if (str($image)->startsWith('http')) {
+            $post->addMediaFromUrl($image)
+                ->toMediaCollection('image');
+        } else {
+            $post->addMedia($image)
+                ->toMediaCollection('image');
+        }
 
         $this->line('Image Saved.');
     }
@@ -182,20 +187,6 @@ class ProcessPostService
         });
 
         $this->line('Media Files Saved.');
-    }
-
-    private function saveHashtags(Post $post, Collection $hashtags): void
-    {
-        $hashtags = $hashtags->merge($this->extraTags)
-            ->unique();
-
-        $this->line('Saving Hashtags. '.$hashtags->count());
-
-        $post->hashtags()->sync(
-            $hashtags->map(fn ($tag) => Hashtag::firstOrCreate(['name' => $tag]))->pluck('id')
-        );
-
-        $this->line('Hashtags Saved.');
     }
 
     private function parseContent(PostItem $postItem): string
@@ -301,10 +292,30 @@ class ProcessPostService
             break;
         }
 
-        $cleanedResults = array_map(static fn ($item) => str($item)->title()
-            ->replace(' ', '')
-            ->value(), $cleanedResults);
+        $cleanedResults = array_map(
+            static fn ($item) => str($item)->title()->replace(' ', '')->value(),
+            $cleanedResults
+        );
 
         $this->extraTags = array_unique(array_merge($this->extraTags, $cleanedResults));
+    }
+
+    private function saveHashtags(Post $post, Collection $hashtags): void
+    {
+        $hashtags = $hashtags->merge($this->extraTags)->unique();
+
+        $this->line('Saving Hashtags. '.$hashtags->count());
+
+        $post->hashtags()->sync(
+            $hashtags->map(function ($tag) {
+                return Hashtag::firstOrCreate([
+                    'slug' => str($tag)->slug()->value()
+                ], [
+                    'name' => $tag,
+                ]);
+            })->pluck('id')
+        );
+
+        $this->line('Hashtags Saved.');
     }
 }

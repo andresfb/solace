@@ -6,6 +6,7 @@ return [
 
     'max_empty_runs' => (int) env('IMPORT_AI_ARTICLES_MAX_EMPTY_RUN', 10),
 
+    // This connection is a reuse of the worker from Media Library Runner
     'queue_connection' => env('IMPORT_AI_ARTICLES_REDIS_CNN', 'ai-runner-cnn'),
 
     'queues' => env('IMPORT_AI_ARTICLES_QUEUES', 'skynet'),

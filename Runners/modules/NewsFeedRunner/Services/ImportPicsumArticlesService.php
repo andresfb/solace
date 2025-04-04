@@ -32,6 +32,7 @@ class ImportPicsumArticlesService implements TaskServiceInterface
         $this->line("Loading Articles without Image\n");
 
         $articles = Article::query()
+            ->withoutQuoteBased()
             ->where('thumbnail', '=', '')
             ->where('title', '!=', '')
             ->where('permalink', '!=', '')

@@ -7,9 +7,9 @@ namespace Modules\NewsFeedRunner\Models\Providers;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Config;
 use Modules\NewsFeedRunner\Models\Feeds\Feed;
 use Modules\NewsFeedRunner\Models\NewsFeedRunnerModel;
-use Modules\NewsFeedRunner\Models\Providers\Scopes\FeedsScope;
 
 /**
  * @property-read int $id
@@ -26,12 +26,6 @@ use Modules\NewsFeedRunner\Models\Providers\Scopes\FeedsScope;
 class Provider extends NewsFeedRunnerModel
 {
     protected $guarded = ['id'];
-
-    protected static function booted(): void
-    {
-        parent::booted();
-        static::addGlobalScope(new FeedsScope);
-    }
 
     protected function casts(): array
     {
@@ -56,5 +50,13 @@ class Provider extends NewsFeedRunnerModel
     {
         return $query->where('status', true)
             ->orderBy('order');
+    }
+
+    public function scopeWithoutQuoteBased(Builder $query): Builder
+    {
+        return $query->whereNotIn(
+            'id',
+            Config::array('news_feed_runner.quote-based-providers')
+        );
     }
 }

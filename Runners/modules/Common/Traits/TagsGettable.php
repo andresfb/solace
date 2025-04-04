@@ -6,6 +6,7 @@ namespace Modules\Common\Traits;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 
 trait TagsGettable
 {
@@ -24,7 +25,11 @@ trait TagsGettable
             ->where('taggables.taggable_id', $modelId)
             ->get()
             ->map(function ($tag) use ($banded) {
-                $values = json_decode((string) $tag->name, true, 512, JSON_THROW_ON_ERROR);
+                try {
+                    $values = json_decode((string)$tag->name, true, 512, JSON_THROW_ON_ERROR);
+                } catch (JsonException) {
+                    return '';
+                }
 
                 $keys = array_keys($values);
                 if ($keys === []) {
@@ -40,8 +45,7 @@ trait TagsGettable
                 }
 
                 return $tag->title()
-                    ->replace(' ', '')
-                    ->toString();
+                    ->value();
             })
             ->reject(fn ($tag): bool => empty($tag));
     }

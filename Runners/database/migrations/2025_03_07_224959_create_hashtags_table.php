@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('hashtags', static function (Blueprint $table): void {
             $table->id();
+            $table->string('slug')->unique();
             $table->string('name');
             $table->softDeletes();
             $table->timestamps();

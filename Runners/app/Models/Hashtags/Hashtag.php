@@ -13,6 +13,13 @@ class Hashtag extends BaseModel
 {
     use SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::creating(static function (Hashtag $tag): void {
+            $tag->slug = str($tag->name)->slug()->value();
+        });
+    }
+
     public function posts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'post_hashtags', 'hashtag_id', 'post_id')

@@ -34,6 +34,8 @@ class ImportImagedArticlesService implements TaskServiceInterface
 
         $providers = Provider::query()
             ->activeWithFeeds()
+            ->withoutQuoteBased()
+            ->with('feeds')
             ->get();
 
         if ($providers->isEmpty()) {

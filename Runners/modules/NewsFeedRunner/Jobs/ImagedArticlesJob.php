@@ -28,6 +28,7 @@ class ImagedArticlesJob implements ShouldQueue
     public function handle(ImagedArticlesService $service): void
     {
         $articles = Article::whereIn('id', $this->articleIds->toArray())
+            ->withoutQuoteBased()
             ->get();
 
         if ($articles->isEmpty()) {
