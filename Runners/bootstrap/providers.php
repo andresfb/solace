@@ -8,4 +8,5 @@ return [
     Modules\MediaLibraryRunner\Providers\MediaLibraryRunnerServiceProvider::class,
     Modules\UserGeneratorRunner\Providers\UserGeneratorRunnerServiceProvider::class,
     Modules\NewsFeedRunner\Providers\NewsFeedRunnerServiceProvider::class,
+    Modules\EmbyMediaRunner\Providers\EmbyMediaServiceProvider::class,
 ];

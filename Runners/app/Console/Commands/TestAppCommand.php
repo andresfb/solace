@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
+use Modules\EmbyMediaRunner\Libraries\EmbyApiLibrary;
 
 class TestAppCommand extends Command
 {
@@ -17,6 +18,11 @@ class TestAppCommand extends Command
     {
         try {
             $this->info("\nStarting test\n");
+
+            $srv = app(EmbyApiLibrary::class);
+            $list = $srv->getMovies();
+
+            dump($list);
 
             $this->info("\nDone at: ".now()."\n");
 
