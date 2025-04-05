@@ -31,7 +31,7 @@ class ContentSourceJob implements ShouldQueue
         }
 
         PostSelectedEvent::dispatch(
-            PostItem::from($newPost->getPostableInfo($this->LOST_CAUSE)),
+            $newPost->getPostableInfo($this->LOST_CAUSE),
         );
     }
 }

@@ -66,9 +66,7 @@ abstract class BaseSimpleMigrateService implements TaskServiceInterface
             $this->line('Loading the Media Files and tags...');
 
             PostSelectedEvent::dispatch(
-                PostItem::from(
-                    $libraryPost->getPostableInfo($this->getTaskName())
-                ),
+                $libraryPost->getPostableInfo($this->getTaskName()),
                 $this->toScreen
             );
 

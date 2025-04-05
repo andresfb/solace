@@ -8,6 +8,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\LibraryPostStatus;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
@@ -108,43 +109,38 @@ class LibraryPost extends MediaRunnerModel
         return $query->where('runner_status', RunnerStatus::LOST_CAUSE);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function getPostableInfo(string $taskName): array
+    public function getPostableInfo(string $taskName): PostItem
     {
-        // TODO: change this function to return a PostItem class
-
         try {
             $priority = random_int(500, 599);
         } catch (\Exception) {
             $priority = 500;
         }
 
-        return [
-            'modelId' => $this->id,
-            'identifier' => $this->slug,
-            'title' => $this->title,
-            'content' => $this->content,
-            'generator' => strtoupper(
+        return new PostItem(
+            modelId: $this->id,
+            identifier: $this->slug,
+            title: $this->title,
+            content: $this->content,
+            generator: strtoupper(
                 "POST=$this->id:ITEM=$this->item_id:TYPE:$this->type:"
                 ."LIST=$this->source:RUNNER=$this->MEDIA_LIBRARY:TASK=$taskName"
             ),
-            'source' => $this->source,
-            'origin' => $this->MEDIA_LIBRARY,
-            'tasker' => $taskName,
-            'priority' => $priority,
-            'image' => '',
-            'fromAi' => false,
-            'responses' => null,
-            'attribution' => '',
-            'mediaFiles' => $this->getMediaFiles(),
-            'hashtags' => $this->getTags(
+            source: $this->source,
+            origin: $this->MEDIA_LIBRARY,
+            tasker: $taskName,
+            priority: $priority,
+            responses: null,
+            mediaFiles: $this->getMediaFiles(),
+            hashtags: $this->getTags(
                 modelId: $this->id,
                 modelType: 'App\Models\Post',
                 connection: $this->getConnectionName() ?? config('database.media_runner_connection')
             ),
-        ];
+            fromAi: false,
+            image: '',
+            attribution: '',
+        );
     }
 
     public function getMediaFiles(): Collection

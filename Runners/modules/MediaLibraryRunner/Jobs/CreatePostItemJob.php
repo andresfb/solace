@@ -25,9 +25,7 @@ class CreatePostItemJob implements ShouldQueue
     public function handle(): void
     {
         PostSelectedQueueableEvent::dispatch(
-            PostItem::from(
-                $this->libraryPost->getPostableInfo($this->taskName)
-            )
+            $this->libraryPost->getPostableInfo($this->taskName)
         );
     }
 }

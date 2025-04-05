@@ -161,34 +161,31 @@ abstract class BaseOllamaService
             );
         }
 
-        $postInfo = $libraryPost->getPostableInfo($this->getTaskName());
+        /** @var PostItem $postItem */
+        $postItem = $libraryPost->getPostableInfo($this->getTaskName());
 
-        $postInfo['generator'] .= strtoupper(':AI_MODEL='.config("{$this->getTaskName()}.ai_model").':SPARK='.$this->spark);
-        $postInfo['generator'] .= $this->hashtagsService->getGeneratorTag();
+        $postItem->generator .= strtoupper(':AI_MODEL='.config("{$this->getTaskName()}.ai_model").':SPARK='.$this->spark);
+        $postItem->generator .= $this->hashtagsService->getGeneratorTag();
 
-        $postInfo['fromAi'] = true;
-        $postInfo['hashtags'] = $postInfo['hashtags']->merge($hashtags);
-        $postInfo['content'] = $content;
-        $postInfo['responses'] = $this->hashtagsService->isGenerated()
-            ? json_encode(['ollama' => $contentResponse, 'openai' => $this->hashtagsService->getOpenAiResponse()], JSON_THROW_ON_ERROR)
+        $postItem->fromAi = true;
+        $postItem->hashtags = $postItem->hashtags->merge($hashtags);
+        $postItem->content = $content;
+        $postItem->responses = $this->hashtagsService->isGenerated()
+            ? json_encode(['ollama' => $contentResponse,
+                'openai' => $this->hashtagsService->getOpenAiResponse()], JSON_THROW_ON_ERROR)
             : $contentResponse;
 
-        $this->dispatchEvents($postInfo);
+        $this->dispatchEvents($postItem);
     }
 
-    /**
-     * @param  array<string, mixed>  $postInfo
-     */
-    private function dispatchEvents(array $postInfo): void
+    private function dispatchEvents(PostItem $postItem): void
     {
-        $message = "Dispatching %s event for LibraryPost: {$postInfo['libraryPostId']}\n";
+        $message = "Dispatching %s event for LibraryPost: $postItem->modelId\n";
 
         if ($this->queueable) {
             $this->line(sprintf($message, 'PostSelectedQueueableEvent'));
 
-            PostSelectedQueueableEvent::dispatch(
-                PostItem::from($postInfo)
-            );
+            PostSelectedQueueableEvent::dispatch($postItem);
 
             return;
         }
@@ -196,7 +193,7 @@ abstract class BaseOllamaService
         $this->line(sprintf($message, 'PostSelectedEvent'));
 
         PostSelectedEvent::dispatch(
-            PostItem::from($postInfo),
+            $postItem,
             $this->toScreen
         );
     }

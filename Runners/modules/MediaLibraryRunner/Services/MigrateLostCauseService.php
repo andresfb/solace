@@ -72,7 +72,7 @@ class MigrateLostCauseService implements TaskServiceInterface
             $this->line('Dispatching the PostSelectedEvent.');
 
             PostSelectedEvent::dispatch(
-                PostItem::from($newPost->getPostableInfo($this->LOST_CAUSE)),
+                $newPost->getPostableInfo($this->LOST_CAUSE),
                 $this->toScreen
             );
 

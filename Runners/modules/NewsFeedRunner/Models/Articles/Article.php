@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Stringable;
+use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Traits\TagsGettable;
 use Modules\NewsFeedRunner\Models\Articles\Scopes\ArticleMediaScope;
@@ -98,13 +99,8 @@ class Article extends NewsFeedRunnerModel
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function getPostableInfo(string $taskName): array
+    public function getPostableInfo(string $taskName): PostItem
     {
-        // TODO: change this function to return a PostItem class
-
         $providerName = str($this->feed->provider->name ?? '')
             ->replace(' ', '_')
             ->trim()
@@ -117,33 +113,33 @@ class Article extends NewsFeedRunnerModel
 
         $mediaFiles = $this->getMediaFiles();
 
-        return [
-            'modelId' => $this->id,
-            'identifier' => $this->permalink,
-            'title' => $this->title,
-            'content' => str(
+        return new PostItem(
+            modelId: $this->id,
+            identifier: $this->permalink,
+            title: $this->title,
+            content: str(
                 nl2br($this->addLinkDateInfo($this->parseContent()))
             )
                 ->replace('<br /><br /><br /><br />', '<br /><br />')
                 ->value(),
-            'generator' => strtoupper(
+            generator: strtoupper(
                 "ARTICLE=$this->id:PROVIDER=$providerName:FEED:$feedName:RUNNER=$this->NEWS_FEED:TASK=$taskName"
             ),
-            'source' => $this->isQuoteBased() ? 'quote' : $providerName,
-            'origin' => $this->NEWS_FEED,
-            'tasker' => $taskName,
-            'image' => $mediaFiles->isEmpty() ? $this->thumbnail : '',
-            'attribution' => $this->attribution ?? '',
-            'fromAi' => $taskName === $this->IMPORT_AI_ARTICLE,
-            'priority' => $this->feed->provider->order ?? 100,
-            'responses' => null,
-            'mediaFiles' => $mediaFiles,
-            'hashtags' => $this->getTags(
+            source: $this->isQuoteBased() ? 'quote' : $providerName,
+            origin: $this->NEWS_FEED,
+            tasker: $taskName,
+            priority: $this->feed->provider->order ?? 100,
+            responses: null,
+            mediaFiles: $mediaFiles,
+            hashtags: $this->getTags(
                 modelId: $this->id,
                 modelType: 'App\Models\Article',
                 connection: $this->getConnectionName() ?? config('database.news_feed_runner_connection')
             ),
-        ];
+            fromAi: $taskName === $this->IMPORT_AI_ARTICLE,
+            image: $mediaFiles->isEmpty() ? $this->thumbnail : '',
+            attribution: $this->attribution ?? '',
+        );
     }
 
     public function getMediaFiles(): Collection

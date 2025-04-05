@@ -24,10 +24,7 @@ class ArticleService
         $this->line('Loading the Media Files and tags...');
 
         PostSelectedEvent::dispatch(
-            PostItem::from(
-                $article->load('feed.provider')
-                    ->getPostableInfo($taskName)
-            ),
+            $article->load('feed.provider')->getPostableInfo($taskName),
             $this->toScreen
         );
 
