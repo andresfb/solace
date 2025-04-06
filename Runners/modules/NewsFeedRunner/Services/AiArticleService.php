@@ -59,6 +59,7 @@ class AiArticleService
         }
 
         $this->articleService->setToScreen($this->toScreen)
+            ->setQueueable(false)
             ->execute(
                 Article::find($article->id),
                 $this->IMPORT_AI_ARTICLE

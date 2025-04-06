@@ -9,8 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\Common\Dtos\PostItem;
-use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
+use Modules\Common\Events\PostSelectedQueueableEvent;
 use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 
 class CreatePostItemJob implements ShouldQueue

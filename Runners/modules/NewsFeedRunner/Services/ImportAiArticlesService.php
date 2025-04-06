@@ -71,8 +71,8 @@ class ImportAiArticlesService implements TaskServiceInterface
 
             $this->line("Processing Article: $article->id - $article->title");
 
-            $this->articleService->setQueueable($this->queueable)
-                ->setToScreen($this->toScreen)
+            $this->articleService->setToScreen($this->toScreen)
+                ->setQueueable($this->queueable)
                 ->execute($article);
         });
     }

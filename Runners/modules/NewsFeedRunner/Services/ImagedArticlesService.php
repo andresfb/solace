@@ -55,6 +55,7 @@ class ImagedArticlesService
             $this->line('Importing the article...');
 
             $this->articleService->setToScreen($this->toScreen)
+                ->setQueueable(false)
                 ->execute(
                     $article,
                     $this->IMPORT_IMAGED_ARTICLES

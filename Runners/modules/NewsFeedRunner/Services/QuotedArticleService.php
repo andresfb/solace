@@ -64,6 +64,7 @@ class QuotedArticleService
             ->firstOrFail();
 
         $this->articleService->setToScreen($this->toScreen)
+            ->setQueueable(false)
             ->execute(
                 $updatedArticle,
                 $this->IMPORT_QUOTED_ARTICLE

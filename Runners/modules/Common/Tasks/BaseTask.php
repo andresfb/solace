@@ -31,7 +31,7 @@ abstract class BaseTask implements TaskInterface
     public function execute(): void
     {
         if (! $this->isEnabled()) {
-            $this->warning('The '.self::class.' is disabled.');
+            $this->warning('The '.__CLASS__.' is disabled.');
 
             return;
         }

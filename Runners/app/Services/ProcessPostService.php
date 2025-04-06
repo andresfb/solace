@@ -13,6 +13,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Common\Dtos\PostItem;
+use Modules\Common\Dtos\RemoteImageItem;
+use Modules\Common\Dtos\StorageImageItem;
 use Modules\Common\Enum\RunnerStatus;
 use Modules\Common\Events\ChangeStatusEvent;
 use Modules\Common\Exceptions\NoImageException;
@@ -94,11 +96,7 @@ class ProcessPostService
                 );
             }
 
-            if ($postItem->mediaFiles->isEmpty()) {
-                $this->saveImage($post, $postItem->image);
-            } else {
-                $this->saveMedia($post, $postItem->mediaFiles);
-            }
+            $this->saveMedia($post, $postItem->mediaFiles);
 
             $this->saveHashtags($post, $postItem->hashtags);
 
@@ -143,39 +141,29 @@ class ProcessPostService
     }
 
     /**
-     * @throws NoImageException
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
      * @throws FileCannotBeAdded
-     * @throws FileDoesNotExist
-     * @throws FileIsTooBig
-     */
-    private function saveImage(Post $post, string $image): void
-    {
-        if (blank($image)) {
-            throw new NoImageException("$post->generator doesn't have a image");
-        }
-
-        $this->line("Saving image Files: $image");
-
-        if (str($image)->startsWith('http')) {
-            $post->addMediaFromUrl($image)
-                ->toMediaCollection('image');
-        } else {
-            $post->addMedia($image)
-                ->toMediaCollection('image');
-        }
-
-        $this->line('Image Saved.');
-    }
-
-    /**
-     * @throws FileDoesNotExist
-     * @throws FileIsTooBig
      */
     private function saveMedia(Post $post, Collection $mediaFiles): void
     {
         $this->line('Saving Media Files. '.$mediaFiles->count());
 
-        $mediaFiles->each(function (MediaItem $mediaFile) use ($post): void {
+        $mediaFiles->each(function (MediaItem|RemoteImageItem|StorageImageItem $mediaFile) use ($post): void {
+            if ($mediaFile instanceof StorageImageItem) {
+                $post->addMedia($mediaFile->filePath)
+                    ->toMediaCollection($mediaFile->type);
+
+                return;
+            }
+
+            if ($mediaFile instanceof RemoteImageItem) {
+                $post->addMediaFromUrl($mediaFile->url)
+                    ->toMediaCollection($mediaFile->type);
+
+                return;
+            }
+
             $post->addMedia($mediaFile->filePath)
                 ->preservingOriginal()
                 ->withCustomProperties([
@@ -250,7 +238,8 @@ class ProcessPostService
             || $titleTrimmed->contains('Word Definition')
             || $source->contains(['bible', 'quran'])
             || $contentLow->startsWith($titleLow)
-            || str($postItem->generator)->contains('AI_MODEL')) {
+            || str($postItem->generator)->contains(['AI_MODEL','EMBY-MEDIA']))
+        {
             return $content->trim()->value();
         }
 

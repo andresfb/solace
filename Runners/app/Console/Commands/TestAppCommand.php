@@ -6,7 +6,7 @@ namespace App\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Modules\EmbyMediaRunner\Libraries\EmbyApiLibrary;
+use Modules\EmbyMediaRunner\Services\GenerateMoviePostService;
 
 class TestAppCommand extends Command
 {
@@ -19,10 +19,11 @@ class TestAppCommand extends Command
         try {
             $this->info("\nStarting test\n");
 
-            $srv = app(EmbyApiLibrary::class);
-            $list = $srv->getMovies();
+            $srv = app(GenerateMoviePostService::class);
 
-            dump($list);
+            $srv->setToScreen(true)
+                ->setQueueable(false)
+                ->execute();
 
             $this->info("\nDone at: ".now()."\n");
 

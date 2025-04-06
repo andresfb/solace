@@ -62,6 +62,7 @@ class PicsumArticleService
         $this->line('Executing ArticleService...');
 
         $this->articleService->setToScreen($this->toScreen)
+            ->setQueueable(false)
             ->execute(
                 Article::find($article->id),
                 $this->IMPORT_PICSUM_ARTICLE

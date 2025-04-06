@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Modules\MediaLibraryRunner\Services;
 
 use Illuminate\Database\Eloquent\Collection;
-use Modules\Common\Dtos\PostItem;
+use Modules\Common\Events\PostSelectedEvent;
 use Modules\Common\Exceptions\EmptyRunException;
 use Modules\Common\Factories\EmptyRunFactory;
 use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
-use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
 use Modules\MediaLibraryRunner\Jobs\CreatePostItemJob;
 use Modules\MediaLibraryRunner\Models\Posts\LibraryPost;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;

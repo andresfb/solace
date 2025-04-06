@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 use Modules\Common\Interfaces\TaskInterface;
 
 use function Laravel\Prompts\clear;
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\pause;
 use function Laravel\Prompts\select;
@@ -39,7 +40,7 @@ class RunTaskCommand extends Command
             $key = select(
                 label: 'Select a task to run',
                 options: array_keys($list),
-                scroll: 12,
+                scroll: 15,
             );
 
             $taskClass = $list[$key];
@@ -48,11 +49,13 @@ class RunTaskCommand extends Command
                 throw new \RuntimeException('Invalid task class');
             }
 
+            $queueable = confirm('Send to queue?', false);
+
             warning("Running task: $key");
             pause('Press ENTER to continue.');
 
             $taskInstance->setToScreen(true)
-                ->setQueueable(false)
+                ->setQueueable($queueable)
                 ->execute();
 
             info("Done...\n");

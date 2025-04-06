@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\MediaLibraryRunner\Events;
+namespace Modules\Common\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Modules\Common\Dtos\PostItem;

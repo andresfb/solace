@@ -8,8 +8,8 @@ use App\Services\ProcessPostService;
 use App\Traits\RunnerConstants;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Modules\Common\Events\PostSelectedQueueableEvent;
 use Modules\Common\Traits\QueueSelectable;
-use Modules\MediaLibraryRunner\Events\PostSelectedQueueableEvent;
 use Throwable;
 
 class PostSelectedQueueableListener implements ShouldQueue

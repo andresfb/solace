@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Stringable;
 use Modules\Common\Dtos\PostItem;
 use Modules\Common\Enum\RunnerStatus;
+use Modules\Common\Factories\ImageItemFactory;
 use Modules\Common\Traits\TagsGettable;
 use Modules\NewsFeedRunner\Models\Articles\Scopes\ArticleMediaScope;
 use Modules\NewsFeedRunner\Models\Feeds\Feed;
@@ -137,7 +138,7 @@ class Article extends NewsFeedRunnerModel
                 connection: $this->getConnectionName() ?? config('database.news_feed_runner_connection')
             ),
             fromAi: $taskName === $this->IMPORT_AI_ARTICLE,
-            image: $mediaFiles->isEmpty() ? $this->thumbnail : '',
+            image: '',
             attribution: $this->attribution ?? '',
         );
     }
@@ -145,6 +146,12 @@ class Article extends NewsFeedRunnerModel
     public function getMediaFiles(): Collection
     {
         $files = collect();
+
+        if (! empty($this->thumbnail) && $this->media->isEmpty()) {
+            $files->push(
+                ImageItemFactory::getItem($this->thumbnail)
+            );
+        }
 
         /** @var ArticleMedia $media */
         foreach ($this->media as $media) {

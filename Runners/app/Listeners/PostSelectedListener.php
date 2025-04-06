@@ -6,7 +6,7 @@ namespace App\Listeners;
 
 use App\Services\ProcessPostService;
 use Exception;
-use Modules\MediaLibraryRunner\Events\PostSelectedEvent;
+use Modules\Common\Events\PostSelectedEvent;
 use Throwable;
 
 readonly class PostSelectedListener
