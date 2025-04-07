@@ -180,7 +180,7 @@ abstract class BaseOllamaService
 
     private function dispatchEvents(PostItem $postItem): void
     {
-        $message = "Dispatching %s event for LibraryPost: $postItem->modelId\n";
+        $message = "Dispatching %s event for LibraryPost: $postItem->title";
 
         if ($this->queueable) {
             $this->line(sprintf($message, 'PostSelectedQueueableEvent'));

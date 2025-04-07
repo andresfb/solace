@@ -21,5 +21,6 @@ class EmbyMediaServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/redis.php', 'database.redis');
         $this->mergeConfigFrom(__DIR__.'/../Config/queue.php', 'queue.connections');
         $this->mergeConfigFrom(__DIR__.'/../Config/horizon.php', 'horizon.environments.tiger-mox');
+        $this->mergeConfigFrom(__DIR__.'/../Config/downloader.php', 'downloader');
     }
 }

@@ -63,5 +63,15 @@ class Post extends BaseModel implements HasMedia
 
         $this->addMediaCollection('image')
             ->withResponsiveImages();
+
+        $this->addMediaCollection('trailer')
+            ->acceptsMimeTypes([
+                'video/mp4',
+            ]);
+
+        $this->addMediaCollection('trailer-image')
+            ->acceptsMimeTypes([
+                'image/jpeg',
+            ]);
     }
 }

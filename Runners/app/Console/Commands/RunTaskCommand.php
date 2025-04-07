@@ -58,7 +58,7 @@ class RunTaskCommand extends Command
                 ->setQueueable($queueable)
                 ->execute();
 
-            info("Done...\n");
+            info("\n\nDone...\n");
 
             return 0;
         } catch (Exception $e) {

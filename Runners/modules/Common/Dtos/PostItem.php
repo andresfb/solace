@@ -9,8 +9,6 @@ use Spatie\LaravelData\Data;
 
 class PostItem extends Data
 {
-    private string $hash;
-
     /**
      * @param  array<string, mixed>|null  $responses
      */
@@ -34,10 +32,10 @@ class PostItem extends Data
 
     public function getHash(): string
     {
-        if (! isset($this->hash) || ($this->hash === '' || $this->hash === '0')) {
-            $this->hash = md5("$this->identifier|$this->title");
-        }
-
-        return $this->hash;
+        return md5(sprintf(
+            '%s|%s',
+            trim($this->identifier),
+            trim($this->title),
+        ));
     }
 }

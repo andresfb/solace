@@ -26,7 +26,7 @@ class ArticleService
         $postItem = $article->load('feed.provider')
             ->getPostableInfo($taskName);
 
-        $message = "Dispatching %s event for Article: $postItem->modelId\n";
+        $message = "Dispatching %s event for Article: $postItem->title";
 
         if ($this->queueable) {
             $this->line(sprintf($message, 'PostSelectedQueueableEvent'));

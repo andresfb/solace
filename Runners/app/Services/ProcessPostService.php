@@ -136,7 +136,7 @@ class ProcessPostService
 
             throw $e;
         } finally {
-            $this->line("\n");
+            $this->line('');
         }
     }
 

@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Config;
 use MeiliSearch\Client;
 use Meilisearch\Endpoints\Indexes;
 use Modules\Common\Dtos\PostItem;
+use Modules\Common\Dtos\PostUpdateItem;
 use Modules\Common\Dtos\RemoteImageItem;
 use Modules\Common\Events\PostSelectedEvent;
 use Modules\Common\Events\PostSelectedQueueableEvent;
+use Modules\Common\Events\UpdatePostEvent;
 use Modules\Common\Factories\ImageItemFactory;
 use Modules\Common\Interfaces\TaskServiceInterface;
 use Modules\Common\Services\PostExistsService;
@@ -18,6 +20,7 @@ use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\EmbyMediaRunner\Dtos\ProcessMediaItem;
+use Modules\EmbyMediaRunner\Factories\MovieTrailerFactory;
 use Modules\EmbyMediaRunner\Jobs\DownloadTrailerJob;
 use Modules\EmbyMediaRunner\Jobs\EncodeTrailerJob;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
@@ -35,11 +38,15 @@ class GenerateMoviePostService implements TaskServiceInterface
 
     private array $usedMovies = [];
 
+    private PostUpdateItem $postUpdateItem;
+
     public function __construct(
         private readonly PostExistsService $postExistsService,
         private readonly DownloadTrailerService $downloadTrailerService,
         private readonly EncodeTrailerService $encodeTrailerService,
-    ) {}
+    ) {
+        $this->postUpdateItem = new PostUpdateItem;
+    }
 
     /**
      * @throws Exception
@@ -50,7 +57,7 @@ class GenerateMoviePostService implements TaskServiceInterface
             $this->getMovie()
         );
 
-        $message = "Dispatching %s event for Movie: $postItem->modelId\n";
+        $message = "Dispatching %s event for Movie: $postItem->title";
 
         if ($this->queueable) {
             $this->line(sprintf($message, 'PostSelectedQueueableEvent'));
@@ -66,6 +73,22 @@ class GenerateMoviePostService implements TaskServiceInterface
             $postItem,
             $this->toScreen
         );
+
+        $this->line('PostSelectedEvent Event dispatched.');
+
+        // If the process is not queued then the download/encoding runs
+        // ahead of this point and updating the posting needs to run
+        // right after the Post is created.
+        $this->line(sprintf($message, 'UpdatePostEvent'));
+
+        usleep(400000);
+
+        UpdatePostEvent::dispatch(
+            $this->postUpdateItem,
+            $this->toScreen
+        );
+
+        $this->line('UpdatePostEvent Event dispatched.');
     }
 
     private function getPostItem(array $movie): PostItem
@@ -123,12 +146,19 @@ class GenerateMoviePostService implements TaskServiceInterface
      */
     private function findUnusedMovie(int $total, Indexes $index): array
     {
+        $this->line('Find a movie');
+
         if ($this->currentChecks >= $this->maxChecks) {
+            $this->error('findUnusedMovie ran too many times');
+
             throw new \RuntimeException('No Movie found');
         }
 
         if (count($this->usedMovies) >= $total) {
-            throw new \RuntimeException('All movies have been used.');
+            $message = 'All movies have been used';
+            $this->error($message);
+
+            throw new \RuntimeException($message);
         }
 
         $randomOffset = random_int(0, $total - 1);
@@ -140,6 +170,9 @@ class GenerateMoviePostService implements TaskServiceInterface
 
         if (empty($results) || $results->getHitsCount() === 0) {
             ++$this->currentChecks;
+            $this->warning("Got empty results. Tries so far: $this->currentChecks");
+
+            usleep(400000);
 
             return $this->findUnusedMovie($total, $index);
         }
@@ -161,6 +194,8 @@ class GenerateMoviePostService implements TaskServiceInterface
             return $this->findUnusedMovie($total, $index);
         }
 
+        $this->line("Found {$movie['Name']}");
+
         return $movie;
     }
 
@@ -173,66 +208,60 @@ class GenerateMoviePostService implements TaskServiceInterface
             ->append('(')
             ->append(sprintf(Config::string('emby-api.item_url'), $movie['Id']))
             ->append(')')
-            ->append('<br /><br />');
+            ->append("\n\n");
 
         if (! empty($movie['Taglines'])) {
             $content = $content->append($movie['Taglines'][0])
-                ->append('<br /><br />');
+                ->append("\n\n");
         }
 
         $content = $content->append($movie['Overview'])
-            ->append('<br /><br />');
+            ->append("\n\n");
 
         $content = $content->append("Released: {$movie['ProductionYear']}")
-            ->append('<br />');
+            ->append("\n");
 
         if (! empty($movie['CriticRating'])) {
             $content = $content->append("Critics: 🍅 {$movie['CriticRating']}%")
-                ->append('<br />');
+                ->append("\n");
         }
 
         if (! empty($movie['OfficialRating'])) {
             $content = $content->append("Rated: {$movie['OfficialRating']}")
-                ->append('<br />');
+                ->append("\n");
         }
 
         if (! empty($movie['RunTimeTicks'])) {
             $content = $content->append(
-                'Runtime: '.
-                $this->convertRunTime((int) $movie['RunTimeTicks'])
+                'Runtime: '.$this->convertRunTime((int) $movie['RunTimeTicks'])
             )
-            ->append('<br />');
+            ->append("\n");
         }
 
         if (! empty($movie['People'])) {
-            $content = $content->append('<br /><br />');
+            $content = $content->append("\n\n");
 
             $director = $this->getDirector($movie['People']);
             if ($director) {
                 $content = $content->append("Directed by: {$director}")
-                    ->append('<br />');
+                    ->append("\n");
             }
 
             $cast = $this->getCastMembers($movie['People']);
             if ($cast) {
-                $content = $content->append("Cast:<br />$cast")
-                    ->append('<br />');
+                $content = $content->append("Cast:\n$cast")
+                    ->append("\n");
             }
         }
 
-        $content = $content->replace('<br /><br /><br /><br />', '<br /><br />')
-            ->replace('<br /><br /><br />', '<br /><br />')
-            ->trim();
+        $text = str(nl2br($content->trim()->value()));
 
-        if ($content->endsWith('<br /><br />')) {
-            $content = $content->replace('<br /><br />', '<br />');
-        }
-
-        if (! $content->endsWith('<br />')) {
-            $content = $content->append('<br />');
-        }
-
-        return $content->trim()->value();
+        return $text->replace(["\n", "\r", "\t"], "")
+            ->trim()
+            ->replace("<br /><br /><br /><br />", "<br /><br />")
+            ->replace("<br /><br /><br />", "<br /><br />")
+            ->trim()
+            ->value();
     }
 
     /**
@@ -270,7 +299,7 @@ class GenerateMoviePostService implements TaskServiceInterface
 
             $cast .= "[{$actor['Name']}]("
                 . sprintf(Config::string('emby-api.item_url'), $actor['Id'])
-                . ")<br />";
+                . ")\n";
         }
 
         return $cast;
@@ -315,41 +344,14 @@ class GenerateMoviePostService implements TaskServiceInterface
         $item = new ProcessMediaItem(
             $movie['Id'],
             $movie['Name'],
+            $movie['Path'] ?? '',
+            $movie['RemoteTrailers'] ?? [],
         );
 
-        if (! empty($movie['RemoteTrailers'])) {
-            $item = $item->withTrailerUrl($movie['RemoteTrailers'][0]['Url']);
-
-            if ($this->queueable) {
-                DownloadTrailerJob::dispatch($item)
-                    ->onConnection($this->getConnection('trailer-download'))
-                    ->onQueue($this->getQueue('trailer-download'))
-                    ->delay(now()->addMinute());
-
-                return;
-            }
-
-            $this->downloadTrailerService->setToScreen($this->toScreen)
-                ->setQueueable($this->queueable)
-                ->execute($item);
-
-            return;
-        }
-
-        $item = $item->withFilePath($movie['Path']);
-
-        if ($this->queueable) {
-            EncodeTrailerJob::dispatch($item)
-                ->onConnection($this->getConnection('encode-trailer'))
-                ->onQueue($this->getQueue('encode-trailer'))
-                ->delay(now()->addMinute());
-
-            return;
-        }
-
-        $this->encodeTrailerService->setToScreen($this->toScreen)
+        $this->postUpdateItem = MovieTrailerFactory::create($item)
             ->setQueueable($this->queueable)
-            ->execute($item);
+            ->setToScreen($this->toScreen)
+            ->process();
     }
 
     /**
@@ -365,7 +367,9 @@ class GenerateMoviePostService implements TaskServiceInterface
         }
 
         if (! empty($movie['TagItems'])) {
-            $tags = $tags->merge($movie['TagItems']);
+            foreach ($movie['TagItems'] as $tag) {
+                $tags->add($tag['Name']);
+            }
         }
 
         if (! empty($movie['Genres'])) {

@@ -42,6 +42,7 @@ class TaskRunnerService
                 $message = $e->getMessage();
 
                 $this->error($message);
+
                 Log::error($message);
             }
         }
