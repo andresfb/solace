@@ -5,6 +5,7 @@ namespace Modules\EmbyMediaRunner\Services;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use MeiliSearch\Client;
 use Meilisearch\Endpoints\Indexes;
 use Modules\Common\Dtos\PostItem;
@@ -25,16 +26,18 @@ use Modules\EmbyMediaRunner\Jobs\DownloadTrailerJob;
 use Modules\EmbyMediaRunner\Jobs\EncodeTrailerJob;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 
-class GenerateMoviePostService implements TaskServiceInterface
+final class GenerateMoviePostService implements TaskServiceInterface
 {
     use ModuleConstants;
     use QueueSelectable;
     use Screenable;
     use SendToQueue;
 
-    private int $maxChecks = 20;
+    private int $maxChecks;
 
     private int $currentChecks = 0;
+
+    private int $currentMovieIndex = 0;
 
     private array $usedMovies = [];
 
@@ -46,12 +49,31 @@ class GenerateMoviePostService implements TaskServiceInterface
         private readonly EncodeTrailerService $encodeTrailerService,
     ) {
         $this->postUpdateItem = new PostUpdateItem;
+        $this->maxChecks = Config::integer('generate-movie-post.max_movie_checks');
+    }
+
+    public function execute(): void
+    {
+        $movieCount = Config::integer('generate-movie-post.posts_limit');
+
+        for ($i = 0; $i < $movieCount; $i++) {
+            try {
+                $this->currentChecks = 0;
+                $this->currentMovieIndex = $i;
+
+                $this->warning(sprintf("\nRequesting Movie %d of %d\n", $i + 1, $movieCount));
+
+                $this->processMovie();
+            } catch (Exception $e) {
+                Log::error($e->getMessage());
+            }
+        }
     }
 
     /**
      * @throws Exception
      */
-    public function execute(): void
+    private function processMovie(): void
     {
         $postItem = $this->getPostItem(
             $this->getMovie()
@@ -91,6 +113,9 @@ class GenerateMoviePostService implements TaskServiceInterface
         $this->line('UpdatePostEvent Event dispatched.');
     }
 
+    /**
+     * @throws Exception
+     */
     private function getPostItem(array $movie): PostItem
     {
         try {
@@ -172,7 +197,7 @@ class GenerateMoviePostService implements TaskServiceInterface
             ++$this->currentChecks;
             $this->warning("Got empty results. Tries so far: $this->currentChecks");
 
-            usleep(400000);
+            usleep(500000);
 
             return $this->findUnusedMovie($total, $index);
         }
@@ -195,6 +220,8 @@ class GenerateMoviePostService implements TaskServiceInterface
         }
 
         $this->line("Found {$movie['Name']}");
+
+        $this->usedMovies[] = $movie['Id'];
 
         return $movie;
     }
@@ -310,6 +337,7 @@ class GenerateMoviePostService implements TaskServiceInterface
      *
      * @param array<string, string> $movie
      * @return Collection<RemoteImageItem>
+     * @throws Exception
      */
     private function parseMedia(array $movie): Collection
     {
@@ -338,6 +366,7 @@ class GenerateMoviePostService implements TaskServiceInterface
 
     /**
      * @param array<string, string> $movie
+     * @throws Exception
      */
     private function processTrailer(array $movie): void
     {
@@ -349,6 +378,7 @@ class GenerateMoviePostService implements TaskServiceInterface
         );
 
         $this->postUpdateItem = MovieTrailerFactory::create($item)
+            ->setCurrentMovieIndex($this->currentMovieIndex)
             ->setQueueable($this->queueable)
             ->setToScreen($this->toScreen)
             ->process();

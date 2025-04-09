@@ -8,7 +8,7 @@ use Modules\EmbyMediaRunner\Jobs\GenerateMoviePostJob;
 use Modules\EmbyMediaRunner\Services\GenerateMoviePostService;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 
-class GenerateMoviePostTask extends BaseTask
+final class GenerateMoviePostTask extends BaseTask
 {
     use ModuleConstants;
 

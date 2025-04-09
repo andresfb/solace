@@ -6,18 +6,22 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
+use Modules\Common\Traits\Screenable;
 use Modules\EmbyMediaRunner\Traits\CommandExecutable;
 use Modules\EmbyMediaRunner\Traits\VideoDuration;
 use RuntimeException;
 
-class TrailerGeneratorService
+final class TrailerGeneratorService
 {
     use VideoDuration;
     use CommandExecutable;
+    use Screenable;
 
-    private string $inputFile;
+    private string $inputFile = '';
 
-    private string $outputFile;
+    private string $outputFile = '';
+
+    private string $outputPath = '';
 
     private float $clipLength; // seconds
 
@@ -38,12 +42,15 @@ class TrailerGeneratorService
     public function setInputFile(string $inputFile): self
     {
         $this->inputFile = $inputFile;
+
         return $this;
     }
 
     public function setOutputFile(string $outputFile): self
     {
         $this->outputFile = $outputFile;
+        $this->outputPath = pathinfo($outputFile, PATHINFO_DIRNAME);
+
         return $this;
     }
 
@@ -65,35 +72,49 @@ class TrailerGeneratorService
             throw new RuntimeException('Video length not valid');
         }
 
-        $trailerDuration = min($duration * $this->scaleFactor, $this->maxTrailerLength);
+        $this->line('Full video duration: '.number_format(($duration / 60), 2).' minutes');
+        $this->line('Get trailer duration');
+
+        $trimmedDuration = $duration - ($duration * Config::float('encode-trailer.padding_time'));
+        $trailerDuration = min($trimmedDuration * $this->scaleFactor, $this->maxTrailerLength);
+
+        $this->line('Trailer duration: '.number_format(($trailerDuration / 60), 2).' minutes');
+        $this->line('Calculating clip sections');
 
         $clipCount = floor($trailerDuration / ($this->clipLength - $this->transitionDuration));
         if ($clipCount < 1) {
             $clipCount = 1;
         }
 
-        $timestamps = $this->selectTimestamps($duration, $clipCount);
+        $this->line("Calculated $clipCount sections");
 
+        $timestamps = $this->selectTimestamps($trimmedDuration, $clipCount);
         $clipFiles = $this->extractClips($timestamps);
+
+        $this->line('');
+
         $this->createCrossfadedTrailer($clipFiles);
-        $this->cleanup($clipFiles);
     }
 
     private function selectTimestamps(float $videoDuration, int $count): array
     {
+        $this->line('Selecting timestamps');
+
         $timestamps = [];
         $interval = ($videoDuration - $this->clipLength) / ($count + 1);
 
         for ($i = 1; $i <= $count; $i++) {
             $timestamps[] = round($i * $interval, 2);
         }
+
         return $timestamps;
     }
 
     private function extractClips(array $timestamps): array
     {
-        $clips = [];
+        $this->line('Extracting clips');
 
+        $clips = [];
         foreach ($timestamps as $i => $start) {
             $clips[] = $this->createClip($i, $start);
         }
@@ -101,64 +122,11 @@ class TrailerGeneratorService
         return $clips;
     }
 
-    private function createCrossfadedTrailer(array $clipFiles): void
-    {
-        $inputCmd = '';
-        $videoLabels = [];
-        $audioLabels = [];
-
-        foreach ($clipFiles as $index => $clip) {
-            $inputCmd .= "-i \"$clip\" ";
-            $videoLabels[] = "[$index:v]";
-            $audioLabels[] = "[$index:a]";
-        }
-
-        $filterSteps = '';
-        $fadeOffset = $this->clipLength - $this->transitionDuration;
-
-        $vIn = $videoLabels[0];
-        $aIn = $audioLabels[0];
-
-        for ($i = 1, $iMax = count($clipFiles); $i < $iMax; $i++) {
-            $vNext = $videoLabels[$i];
-            $aNext = $audioLabels[$i];
-
-            $vOut = "v$i";
-            $aOut = "a$i";
-
-            $filterSteps .= sprintf(
-                "%s%s xf=xfade=transition=fade:duration=%s:offset=%s [%s];",
-                $vIn,
-                $vNext,
-                $this->transitionDuration,
-                $fadeOffset,
-                $vOut
-            );
-
-            $filterSteps .= "$aIn$aNext af=acrossfade=d=$this->transitionDuration:c1=exp:c2=exp [$aOut];";
-
-            $vIn = "[$vOut]";
-            $aIn = "[$aOut]";
-        }
-
-        $filterComplex = "-filter_complex \"$filterSteps\" -map $vIn -map $aIn";
-
-        $finalCmd = sprintf(
-            '%s %s %s -c:v libx264 -c:a aac "%s" -y',
-            Config::string('media-library.ffmpeg_path'),
-            $inputCmd,
-            $filterComplex,
-            $this->outputFile
-        );
-
-        $this->executeCommand($finalCmd);
-    }
-
     private function createClip(int $number, float $start): string
     {
-        $clipFile = "clip_$number.mp4";
+        $clipFile = "$this->outputPath/clip_$number.mp4";
         $cmd = sprintf(
-            '%s -ss %s -i "%s" -t %s -c:v libx264 -c:a aac "%s" -y',
+            '%s -hide_banner -v error -ss %s -i "%s" -t %s -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -movflags +faststart "%s" -y',
             Config::string('media-library.ffmpeg_path'),
             $start,
             $this->inputFile,
@@ -171,14 +139,55 @@ class TrailerGeneratorService
         return $clipFile;
     }
 
-    private function cleanup(array $files): void
+    private function createCrossfadedTrailer(array $clips): void
     {
-        foreach ($files as $file) {
-            if (!file_exists($file)) {
-                continue;
+        $index = 0;
+        $fadeOffset = 0;
+        $previousTempFile = null;
+        $current = array_shift($clips);
+
+        $ffmpegSection = sprintf(
+            '%s -hide_banner -y -v error -copyts',
+            Config::string('media-library.ffmpeg_path')
+        );
+
+        $mapSection = '-map "[v]" -map "[a]" -avoid_negative_ts make_zero';
+        $encodingSettings = '-c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -movflags +faststart';
+
+        foreach ($clips as $clip) {
+            $nextTemp = "$this->outputPath/temp_merged_$index.mp4";
+            $fadeOffset += $this->clipLength - $this->transitionDuration;
+
+            $filter = sprintf(
+                '%s;%s',
+                sprintf('[0:v][1:v]xfade=transition=fade:duration=%f:offset=%f[v]', $this->transitionDuration, $fadeOffset),
+                sprintf('[0:a][1:a]acrossfade=duration=%f[a]', $this->transitionDuration)
+            );
+
+            $cmd = sprintf(
+                '%s -i "%s" -i "%s" -filter_complex "%s" %s %s "%s"',
+                $ffmpegSection,
+                $current,
+                $clip,
+                $filter,
+                $mapSection,
+                $encodingSettings,
+                $nextTemp
+            );
+
+            $this->executeCommand($cmd);
+
+            if ($previousTempFile !== null && file_exists($previousTempFile)) {
+                unlink($previousTempFile);
             }
 
-            unlink($file);
+            $current = $nextTemp;
+            $previousTempFile = $current;
+            $index++;
         }
+
+        rename($current, $this->outputFile);
+
+        $this->line('Finished encoding');
     }
 }

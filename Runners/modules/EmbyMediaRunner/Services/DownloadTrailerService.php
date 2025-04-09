@@ -13,28 +13,33 @@ use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\EmbyMediaRunner\Dtos\ProcessMediaItem;
 use Modules\EmbyMediaRunner\Factories\MovieTrailerFactory;
+use Modules\EmbyMediaRunner\Traits\CommandExecutable;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class DownloadTrailerService
+final class DownloadTrailerService
 {
     use ModuleConstants;
     use Screenable;
     use SendToQueue;
+    use CommandExecutable;
+
+    private int $maxRuns = 2;
+
+    private int $runCount = 0;
 
     public function __construct(
         private readonly YouTubeService $tubeService,
         private readonly VideoService $videoService,
     ) {}
 
+    /**
+     * @throws Exception
+     */
     public function execute(ProcessMediaItem $mediaItem): PostUpdateItem
     {
-        $runCount = 0;
-        $urlCount = count($mediaItem->trailerUrls);
-        $encoder = MovieTrailerFactory::create($mediaItem)
-            ->setQueueable($this->queueable)
-            ->setToScreen($this->toScreen);
+        ++$this->runCount;
 
         foreach ($mediaItem->trailerUrls as $trailerUrl) {
             try {
@@ -52,8 +57,6 @@ class DownloadTrailerService
                     throw new \RuntimeException('YouTube is not a valid URL');
                 }
 
-                ++$runCount;
-
                 return $this->processUrl(
                     $mediaItem->movieId,
                     $mediaItem->name,
@@ -63,15 +66,28 @@ class DownloadTrailerService
                 $this->error($e->getMessage());
                 Log::error($e->getMessage());
 
-                if ($runCount < $urlCount) {
-                    continue;
-                }
-
-                return $encoder->encodeTrailer();
+                continue;
             }
         }
 
-        return $encoder->encodeTrailer();
+        // If the downloads failed and we run this `$this->maxRuns` times
+        // we send a request to encode a trailer.
+        if ($this->runCount >= $this->maxRuns) {
+            $this->error('No trailers downloaded. Encoding one');
+
+            return MovieTrailerFactory::create($mediaItem)
+                ->setQueueable($this->queueable)
+                ->setToScreen($this->toScreen)
+                ->encodeTrailer();
+        }
+
+        $this->line('Could not download trailers. Trying again.');
+
+        // We try two times to download the trailers in case
+        // there's an internet issue.
+        usleep(300000);
+
+        return $this->execute($mediaItem);
     }
 
     private function processUrl(string $movieId, string $name, string $trailerUrl): PostUpdateItem
@@ -119,21 +135,7 @@ class DownloadTrailerService
             ->replace('{1}', $url)
             ->value();
 
-        $this->line("Executing: $cmd");
-
-        $process = Process::fromShellCommandline($cmd)
-            ->enableOutput()
-            ->setTimeout(0)
-            ->mustRun();
-
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $result = str($process->getOutput());
-        if ($result->lower()->contains('error')) {
-            throw new \RuntimeException($result->value());
-        }
+        $this->executeCommand($cmd);
 
         return $this->checkFiles(
             $this->tubeService->getYtVideoId($url),
@@ -147,7 +149,7 @@ class DownloadTrailerService
             throw new \RuntimeException("Video Id is empty");
         }
 
-        $files = $this->videoService->exists($videoId, $processPath);
+        $files = $this->videoService->getFiles($videoId, $processPath);
         if ($files->isEmpty()) {
             throw new \RuntimeException("Video $videoId not found");
         }

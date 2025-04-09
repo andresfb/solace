@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Common\Traits;
 
+use Illuminate\Support\Facades\Log;
+
 trait Screenable
 {
     protected bool $toScreen = false;
@@ -26,6 +28,10 @@ trait Screenable
 
     public function line(string $message): void
     {
+        if ($message !== '') {
+            Log::notice($message);
+        }
+
         if (! $this->toScreen) {
             return;
         }
@@ -35,6 +41,10 @@ trait Screenable
 
     private function info(string $message): void
     {
+        if ($message !== '') {
+            Log::info($message);
+        }
+
         if (! $this->toScreen) {
             return;
         }
@@ -47,6 +57,10 @@ trait Screenable
 
     private function error(string $error): void
     {
+        if ($error !== '') {
+            Log::error($error);
+        }
+
         if (! $this->toScreen) {
             return;
         }
@@ -59,6 +73,10 @@ trait Screenable
 
     private function warning(string $warning): void
     {
+        if ($warning !== '') {
+            Log::warning($warning);
+        }
+
         if (! $this->toScreen) {
             return;
         }

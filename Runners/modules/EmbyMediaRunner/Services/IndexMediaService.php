@@ -12,7 +12,7 @@ use Modules\Common\Traits\SendToQueue;
 use Modules\EmbyMediaRunner\Libraries\EmbyApiLibrary;
 use Modules\MediaLibraryRunner\Traits\ModuleConstants;
 
-class IndexMediaService implements TaskServiceInterface
+final class IndexMediaService implements TaskServiceInterface
 {
     use ModuleConstants;
     use QueueSelectable;

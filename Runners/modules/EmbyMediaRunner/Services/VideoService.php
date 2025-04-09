@@ -7,9 +7,9 @@ use FFMpeg\FFProbe;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
-class VideoService
+final class VideoService
 {
-    public function exists(string $videoId, string $processPath): Collection
+    public function getFiles(string $videoId, string $processPath): Collection
     {
         $search = "$processPath/*$videoId*";
         $files = collect(glob($search));

@@ -16,15 +16,20 @@ trait QueueSelectable
 
     public function getQueue(string $section): string
     {
-        return (string) $this->getQueues($section)
+        return (string) $this->getRandomQueues($section)
             ->firstOrFail();
     }
 
-    public function getQueues(string $section, int $number = 1): Collection
+    public function getRandomQueues(string $section, int $number = 1): Collection
+    {
+        return collect($this->getQueues($section))
+            ->random($number);
+    }
+
+    public function getQueues(string $section): array
     {
         return Str::of(config("$section.queues"))
             ->explode(',')
-            ->random($number)
-            ->collect();
+            ->toArray();
     }
 }

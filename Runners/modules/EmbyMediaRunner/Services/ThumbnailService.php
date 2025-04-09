@@ -6,14 +6,16 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
+use Modules\Common\Traits\Screenable;
 use Modules\EmbyMediaRunner\Traits\CommandExecutable;
 use Modules\EmbyMediaRunner\Traits\VideoDuration;
 use RuntimeException;
 
-class ThumbnailService
+final class ThumbnailService
 {
     use VideoDuration;
     use CommandExecutable;
+    use Screenable;
 
     private string $inputFile;
 
@@ -22,12 +24,14 @@ class ThumbnailService
     public function setInputFile(string $inputFile): self
     {
         $this->inputFile = $inputFile;
+
         return $this;
     }
 
     public function setOutputFile(string $outputFile): self
     {
         $this->outputFile = $outputFile;
+
         return $this;
     }
 
@@ -49,14 +53,14 @@ class ThumbnailService
             throw new RuntimeException('Video length not valid');
         }
 
-        $min = 0.64;
-        $max = 0.76;
+        $min = 0.62;
+        $max = 0.78;
         $timeCode = $min + mt_rand() / mt_getrandmax() * ($max - $min);
 
         $thumbnailTime = gmdate("H:i:s", floor($duration * $timeCode));
 
         $thumbnailCmd = sprintf(
-            '%s -ss %s -i "%s" -frames:v 1 -q:v 2 "%s"',
+            '%s -hide_banner -y -v error -ss %s -i "%s" -frames:v 1 -q:v 2 "%s"',
             Config::string('media-library.ffmpeg_path'),
             $thumbnailTime,
             $this->inputFile,

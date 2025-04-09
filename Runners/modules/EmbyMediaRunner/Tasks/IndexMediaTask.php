@@ -8,7 +8,7 @@ use Modules\EmbyMediaRunner\Jobs\IndexMoviesJob;
 use Modules\EmbyMediaRunner\Services\IndexMediaService;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 
-class IndexMediaTask extends BaseTask
+final class IndexMediaTask extends BaseTask
 {
     use ModuleConstants;
 

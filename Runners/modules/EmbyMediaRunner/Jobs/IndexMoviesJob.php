@@ -18,6 +18,8 @@ class IndexMoviesJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public bool $failOnTimeout = true;
+
     /**
      * @throws Exception
      */

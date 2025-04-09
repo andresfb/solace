@@ -10,6 +10,8 @@ trait CommandExecutable
 {
     private function executeCommand(string $cmd): void
     {
+        $this->line("Executing command: $cmd");
+
         $process = Process::fromShellCommandline($cmd)
             ->enableOutput()
             ->setTimeout(0)

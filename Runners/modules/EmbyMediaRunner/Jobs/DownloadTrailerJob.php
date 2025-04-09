@@ -19,6 +19,8 @@ class DownloadTrailerJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public bool $failOnTimeout = true;
+
     public function __construct(private readonly ProcessMediaItem $mediaItem) {}
 
     /**

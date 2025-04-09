@@ -10,7 +10,7 @@ use Modules\Common\Traits\SendToQueue;
 use Modules\EmbyMediaRunner\Dtos\ProcessMediaItem;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 
-class EncodeTrailerService
+final class EncodeTrailerService
 {
     use ModuleConstants;
     use Screenable;
@@ -28,28 +28,32 @@ class EncodeTrailerService
     {
         $this->line('Encoding trailer: ' . $mediaItem->filePath);
 
-        $outFile = $this->prepareOutFile($mediaItem);
+        $trailer = $this->prepareOutFile($mediaItem);
 
-        $this->trailerService->setInputFile($mediaItem->filePath)
-            ->setOutputFile($outFile)
+        $this->trailerService->setToScreen($this->toScreen)
+            ->setInputFile($mediaItem->filePath)
+            ->setOutputFile($trailer)
             ->generateTrailer();
 
-        $tempPath = pathinfo($outFile, PATHINFO_DIRNAME);
+        $tempPath = pathinfo($trailer, PATHINFO_DIRNAME);
         $thumbnail = "$tempPath/thumbnail.png";
 
-        $this->thumbnailService->setInputFile($mediaItem->filePath)
+        $this->thumbnailService->setToScreen($this->toScreen)
+            ->setInputFile($mediaItem->filePath)
             ->setOutputFile($thumbnail)
             ->captureThumbnail();
 
         return new PostUpdateItem(
             identifier: $mediaItem->movieId,
             title: $mediaItem->name,
-            mediaFiles: collect($outFile)->add($thumbnail),
+            mediaFiles: collect($trailer)->add($thumbnail),
         );
     }
 
     private function prepareOutFile(ProcessMediaItem $mediaItem): string
     {
+        $this->line('Preparing out file');
+
         $tmpPath = md5($mediaItem->filePath);
 
         $processPath = Storage::disk('processing')->path($tmpPath);
@@ -58,14 +62,13 @@ class EncodeTrailerService
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $processPath));
         }
 
-        $ext = pathinfo($mediaItem->name, PATHINFO_EXTENSION);
         $videoName = str(pathinfo($mediaItem->filePath, PATHINFO_FILENAME));
 
         return sprintf(
             "%s/%s.%s",
             $processPath,
             $videoName->slug()->value(),
-            $ext
+            'mp4'
         );
     }
 }

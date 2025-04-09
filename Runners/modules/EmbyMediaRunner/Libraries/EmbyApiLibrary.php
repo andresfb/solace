@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class EmbyApiLibrary
+final class EmbyApiLibrary
 {
     public const string MOVIE_TYPE = 'movies';
 

@@ -16,7 +16,6 @@ class UpdatePostService
     /** @var array|string[]  */
     private array $collectionType = [
         'mp4' => 'trailer',
-        'jpg' => 'trailer-image',
     ];
 
     /**
@@ -44,14 +43,12 @@ class UpdatePostService
             $file = $mediaFile;
             $ext = strtolower(pathinfo($mediaFile, PATHINFO_EXTENSION));
 
-            if (! array_key_exists($ext, $this->collectionType)) {
-                continue;
-            }
+            $collection = array_key_exists($ext, $this->collectionType)
+                ? $this->collectionType[$ext]
+                : 'trailer-image';
 
             $post->addMedia($mediaFile)
-                ->toMediaCollection(
-                    $this->collectionType[$ext]
-                );
+                ->toMediaCollection($collection);
         }
 
         $this->line('Deleting temporary directory...');

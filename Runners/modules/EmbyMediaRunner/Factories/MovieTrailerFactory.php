@@ -2,6 +2,7 @@
 
 namespace Modules\EmbyMediaRunner\Factories;
 
+use Exception;
 use Modules\Common\Dtos\PostUpdateItem;
 use Modules\Common\Traits\QueueSelectable;
 use Modules\Common\Traits\Screenable;
@@ -20,8 +21,12 @@ final class MovieTrailerFactory
     use Screenable;
     use SendToQueue;
 
+    private int $currentMovieIndex = 0;
+
     private readonly ProcessMediaItem $mediaItem;
+
     private readonly DownloadTrailerService $downloadTrailerService;
+
     private readonly EncodeTrailerService $encodeTrailerService;
 
     private function __construct(ProcessMediaItem $mediaItem)
@@ -36,6 +41,15 @@ final class MovieTrailerFactory
         return new self($mediaItem);
     }
 
+    public function setCurrentMovieIndex(int $currentMovieIndex): MovieTrailerFactory
+    {
+        $this->currentMovieIndex = $currentMovieIndex;
+        return $this;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function process(): PostUpdateItem
     {
         if ($this->mediaItem->hasTrailerUrls()) {
@@ -45,6 +59,9 @@ final class MovieTrailerFactory
         return $this->encodeTrailer();
     }
 
+    /**
+     * @throws Exception
+     */
     public function downloadTrailer(): PostUpdateItem
     {
         if ($this->queueable) {
@@ -64,13 +81,18 @@ final class MovieTrailerFactory
             ->execute($this->mediaItem);
     }
 
+    /**
+     * @throws Exception
+     */
     public function encodeTrailer(): PostUpdateItem
     {
         if ($this->queueable) {
             EncodeTrailerJob::dispatch($this->mediaItem)
+                ->delay(now()->addMinutes(5))
                 ->onConnection($this->getConnection('encode-trailer'))
-                ->onQueue($this->getQueue('encode-trailer'))
-                ->delay(now()->addMinutes(5));
+                ->onQueue(
+                    $this->selectQueue()
+                );
 
             return new PostUpdateItem(
                 $this->mediaItem->movieId,
@@ -81,5 +103,18 @@ final class MovieTrailerFactory
         return $this->encodeTrailerService->setToScreen($this->toScreen)
             ->setQueueable($this->queueable)
             ->execute($this->mediaItem);
+    }
+
+    private function selectQueue(): string
+    {
+        $queues = $this->getQueues('encode-trailer');
+
+        if ($this->currentMovieIndex > (count($queues) - 1)) {
+            return $this->getQueue('encode-trailer');
+        }
+
+        return ! array_key_exists($this->currentMovieIndex, $queues)
+            ? $this->getQueue('encode-trailer')
+            : $queues[$this->currentMovieIndex];
     }
 }

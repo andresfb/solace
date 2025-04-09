@@ -2,23 +2,23 @@
 
 namespace Modules\EmbyMediaRunner\Traits;
 
-use FFMpeg\FFProbe;
-use RuntimeException;
+use Illuminate\Support\Facades\Storage;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 trait VideoDuration
 {
     private function getVideoDuration(string $file): float
     {
-        $ffProbe = FFProbe::create();
+        $this->line('Getting full video duration');
 
-        $video = $ffProbe->streams($file)
-            ->videos()
-            ->first();
+        $mediaReadDisk = 'media-read';
 
-        if ($video === null){
-            throw new RuntimeException('Invalid video file');
-        }
+        $mediaReadPath = Storage::disk($mediaReadDisk)->path('');
 
-        return (float) $video->get('duration', 0.00);
+        $fileLocation = str_replace($mediaReadPath, '', $file);
+
+        return FFMpeg::fromDisk($mediaReadDisk)
+            ->open($fileLocation)
+            ->getDurationInSeconds();
     }
 }

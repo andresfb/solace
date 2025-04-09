@@ -2,7 +2,7 @@
 
 namespace Modules\EmbyMediaRunner\Services;
 
-class YouTubeService
+final class YouTubeService
 {
     public function isYouTube(string $url): bool
     {
