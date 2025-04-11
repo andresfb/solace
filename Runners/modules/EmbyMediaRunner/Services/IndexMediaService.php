@@ -26,9 +26,13 @@ final class IndexMediaService implements TaskServiceInterface
      */
     public function execute(): void
     {
-        $this->line('Indexing Emby Movies');
+        $this->line('');
 
+        $this->line('Indexing Emby Movies'.PHP_EOL);
         $this->indexMovies();
+
+        $this->line('Indexing Emby TV Series'.PHP_EOL);
+        $this->indexSeries();
     }
 
     /**
@@ -36,22 +40,62 @@ final class IndexMediaService implements TaskServiceInterface
      */
     public function indexMovies(): void
     {
-        $movies = $this->embyApiLibrary->getData(EmbyApiLibrary::MOVIE_TYPE);
+        $movies = $this->embyApiLibrary->getMovies();
 
         if (empty($movies)) {
             throw new \RuntimeException("No movies found.");
         }
 
+        $this->savetoIndex(
+            $movies,
+            config('meilisearch.movies_index')
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function indexSeries(): void
+    {
+        $series = $this->embyApiLibrary->getSeries();
+
+        if (empty($series)) {
+            throw new \RuntimeException("No series found.");
+        }
+
+        $this->getSeriesInfo($series);
+
+        $this->savetoIndex(
+            $series,
+            config('meilisearch.series_index')
+        );
+    }
+
+    private function getSeriesInfo(array $series): void
+    {
+        foreach ($series as $item) {
+            $this->character('.');
+
+            try {
+                $item->Seasons = $this->embyApiLibrary->getSeriesSeasons($item->Id);
+
+                $item->Episodes = $this->embyApiLibrary->getSeriesEpisodes($item->Id);
+            } catch (Exception $e) {
+                $this->error($e->getMessage().PHP_EOL);
+            }
+        }
+    }
+
+    private function savetoIndex(array $data, string $indexName): void
+    {
         $client = new Client(
             Config::string('meilisearch.host'),
             Config::string('meilisearch.key'),
         );
 
-        $index = $client->index(
-            Config::string('meilisearch.movies_index')
-        );
+        $index = $client->index($indexName);
 
         $index->deleteAllDocuments();
-        $index->addDocuments($movies);
+        $index->addDocuments($data);
     }
 }

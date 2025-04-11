@@ -4,16 +4,16 @@ namespace Modules\EmbyMediaRunner\Tasks;
 
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
-use Modules\EmbyMediaRunner\Jobs\GenerateMoviePostJob;
-use Modules\EmbyMediaRunner\Services\GenerateMoviePostService;
+use Modules\EmbyMediaRunner\Jobs\GenerateSeriesPostJob;
+use Modules\EmbyMediaRunner\Services\GenerateSeriesPostService;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 
-final class GenerateMoviePostTask extends BaseTask
+class GenerateSeriesPostTask extends BaseTask
 {
     use ModuleConstants;
 
     public function __construct(
-        GenerateMoviePostService $taskTaskService,
+        GenerateSeriesPostService $taskTaskService,
         ModuleSettingsService $settingsService
     ) {
         parent::__construct($taskTaskService, $settingsService);
@@ -26,14 +26,14 @@ final class GenerateMoviePostTask extends BaseTask
 
     protected function getTaskName(): string
     {
-        return $this->GENERATE_MOVIE_POST;
+        return $this->GENERATE_SERIES_POST;
     }
 
     protected function dispatchEvent(): void
     {
-        $this->line('Sending request to GenerateMoviePostJob');
+        $this->line('Sending request to GenerateSeriesPostJob');
 
-        GenerateMoviePostJob::dispatch()
+        GenerateSeriesPostJob::dispatch()
             ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
             ->delay(now()->addSecond());
     }

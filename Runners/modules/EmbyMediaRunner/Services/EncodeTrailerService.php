@@ -9,6 +9,7 @@ use Modules\Common\Traits\Screenable;
 use Modules\Common\Traits\SendToQueue;
 use Modules\EmbyMediaRunner\Dtos\ProcessMediaItem;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
+use RuntimeException;
 
 final class EncodeTrailerService
 {
@@ -52,6 +53,10 @@ final class EncodeTrailerService
 
     private function prepareOutFile(ProcessMediaItem $mediaItem): string
     {
+        if (empty($mediaItem->filePath)) {
+            return '';
+        }
+
         $this->line('Preparing out file');
 
         $tmpPath = md5($mediaItem->filePath);
@@ -59,7 +64,7 @@ final class EncodeTrailerService
         $processPath = Storage::disk('processing')->path($tmpPath);
 
         if (! file_exists($processPath) && ! mkdir($processPath, 0775, true) && ! is_dir($processPath)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $processPath));
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $processPath));
         }
 
         $videoName = str(pathinfo($mediaItem->filePath, PATHINFO_FILENAME));

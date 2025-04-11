@@ -5,6 +5,7 @@ namespace Modules\EmbyMediaRunner\Tasks;
 use Modules\Common\Services\ModuleSettingsService;
 use Modules\Common\Tasks\BaseTask;
 use Modules\EmbyMediaRunner\Jobs\IndexMoviesJob;
+use Modules\EmbyMediaRunner\Jobs\IndexSeriesJob;
 use Modules\EmbyMediaRunner\Services\IndexMediaService;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
 
@@ -37,6 +38,10 @@ final class IndexMediaTask extends BaseTask
             ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
             ->delay(now()->addSecond());
 
-        // TODO: dispatch the jobs for the other media (tv shows, collections, Music Videos, Music).
+        IndexSeriesJob::dispatch()
+            ->onQueue(config("$this->MODULE_NAME.horizon_queue"))
+            ->delay(now()->addSeconds(5));
+
+        // TODO: dispatch the jobs for the other media (collections, Music Videos, Music).
     }
 }

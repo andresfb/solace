@@ -17,6 +17,9 @@ return new class extends Migration
                 ['module_name' => 'emby_media_runner', 'task_name' => 'generate-movie-post', 'name' => 'schedule', 'value' => 'od', 'created_at' => now(), 'updated_at' => now()],
                 ['module_name' => 'emby_media_runner', 'task_name' => 'generate-movie-post', 'name' => 'empty_runs_count', 'value' => '0', 'created_at' => now(), 'updated_at' => now()],
 
+                ['module_name' => 'emby_media_runner', 'task_name' => 'generate-series-post', 'name' => 'is_enabled', 'value' => '1', 'created_at' => now(), 'updated_at' => now()],
+                ['module_name' => 'emby_media_runner', 'task_name' => 'generate-series-post', 'name' => 'schedule', 'value' => 'od', 'created_at' => now(), 'updated_at' => now()],
+                ['module_name' => 'emby_media_runner', 'task_name' => 'generate-series-post', 'name' => 'empty_runs_count', 'value' => '0', 'created_at' => now(), 'updated_at' => now()],
             ]);
     }
 

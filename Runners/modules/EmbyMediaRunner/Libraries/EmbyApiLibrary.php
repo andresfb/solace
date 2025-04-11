@@ -13,6 +13,10 @@ final class EmbyApiLibrary
 
     public const string SERIES_TYPE = 'series';
 
+    public const string SEASONS_TYPE = 'seasons';
+
+    public const string EPISODES_TYPE = 'episodes';
+
     protected array $endPoints = [];
 
     public function __construct()
@@ -34,22 +38,71 @@ final class EmbyApiLibrary
                     Config::array('emby-api.series_url_strings')
                 ),
             ),
+            self::SEASONS_TYPE => sprintf(
+                $baseUrl,
+                'Shows/{0}/Seasons',
+                http_build_query(
+                    Config::array('emby-api.series_url_strings')
+                ),
+            ),
+            self::EPISODES_TYPE => sprintf(
+                $baseUrl,
+                'Shows/{0}/Episodes',
+                http_build_query(
+                    Config::array('emby-api.episodes_url_strings')
+                ),
+            ),
         ];
     }
 
     /**
      * @throws Exception
      */
-    public function getData(string $type): array
+    public function getMovies(): array
+    {
+        $url = $this->endPoints[self::MOVIE_TYPE];
+
+        return $this->getData($url);
+    }
+    /**
+     * @throws Exception
+     */
+    public function getSeries(): array
+    {
+        $url = $this->endPoints[self::SERIES_TYPE];
+
+        return $this->getData($url);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getSeriesSeasons(string $seriesId): array
+    {
+        $endpoint = $this->endPoints[self::SEASONS_TYPE];
+        $url = str($endpoint)->replace('{0}', $seriesId)->value();
+
+        return $this->getData($url);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getSeriesEpisodes(string $seriesId): array
+    {
+        $endpoint = $this->endPoints[self::EPISODES_TYPE];
+        $url = str($endpoint)->replace('{0}', $seriesId)->value();
+
+        return $this->getData($url);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getData(string $url): array
     {
         try {
-            if (! array_key_exists($type, $this->endPoints)) {
-                throw new \RuntimeException('Invalid type');
-            }
-
-            $response = json_decode(
-                $this->getResponse($this->endPoints[$type]), false, 512, JSON_THROW_ON_ERROR
-            );
+            $response = json_decode($this->getResponse($url), false, 512, JSON_THROW_ON_ERROR);
 
             if (! $response || ! $response->Items) {
                 throw new \RuntimeException('Invalid response');

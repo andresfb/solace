@@ -6,6 +6,6 @@ return [
 
     'max_empty_runs' => 10000,
 
-    'max_movie_checks' => (int) env('EMBY_MEDIA_ENCODER_MAX_MOVIE_CHECKS', 25),
+    'max_movie_checks' => (int) env('EMBY_MEDIA_MAX_MOVIE_CHECKS', 25),
 
 ];

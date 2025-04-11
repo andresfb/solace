@@ -11,4 +11,6 @@ trait ModuleConstants
     public string $INDEX_MEDIA = 'index-media';
 
     public string $GENERATE_MOVIE_POST = 'generate-movie-post';
+
+    public string $GENERATE_SERIES_POST = 'generate-series-post';
 }

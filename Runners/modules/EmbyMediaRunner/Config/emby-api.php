@@ -9,9 +9,8 @@ return [
         'IncludeItemTypes' => 'Movie',
         'ExcludeItemTypes' => 'Episode',
         'EnableImages' => 'true',
-        'EnableUserData' => 'false',
+        'EnableUserData' => 'true',
         'IsLocked' => 'false',
-        'IsPlayed' => 'false',
         'ParentId' => env('EMBY_MOVIES_PARENT_ID'),
         'Fields' => 'Overview,ProductionYear,Genres,TagLines,OfficialRating,People,CriticRating,RunTimeTicks,Path,Tags,RemoteTrailers',
     ],
@@ -19,11 +18,23 @@ return [
     'series_url_strings' => [
         'Recursive' => 'true',
         'IncludeItemTypes' => 'Series',
-        'IsPlayed' => 'false',
         'IsLocked' => 'false',
         'EnableImages' => 'true',
+        'EnableUserData' => 'true',
+        'ParentId' => env('EMBY_SERIES_PARENT_ID'),
+        'Fields' => 'Overview,ProductionYear,Genres,TagLines,OfficialRating,People,CriticRating,RunTimeTicks,Path,Tags,RemoteTrailers,EndDate',
+    ],
+
+    'seasons_url_strings' => [
+        'EnableImages' => 'false',
+        'EnableImageTypes' => 'false',
         'EnableUserData' => 'false',
-        'Fields' => 'Overview,ProductionYear,Genres,DateCreated,TagLines,OfficialRating',
+        'Fields' => 'Overview,Taglines',
+    ],
+
+    'episodes_url_strings' => [
+        'EnableImages' => 'false',
+        'Fields' => 'Overview,Path',
     ],
 
     'movies_list_page' => env('EMBY_SERVER_MOVIE_LIST_PAGE'),

@@ -52,11 +52,18 @@ final class MovieTrailerFactory
      */
     public function process(): PostUpdateItem
     {
-        if ($this->mediaItem->hasTrailerUrls()) {
-            return $this->downloadTrailer();
-        }
+        try {
+            if ($this->mediaItem->hasTrailerUrls()) {
+                return $this->downloadTrailer();
+            }
 
-        return $this->encodeTrailer();
+            return $this->encodeTrailer();
+        } catch (Exception) {
+            return new PostUpdateItem(
+                $this->mediaItem->movieId,
+                $this->mediaItem->name
+            );
+        }
     }
 
     /**

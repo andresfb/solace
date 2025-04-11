@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Meilisearch\Client;
 
 return new class extends Migration
@@ -12,7 +14,7 @@ return new class extends Migration
             Config::string('meilisearch.key'),
         );
 
-        $indexName = Config::string('meilisearch.movies_index');
+        $indexName = Config::string('meilisearch.series_index');
 
         // Create index if it doesn't exist
         try {
@@ -37,7 +39,7 @@ return new class extends Migration
         );
 
         $client->deleteIndex(
-            Config::string('meilisearch.movies_index')
+            Config::string('meilisearch.series_index')
         );
     }
 };
