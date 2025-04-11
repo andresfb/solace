@@ -15,6 +15,7 @@
     "require": {
         "php": "^8.3.0",
         "ext-gd": "*",
+        "ext-zlib": "*",
         "ext-imagick": "*",
         "guzzlehttp/guzzle": "^7.9",
         "http-interop/http-factory-guzzle": "^1.0",

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\EmbyMediaRunner\Services;
 
 use Exception;
@@ -57,13 +59,13 @@ class GenerateSeriesPostService extends BaseGenerateMediaPostService
             )->append("\n");
         }
 
-        return $content->append(
-            sprintf(
-                'Status: %s',
-                $item['EndDate'] ? 'Finished' : 'Ongoing'
-            )
-        )
-        ->append("\n");
+        $status = 'Ongoing';
+        if (! empty($item['EndDate'])) {
+            $status = 'Finished';
+        }
+
+        return $content->append("Status: $status")
+            ->append("\n");
     }
 
     protected function getRunTime(array $item, Stringable $content): Stringable

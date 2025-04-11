@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\EmbyMediaRunner\Services;
 
 use Exception;
@@ -55,10 +57,9 @@ final class ThumbnailService
 
         $min = 0.62;
         $max = 0.78;
+
         $timeCode = $min + mt_rand() / mt_getrandmax() * ($max - $min);
-
-        $thumbnailTime = gmdate("H:i:s", floor($duration * $timeCode));
-
+        $thumbnailTime = gmdate("H:i:s", (int) floor($duration * $timeCode));
         $thumbnailCmd = sprintf(
             '%s -hide_banner -y -v error -ss %s -i "%s" -frames:v 1 -q:v 2 "%s"',
             Config::string('media-library.ffmpeg_path'),

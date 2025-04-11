@@ -11,6 +11,7 @@ use App\Models\Hashtags\Hashtag;
 use App\Models\Hashtags\Scopes\HashtagsScope;
 use App\Traits\ConvertDateTimeToTimezone;
 use App\Traits\Sluggable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -43,6 +44,14 @@ class Post extends BaseModel implements HasMedia
             'privacy' => PostPrivacy::class,
             'responses' => 'json',
         ];
+    }
+
+    public function responses(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => json_decode(gzinflate($value), false, 512, JSON_THROW_ON_ERROR),
+            set: fn ($value) => gzdeflate(json_encode($value, JSON_THROW_ON_ERROR), 9),
+        );
     }
 
     public function hashtags(): BelongsToMany

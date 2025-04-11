@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\EmbyMediaRunner\Services;
 
 use App\Events\UpdatePostQueueableEvent;
@@ -15,6 +17,7 @@ use Modules\EmbyMediaRunner\Dtos\ProcessMediaItem;
 use Modules\EmbyMediaRunner\Factories\MovieTrailerFactory;
 use Modules\EmbyMediaRunner\Traits\CommandExecutable;
 use Modules\EmbyMediaRunner\Traits\ModuleConstants;
+use RuntimeException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -48,13 +51,13 @@ final class DownloadTrailerService
                 $trailerUrl = $trailerUrl['Url'];
 
                 if (filter_var($trailerUrl, FILTER_VALIDATE_URL) === false) {
-                    throw new \RuntimeException('Invalid URL');
+                    throw new RuntimeException('Invalid URL');
                 }
 
                 $this->line('Checking the URl is from Youtube');
 
                 if (! $this->tubeService->isYouTube($trailerUrl)) {
-                    throw new \RuntimeException('YouTube is not a valid URL');
+                    throw new RuntimeException('YouTube is not a valid URL');
                 }
 
                 return $this->processUrl(
@@ -64,13 +67,12 @@ final class DownloadTrailerService
                 );
             } catch (Exception $e) {
                 $this->error($e->getMessage());
-                Log::error($e->getMessage());
 
                 continue;
             }
         }
 
-        // If the downloads failed and we run this `$this->maxRuns` times
+        // If the downloads failed, and we run this `$this->maxRuns` times
         // we send a request to encode a trailer.
         if ($this->runCount >= $this->maxRuns) {
             $this->error('No trailers downloaded. Encoding one');
@@ -127,7 +129,7 @@ final class DownloadTrailerService
     private function download(string $url, string $processPath): Collection
     {
         if (! file_exists($processPath) && ! mkdir($processPath, 0775, true) && ! is_dir($processPath)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $processPath));
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $processPath));
         }
 
         $cmd = str(config('downloader.yt-dlp-cmd'))
@@ -146,12 +148,12 @@ final class DownloadTrailerService
     private function checkFiles(?string $videoId, string $processPath): Collection
     {
         if (empty($videoId)) {
-            throw new \RuntimeException("Video Id is empty");
+            throw new RuntimeException("Video Id is empty");
         }
 
         $files = $this->videoService->getFiles($videoId, $processPath);
         if ($files->isEmpty()) {
-            throw new \RuntimeException("Video $videoId not found");
+            throw new RuntimeException("Video $videoId not found");
         }
 
         $files->each(function (string $file) {
@@ -161,7 +163,7 @@ final class DownloadTrailerService
             }
 
             if (! $this->videoService->isValid($file)) {
-                throw new \RuntimeException("Video $file is not valid");
+                throw new RuntimeException("Video $file is not valid");
             }
         });
 

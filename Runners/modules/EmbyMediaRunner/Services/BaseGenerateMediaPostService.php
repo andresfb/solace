@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\EmbyMediaRunner\Services;
 
 use Exception;
@@ -78,7 +80,7 @@ abstract class BaseGenerateMediaPostService implements TaskServiceInterface
 
                 $this->processItem();
             } catch (Exception $e) {
-                Log::error($e->getMessage());
+                $this->error($e->getMessage());
             }
         }
     }
@@ -163,7 +165,7 @@ abstract class BaseGenerateMediaPostService implements TaskServiceInterface
         }
 
         return new PostItem(
-            modelId: $item['Id'],
+            modelId: (int) $item['Id'],
             identifier: $item['Id'],
             title: $item['Name'],
             content: $this->parseContent($item),

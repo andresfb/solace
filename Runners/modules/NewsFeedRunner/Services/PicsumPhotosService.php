@@ -7,7 +7,6 @@ namespace Modules\NewsFeedRunner\Services;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Modules\Common\Traits\ImageCatchable;
 use Modules\Common\Traits\Screenable;
 use Modules\NewsFeedRunner\Dtos\PicsumItem;
@@ -28,8 +27,6 @@ class PicsumPhotosService
             return $this->getServiceImage();
         } catch (Exception $e) {
             $this->error($e->getMessage());
-
-            Log::error($e->getMessage());
 
             return PicsumItem::empty();
         }

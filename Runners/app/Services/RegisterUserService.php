@@ -87,8 +87,6 @@ class RegisterUserService
 
             $this->error($e->getMessage());
 
-            Log::error($e->getMessage());
-
             DB::rollBack();
         } finally {
             $this->line('');

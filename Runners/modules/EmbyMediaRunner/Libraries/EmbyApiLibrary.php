@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\EmbyMediaRunner\Libraries;
 
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 final class EmbyApiLibrary
 {
@@ -105,7 +108,7 @@ final class EmbyApiLibrary
             $response = json_decode($this->getResponse($url), false, 512, JSON_THROW_ON_ERROR);
 
             if (! $response || ! $response->Items) {
-                throw new \RuntimeException('Invalid response');
+                throw new RuntimeException('Invalid response');
             }
 
             return $response->Items;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\EmbyMediaRunner\Services;
 
 use Exception;
@@ -67,6 +69,7 @@ final class TrailerGeneratorService
             throw new InvalidArgumentException('No output file provided');
         }
 
+        // TODO: Get the video resolution and change the clips command to scale down to 720 if the resolution is bigger
         $duration = $this->getVideoDuration($this->inputFile);
         if ($duration <= 0.0) {
             throw new RuntimeException('Video length not valid');
@@ -81,7 +84,7 @@ final class TrailerGeneratorService
         $this->line('Trailer duration: '.number_format(($trailerDuration / 60), 2).' minutes');
         $this->line('Calculating clip sections');
 
-        $clipCount = floor($trailerDuration / ($this->clipLength - $this->transitionDuration));
+        $clipCount = (int) floor($trailerDuration / ($this->clipLength - $this->transitionDuration));
         if ($clipCount < 1) {
             $clipCount = 1;
         }

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('tasker');
             $table->unsignedSmallInteger('priority')->default(0);
             $table->string('generator');
-            $table->json('responses')->nullable();
             $table->unsignedInteger('likes_count')->default(0);
             $table->unsignedInteger('comments_count')->default(0);
             $table->softDeletes();
@@ -30,6 +29,8 @@ return new class extends Migration
 
             $table->index('tasker');
         });
+
+        DB::statement("ALTER TABLE posts ADD responses MEDIUMBLOB NULL AFTER `generator`");
     }
 
     public function down(): void
